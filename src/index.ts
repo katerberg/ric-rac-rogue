@@ -25,6 +25,14 @@ const state = {
   selections: new Map<Coordinate, Choice>(),
 } as State;
 
+function getCellWidth(): number {
+  return gameWidth / state.columns;
+}
+
+function getCellHeight(): number {
+  return gameHeight / state.rows;
+}
+
 function initCanvasSize(canvas: HTMLCanvasElement): void {
   const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
   const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
@@ -66,6 +74,31 @@ function handleClick(event: MouseEvent): void {
   console.log(state.selections);
 }
 
+// function clearBoard(ctx: CanvasRenderingContext2D): void {
+//   const cellWidth = getCellWidth();
+//   const cellHeight = getCellHeight();
+
+//   for (let col = 1; col < state.columns; col++) {
+//     ctx.clearRect(cellWidth * col - 5, 10, 10, gameHeight - 20);
+//   }
+//   for (let row = 1; row < state.rows; row++) {
+//     ctx.clearRect(10, cellHeight * row - 5, gameWidth - 20, 10);
+//   }
+// }
+
+function redrawBoard(ctx: CanvasRenderingContext2D): void {
+  const cellWidth = getCellWidth();
+  const cellHeight = getCellHeight();
+
+  ctx.fillStyle = 'rgb(10 200 110)';
+  for (let col = 1; col < state.columns; col++) {
+    ctx.fillRect(cellWidth * col - 5, 10, 10, gameHeight - 20);
+  }
+  for (let row = 1; row < state.rows; row++) {
+    ctx.fillRect(10, cellHeight * row - 5, gameWidth - 20, 10);
+  }
+}
+
 resize();
 addEventListener('resize', () => {
   resize();
@@ -74,5 +107,10 @@ addEventListener('resize', () => {
 window.addEventListener('load', () => {
   initCanvasSize(getCanvas());
 
-  getCanvas().addEventListener('click', handleClick, false);
+  const canvas = getCanvas();
+  canvas.addEventListener('click', handleClick, false);
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    redrawBoard(ctx);
+  }
 });
