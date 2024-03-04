@@ -2,6 +2,7 @@ import './index.scss';
 import * as P5 from 'p5';
 import {COLORS} from './colors';
 import {coordsToNumberCoords} from './coordinatesHelper';
+import {getBestMove} from './minimax';
 import {Choice, Coordinate, NumberCoordinates, State} from './types';
 
 let gameWidth = 1600;
@@ -26,10 +27,12 @@ function resizeP(): void {
 }
 
 const state = {
-  columns: 6,
-  rows: 6,
+  columns: 3,
+  rows: 3,
   requiredWin: 3,
   selections: new Map<Coordinate, Choice>(),
+  currentPlayer: 'x' as Choice,
+  maxDepth: 4,
 } as State;
 
 function getCellWidth(): number {
@@ -162,17 +165,12 @@ function redrawSelections(): void {
 
 function handleClick(): void {
   const {x, y} = getCellCoordinatesFromClick(p5.mouseX, p5.mouseY);
-  switch (state.selections.get(`${x},${y}`)) {
-    case 'x':
-      state.selections.set(`${x},${y}`, 'o');
-      break;
-    case 'o':
-      state.selections.delete(`${x},${y}`);
-      break;
-    case undefined:
-    default:
-      state.selections.set(`${x},${y}`, 'x');
-      break;
+  if (state.selections.get(`${x},${y}`) === undefined) {
+    state.selections.set(`${x},${y}`, 'x');
+    const response = getBestMove(state, false);
+    if (response.bestMove) {
+      state.selections.set(`${response.bestMove.x},${response.bestMove.y}`, 'o');
+    }
   }
 }
 
@@ -190,16 +188,10 @@ const sketch = (p: P5): void => {
     p.background(0, 0, 0);
     redrawBoard();
     redrawSelections();
-    // detectSelection();
   };
 };
 
 window.addEventListener('load', () => {
-  // initCanvasSize(getCanvas());
-
-  // const canvas = getCanvas();
-  // canvas.addEventListener('click', handleClick, false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   p5 = new P5(sketch, document.getElementById('game')!);
 
   resizeP();
