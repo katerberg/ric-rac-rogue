@@ -51,36 +51,6 @@ function getCellCoordinatesFromClick(x: number, y: number): NumberCoordinates {
   };
 }
 
-// function handleClick(event: MouseEvent): void {
-//   const {x, y} = getCellCoordinatesFromClick(event);
-//   switch (state.selections.get(`${x},${y}`)) {
-//     case 'x':
-//       state.selections.set(`${x},${y}`, 'o');
-//       break;
-//     case 'o':
-//       state.selections.delete(`${x},${y}`);
-//       break;
-//     case undefined:
-//     default:
-//       state.selections.set(`${x},${y}`, 'x');
-//       break;
-//   }
-//   // eslint-disable-next-line no-console
-//   console.log(state.selections);
-// }
-
-// function clearBoard(ctx: CanvasRenderingContext2D): void {
-//   const cellWidth = getCellWidth();
-//   const cellHeight = getCellHeight();
-
-//   for (let col = 1; col < state.columns; col++) {
-//     ctx.clearRect(cellWidth * col - 5, 10, 10, gameHeight - 20);
-//   }
-//   for (let row = 1; row < state.rows; row++) {
-//     ctx.clearRect(10, cellHeight * row - 5, gameWidth - 20, 10);
-//   }
-// }
-
 function redrawBoard(): void {
   const cellWidth = getCellWidth();
   const cellHeight = getCellHeight();

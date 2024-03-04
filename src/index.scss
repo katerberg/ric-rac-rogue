@@ -2,6 +2,11 @@ $color-background: #000;
 $color-text: #fff;
 $color-canvas-border: #fff;
 $color-game-axes: #60DEA4;
+$color-game-x: #E6F603;
+$color-game-o: #C422D7;
+$spinner-border: 1.5px;
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
 
 * {
     box-sizing: border-box;
@@ -15,10 +20,65 @@ body {
     padding: 0;
     background: $color-background;
     color: $color-text;
+    font-family: 'Orbitron', 'Roboto', sans-serif;
 }
 
 #start-screen {
     h1 {
         margin-top: 0;
+    }
+}
+
+.loading {
+    display: none;
+    background: black;
+    width: 40vh;
+    height: 40vh;
+    position: absolute;
+    top: calc(50% - 20vh);
+    left: calc(50% - 20vh);
+    border-radius: 50%;
+    font-size: 24px;
+
+    .loading-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .loading-spinner {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: $spinner-border dashed $color-game-o;
+        animation: spinner 5s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+    }
+}
+
+@keyframes spinner {
+
+    0% {
+        transform: rotate(360deg);
+        color: $color-game-x;
+        border: $spinner-border dashed $color-game-x;
+        box-shadow: 0px 0px 10px $color-game-x, 0px 0px 40px$color-game-x, 0px 0px 80px $color-game-x;
+        transition-delay: 0.2s;
+    }
+
+    50% {
+        color: $color-game-o;
+        box-shadow: 0px 0px 10px $color-game-o, 0px 0px 40px$color-game-o, 0px 0px 80px $color-game-o;
+        transition-delay: 1s;
+    }
+
+    100% {
+        color: $color-game-x;
+        transform: rotate(0deg);
+        border: $spinner-border dashed $color-game-x;
+        box-shadow: 0px 0px 10px $color-game-x, 0px 0px 40px$color-game-x, 0px 0px 80px $color-game-x;
+        transition-delay: 0.2s;
     }
 }
