@@ -116,6 +116,20 @@ function redrawBoard(): void {
     );
   }
 }
+function drawO(x: number, y: number): void {
+  p5.stroke(COLORS.o);
+  p5.fill(p5.color(0, 0));
+  p5.drawingContext.shadowBlur = 20;
+  p5.drawingContext.shadowColor = COLORS.o;
+  const cellWidth = getCellWidth();
+  const cellHeight = getCellHeight();
+
+  const xStart = x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
+  const yStart = y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
+  p5.circle(xStart, yStart, Math.max(Math.min(cellWidth, cellHeight) * 0.8 - gameAxisWidth * 4, 10));
+  // repeat here as needed
+  p5.circle(xStart, yStart, Math.max(Math.min(cellWidth, cellHeight) * 0.8 - gameAxisWidth * 4, 10));
+}
 
 function drawX(x: number, y: number): void {
   p5.stroke(COLORS.x);
@@ -130,6 +144,9 @@ function drawX(x: number, y: number): void {
   const yEnd = yStart + cellHeight * 0.8 - gameAxisWidth * 4;
   p5.line(xStart, yStart, xEnd, yEnd);
   p5.line(xEnd, yStart, xStart, yEnd);
+  // repeat here as needed
+  p5.line(xStart, yStart, xEnd, yEnd);
+  p5.line(xEnd, yStart, xStart, yEnd);
 }
 
 function redrawSelections(): void {
@@ -137,8 +154,8 @@ function redrawSelections(): void {
     const {x, y} = coordsToNumberCoords(value);
     if (key === 'x') {
       drawX(x, y);
-      // } else {
-      //   drawO(x, y);
+    } else {
+      drawO(x, y);
     }
   });
 }
