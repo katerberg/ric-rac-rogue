@@ -54,8 +54,8 @@ export function getBestMove(
   }
   //Initialize best to the worst possible value and have a default move
   const WORST_POSSIBLE_SCORE = maximizing ? -1_000_000 : 1_000_000;
-  // const DEPTH_MULTIPLIER = maximizing ? 0.1 : -0.1;
-  const DEPTH_MULTIPLIER = 0;
+  const DEPTH_MULTIPLIER = maximizing ? 0.1 : -0.1;
+  // const DEPTH_MULTIPLIER = 0;
   let bestScore = WORST_POSSIBLE_SCORE;
   let newAlpha = alpha;
   let newBeta = beta;
@@ -74,24 +74,16 @@ export function getBestMove(
       if (terminalState.isWinner) {
         // if it's terminal, get the best score minus how long it took to get there
         bestScore = WORST_POSSIBLE_SCORE * -1 - depth * DEPTH_MULTIPLIER;
-        // eslint-disable-next-line no-console
-        console.log('winner', bestScore, depth);
-        // console.log('new best score', bestScore);
         bestMove = move;
-        // lowestDepth = depth;
         break;
       }
       if (terminalState.isCat) {
         if ((maximizing && 0 > bestScore) || (!maximizing && 0 < bestScore)) {
           // if it's terminal, it's zero because it's better than any loss but worse than any win
           bestScore = 0;
-          // console.log('new best score - cat', 0);
           bestMove = move;
         }
       }
-      // if (depth === 0) {
-      // console.log('terminal', availableMoves[i], bestMove, bestScore);
-      // }
     } else {
       let nodeValue: {bestScore: number; bestMove: NumberCoordinates};
       const transpositionTableKey = boardToTranspositionTableKey(child);
@@ -106,26 +98,20 @@ export function getBestMove(
         });
       }
       if ((maximizing && nodeValue.bestScore > bestScore) || (!maximizing && nodeValue.bestScore < bestScore)) {
-        // console.log('new best score from node', bestScore);
         ({bestScore} = nodeValue);
         bestMove = move;
-        if (maximizing) {
-          newAlpha = Math.max(bestScore, newAlpha);
-        } else if (!maximizing) {
-          newBeta = Math.min(bestScore, newBeta);
-        }
-      }
-      if (depth === 0) {
-        // console.log('not terminal', availableMoves[i], bestMove, bestScore);
+        newAlpha = null || newAlpha;
+        newBeta = null || newBeta;
+        // if (maximizing) {
+        //   newAlpha = Math.max(bestScore, newAlpha);
+        // } else if (!maximizing) {
+        //   newBeta = Math.min(bestScore, newBeta);
+        // }
       }
     }
     if (newBeta <= newAlpha) {
       break;
     }
-  }
-  if (depth === 0) {
-    // eslint-disable-next-line no-console
-    console.log('done', bestMove, bestScore);
   }
   return {bestScore, bestMove};
 }

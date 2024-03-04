@@ -27,12 +27,12 @@ function resizeP(): void {
 }
 
 const state = {
-  columns: 3,
-  rows: 3,
+  columns: 4,
+  rows: 4,
   requiredWin: 3,
   selections: new Map<Coordinate, Choice>(),
   currentPlayer: 'x' as Choice,
-  maxDepth: 4,
+  maxDepth: 1200,
 } as State;
 
 function getCellWidth(): number {
