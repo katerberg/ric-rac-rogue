@@ -11,6 +11,7 @@ let gameHeight = 750;
 const gameAxisWidth = 10;
 const gameInnerPadding = 24;
 let p5: P5;
+let loading = false;
 
 function resizeP(): void {
   const verticalPadding = 80;
@@ -135,12 +136,18 @@ function redrawSelections(): void {
 
 function handleClick(): void {
   const {x, y} = getCellCoordinatesFromClick(p5.mouseX, p5.mouseY);
-  if (state.selections.get(`${x},${y}`) === undefined) {
+  if (!loading && state.selections.get(`${x},${y}`) === undefined && x > -1 && y > -1) {
+    loading = true;
+    document.getElementById('loading')?.classList.add('loading');
     state.selections.set(`${x},${y}`, 'x');
-    const response = getBestMove(state, false);
-    if (response.bestMove) {
-      state.selections.set(`${response.bestMove.x},${response.bestMove.y}`, 'o');
-    }
+    setTimeout(() => {
+      const response = getBestMove(state, false);
+      document.getElementById('loading')?.classList.remove('loading');
+      loading = false;
+      if (response.bestMove) {
+        state.selections.set(`${response.bestMove.x},${response.bestMove.y}`, 'o');
+      }
+    }, 1);
   }
 }
 

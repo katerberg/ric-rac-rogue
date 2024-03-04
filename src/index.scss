@@ -29,8 +29,8 @@ body {
     }
 }
 
-.loading {
-    display: none;
+#loading {
+    opacity: 0;
     background: black;
     width: 40vh;
     height: 40vh;
@@ -39,6 +39,11 @@ body {
     left: calc(50% - 20vh);
     border-radius: 50%;
     font-size: 24px;
+
+    &.loading {
+        transition: opacity 500ms;
+        opacity: 1;
+    }
 
     .loading-text {
         position: absolute;
