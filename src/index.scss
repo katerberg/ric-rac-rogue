@@ -1,0 +1,46 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#start-screen {
+    h1 {
+        margin-top: 0;
+    }
+}
+
+#game {
+    canvas {
+        background: #dfdfdf;
+    }
+}
+
+#game.vertical-constraint>canvas {
+    width: auto;
+    height: calc(100vh - 112px);
+}
+
+#game.horizontal-constraint>canvas {
+    width: 100%;
+    height: auto;
+}
+
+.selectors {
+    display: flex;
+    margin: 8px;
+
+    >* {
+        margin-right: 8px;
+    }
+}
+
+.calculations {
+    display: flex;
+}

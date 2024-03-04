@@ -1,0 +1,7 @@
+/node_modules
+/dist
+.DS_STORE
+/creds
+/server/**/*.js
+/types/**/*.js
+.env

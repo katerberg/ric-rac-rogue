@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "strict": true,
+      "noImplicitAny": true,
+      "outDir": "./public",
+      "allowJs": true,
+      "target": "es5",
+      "removeComments": true,
+      "resolveJsonModule": true,
+      "preserveConstEnums": true,
+      "sourceMap": true
+    },
+    "include": ["./.eslintrc.js", "./src/**/*", "./server/**/*", "./types/**/*"]
+  }
