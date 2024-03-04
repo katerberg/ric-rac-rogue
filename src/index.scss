@@ -22,33 +22,3 @@ body {
         margin-top: 0;
     }
 }
-
-#game {
-    canvas {
-        border: 1px solid $color-canvas-border;
-        background: $color-background;
-    }
-}
-
-#game.vertical-constraint>canvas {
-    width: auto;
-    height: calc(100vh - 112px);
-}
-
-#game.horizontal-constraint>canvas {
-    width: 100%;
-    height: auto;
-}
-
-.selectors {
-    display: flex;
-    margin: 8px;
-
-    >* {
-        margin-right: 8px;
-    }
-}
-
-.calculations {
-    display: flex;
-}

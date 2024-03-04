@@ -1,26 +1,33 @@
 import './index.scss';
+import * as P5 from 'p5';
+import {COLORS} from './colors';
+import {coordsToNumberCoords} from './coordinatesHelper';
 import {Choice, Coordinate, NumberCoordinates, State} from './types';
 
-const gameWidth = 1600;
-const gameHeight = 750;
-const gameRatio = gameWidth / gameHeight;
-function resize(): void {
-  const gameNode = document.getElementById('game');
-  gameNode?.classList.remove('vertical-constraint', 'horizontal-constraint');
-  const windowRatio = window.innerWidth / (window.innerHeight - 120);
+let gameWidth = 1600;
+let gameHeight = 750;
+
+const gameAxisWidth = 10;
+const gameInnerPadding = 24;
+let p5: P5;
+
+function resizeP(): void {
+  const verticalPadding = 80;
+  const horizontalPadding = 0;
+  const windowRatio = (window.innerWidth - horizontalPadding) / (window.innerHeight - verticalPadding);
   if (windowRatio < 0 || windowRatio > 10) {
     return;
   }
-  if (gameRatio < windowRatio) {
-    gameNode?.classList.add('vertical-constraint');
-  } else {
-    gameNode?.classList.add('horizontal-constraint');
-  }
+
+  gameWidth = p5.windowWidth - horizontalPadding;
+  gameHeight = p5.windowHeight - verticalPadding;
+
+  p5.resizeCanvas(p5.windowWidth - horizontalPadding, p5.windowHeight - verticalPadding);
 }
 
 const state = {
-  columns: 3,
-  rows: 3,
+  columns: 6,
+  rows: 6,
   requiredWin: 3,
   selections: new Map<Coordinate, Choice>(),
 } as State;
@@ -33,46 +40,31 @@ function getCellHeight(): number {
   return gameHeight / state.rows;
 }
 
-function initCanvasSize(canvas: HTMLCanvasElement): void {
-  const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-  const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-  canvas.width = gameWidth; //horizontal resolution (?) - increase for better looking text
-  canvas.height = gameHeight; //vertical resolution (?) - increase for better looking text
-  canvas.style.width = `${width}`; //actual width of canvas
-  canvas.style.height = `${height}`; //actual height of canvas
+function getCellCoordinatesFromClick(x: number, y: number): NumberCoordinates {
+  // not strictly accurate since there are axes to consider but fine for now
+  return {
+    x: Math.floor((x / gameWidth) * state.columns),
+    y: Math.floor((y / gameHeight) * state.rows),
+  };
 }
 
-function getCanvas(): HTMLCanvasElement {
-  return document.getElementById('game-canvas') as HTMLCanvasElement;
-}
-
-function getCellCoordinatesFromClick(event: MouseEvent): NumberCoordinates {
-  const elem = getCanvas();
-  const elemLeft = elem.offsetLeft + elem.clientLeft;
-  const elemTop = elem.offsetTop + elem.clientTop;
-  const x = event.pageX - elemLeft;
-  const y = event.pageY - elemTop;
-
-  return {x: Math.floor((x / elem.clientWidth) * state.columns), y: Math.floor((y / elem.clientHeight) * state.rows)};
-}
-
-function handleClick(event: MouseEvent): void {
-  const {x, y} = getCellCoordinatesFromClick(event);
-  switch (state.selections.get(`${x},${y}`)) {
-    case 'x':
-      state.selections.set(`${x},${y}`, 'o');
-      break;
-    case 'o':
-      state.selections.delete(`${x},${y}`);
-      break;
-    case undefined:
-    default:
-      state.selections.set(`${x},${y}`, 'x');
-      break;
-  }
-  // eslint-disable-next-line no-console
-  console.log(state.selections);
-}
+// function handleClick(event: MouseEvent): void {
+//   const {x, y} = getCellCoordinatesFromClick(event);
+//   switch (state.selections.get(`${x},${y}`)) {
+//     case 'x':
+//       state.selections.set(`${x},${y}`, 'o');
+//       break;
+//     case 'o':
+//       state.selections.delete(`${x},${y}`);
+//       break;
+//     case undefined:
+//     default:
+//       state.selections.set(`${x},${y}`, 'x');
+//       break;
+//   }
+//   // eslint-disable-next-line no-console
+//   console.log(state.selections);
+// }
 
 // function clearBoard(ctx: CanvasRenderingContext2D): void {
 //   const cellWidth = getCellWidth();
@@ -86,31 +78,113 @@ function handleClick(event: MouseEvent): void {
 //   }
 // }
 
-function redrawBoard(ctx: CanvasRenderingContext2D): void {
+function redrawBoard(): void {
   const cellWidth = getCellWidth();
   const cellHeight = getCellHeight();
+  p5.stroke(COLORS.gameAxes);
+  p5.strokeCap(p5.ROUND);
+  p5.strokeWeight(gameAxisWidth);
+  p5.drawingContext.shadowBlur = 40;
+  p5.drawingContext.shadowColor = COLORS.gameAxes;
 
-  ctx.fillStyle = 'rgb(10 200 110)';
   for (let col = 1; col < state.columns; col++) {
-    ctx.fillRect(cellWidth * col - 5, 10, 10, gameHeight - 20);
+    p5.line(
+      cellWidth * col - gameInnerPadding / 2,
+      gameInnerPadding,
+      cellWidth * col - gameInnerPadding / 2,
+      gameHeight - gameInnerPadding * 2,
+    );
+    p5.line(
+      cellWidth * col - gameInnerPadding / 2,
+      gameInnerPadding,
+      cellWidth * col - gameInnerPadding / 2,
+      gameHeight - gameInnerPadding * 2,
+    );
   }
   for (let row = 1; row < state.rows; row++) {
-    ctx.fillRect(10, cellHeight * row - 5, gameWidth - 20, 10);
+    p5.line(
+      gameInnerPadding,
+      cellHeight * row - gameInnerPadding / 2,
+      gameWidth - gameInnerPadding * 2,
+      cellHeight * row - gameInnerPadding / 2,
+    );
+    p5.line(
+      gameInnerPadding,
+      cellHeight * row - gameInnerPadding / 2,
+      gameWidth - gameInnerPadding * 2,
+      cellHeight * row - gameInnerPadding / 2,
+    );
   }
 }
 
-resize();
-addEventListener('resize', () => {
-  resize();
-});
+function drawX(x: number, y: number): void {
+  p5.stroke(COLORS.x);
+  p5.strokeCap(p5.ROUND);
+  p5.drawingContext.shadowBlur = 20;
+  p5.drawingContext.shadowColor = COLORS.x;
+  const cellWidth = getCellWidth();
+  const cellHeight = getCellHeight();
+  const xStart = x * cellWidth + gameAxisWidth * 2;
+  const yStart = y * cellHeight + gameAxisWidth * 2;
+  const xEnd = xStart + cellWidth * 0.9 - gameAxisWidth * 4;
+  const yEnd = yStart + cellHeight * 0.8 - gameAxisWidth * 4;
+  p5.line(xStart, yStart, xEnd, yEnd);
+  p5.line(xEnd, yStart, xStart, yEnd);
+}
+
+function redrawSelections(): void {
+  state.selections.forEach((key, value) => {
+    const {x, y} = coordsToNumberCoords(value);
+    if (key === 'x') {
+      drawX(x, y);
+      // } else {
+      //   drawO(x, y);
+    }
+  });
+}
+
+function handleClick(): void {
+  const {x, y} = getCellCoordinatesFromClick(p5.mouseX, p5.mouseY);
+  switch (state.selections.get(`${x},${y}`)) {
+    case 'x':
+      state.selections.set(`${x},${y}`, 'o');
+      break;
+    case 'o':
+      state.selections.delete(`${x},${y}`);
+      break;
+    case undefined:
+    default:
+      state.selections.set(`${x},${y}`, 'x');
+      break;
+  }
+}
+
+const sketch = (p: P5): void => {
+  p.setup = (): void => {
+    const canvas = p.createCanvas(gameWidth, gameHeight);
+    canvas.id('game-canvas');
+  };
+  p.windowResized = (): void => {
+    resizeP();
+  };
+  p.mouseClicked = handleClick;
+
+  p.draw = (): void => {
+    p.background(0, 0, 0);
+    redrawBoard();
+    redrawSelections();
+    // detectSelection();
+  };
+};
 
 window.addEventListener('load', () => {
-  initCanvasSize(getCanvas());
+  // initCanvasSize(getCanvas());
 
-  const canvas = getCanvas();
-  canvas.addEventListener('click', handleClick, false);
-  const ctx = canvas.getContext('2d');
-  if (ctx) {
-    redrawBoard(ctx);
-  }
+  // const canvas = getCanvas();
+  // canvas.addEventListener('click', handleClick, false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  p5 = new P5(sketch, document.getElementById('game')!);
+
+  resizeP();
+  redrawBoard();
 });
