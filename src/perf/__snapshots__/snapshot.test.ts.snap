@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`snapshot infinite depth 3x3 with 3 in a row 1`] = `22`;
+exports[`snapshot infinite depth 3x3 with 3 in a row 1`] = `38`;
 
-exports[`snapshot infinite depth 4x4 with 3 in a row 1`] = `993`;
+exports[`snapshot infinite depth 4x4 with 3 in a row 1`] = `40328`;
 
 exports[`snapshot infinite depth 4x10 with 3 in a row 1`] = `7442`;
 
 exports[`snapshot infinite depth 4x20 with 3 in a row 1`] = `24372`;
 
-exports[`snapshot limited depth 4x4 with 3 in a row 1`] = `979`;
+exports[`snapshot limited depth 4x4 with 3 in a row 1`] = `39121`;
 
 exports[`snapshot limited depth 4x4 with 4 in a row 1`] = `32810`;
