@@ -91,8 +91,8 @@ export function checkTerminal(state: State): {
   isWinner: boolean;
   winner: Choice | null;
 } {
-  const isCatGame = isCat(state.selections, state.columns, state.rows);
-  const isWinner = isWin(state.selections, state.columns, state.rows, state.requiredWin);
+  const isCatGame = isCat(state.board.selections, state.board.columns, state.board.rows);
+  const isWinner = isWin(state.board.selections, state.board.columns, state.board.rows, state.requiredWin);
   return {
     isTerminal: isWinner || isCatGame,
     isWinner,

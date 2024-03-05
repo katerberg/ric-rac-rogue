@@ -1,15 +1,15 @@
-import {getAvailableMoves} from './board';
+import {Board} from './board';
 import {numberCoordsToCoords} from './coordinatesHelper';
-import {NumberCoordinates, State} from './types';
+import {Moves, NumberCoordinates, State} from './types';
 import {checkTerminal, getTotalScore} from './winCalculation';
 
 const transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoordinates}> = {};
 
-export function boardToTranspositionTableKey(state: State): string {
+export function boardToTranspositionTableKey(selections: Moves, columns: number, rows: number): string {
   let key = '';
-  for (let y = 0; y < state.columns; y++) {
-    for (let x = 0; x < state.rows; x++) {
-      key += state.selections.get(`${x},${y}`) ?? '_';
+  for (let y = 0; y < columns; y++) {
+    for (let x = 0; x < rows; x++) {
+      key += selections.get(`${x},${y}`) ?? '_';
     }
     key += ',';
   }
@@ -17,13 +17,13 @@ export function boardToTranspositionTableKey(state: State): string {
   return key;
 }
 
-export function boardToTranspositionTableKeys(state: State): string[] {
+export function boardToTranspositionTableKeys(selections: Moves, columns: number, rows: number): string[] {
   let key = '';
   let keyInverted = '';
-  for (let y = 0; y < state.columns; y++) {
-    for (let x = 0; x < state.rows; x++) {
-      key += state.selections.get(`${x},${y}`) ?? '_';
-      keyInverted += state.selections.get(`${y},${x}`) ?? '_';
+  for (let y = 0; y < columns; y++) {
+    for (let x = 0; x < rows; x++) {
+      key += selections.get(`${x},${y}`) ?? '_';
+      keyInverted += selections.get(`${y},${x}`) ?? '_';
     }
     key += ',';
     keyInverted += ',';
@@ -47,11 +47,12 @@ export function getBestMove(
     }
   }
   const maximizing = isMaximizing !== undefined ? isMaximizing : state.currentPlayer === 'x';
-  const availableMoves = getAvailableMoves(state);
+  const availableMoves = state.board.getAvailableMoves();
   let [bestMove] = availableMoves;
   if (depth > state.maxDepth) {
     return {
-      bestScore: getTotalScore(state.selections, state.columns, state.rows) + 1000 * (maximizing ? -1 : 1),
+      bestScore:
+        getTotalScore(state.board.selections, state.board.columns, state.board.rows) + 1000 * (maximizing ? -1 : 1),
       bestMove,
     };
   }
@@ -68,10 +69,14 @@ export function getBestMove(
     //Initialize a new board with a copy of our current state
     const child: State = {
       ...state,
+      board: new Board({
+        columns: state.board.columns,
+        rows: state.board.rows,
+        selections: new Map(state.board.selections),
+      }),
       currentPlayer: maximizing ? 'o' : 'x',
-      selections: new Map(state.selections),
     };
-    child.selections.set(numberCoordsToCoords(move), maximizing ? 'x' : 'o');
+    child.board.selections.set(numberCoordsToCoords(move), maximizing ? 'x' : 'o');
     const terminalState = checkTerminal(child);
     if (terminalState.isTerminal) {
       if (terminalState.isWinner) {
@@ -89,12 +94,16 @@ export function getBestMove(
       }
     } else {
       let nodeValue: {bestScore: number; bestMove: NumberCoordinates};
-      const transpositionTableKey = boardToTranspositionTableKey(child);
+      const transpositionTableKey = boardToTranspositionTableKey(
+        child.board.selections,
+        child.board.columns,
+        child.board.rows,
+      );
       if (transpositionTable[transpositionTableKey]) {
         nodeValue = transpositionTable[transpositionTableKey];
       } else {
         nodeValue = getBestMove(child, !maximizing, depth + 1, newAlpha, newBeta);
-        boardToTranspositionTableKeys(child).forEach((key) => {
+        boardToTranspositionTableKeys(child.board.selections, child.board.columns, child.board.rows).forEach((key) => {
           if (!transpositionTable[key]) {
             transpositionTable[key] = nodeValue;
           }

@@ -1,26 +1,29 @@
+import {Board} from './board';
 import {boardToTranspositionTableKeys, getBestMove} from './minimax';
 import {Choice, Coordinate, State} from './types';
 
 function getFullBoardState(): State {
   const state = {
-    columns: 3,
-    rows: 3,
     requiredWin: 3,
     maxDepth: 1200,
-    selections: new Map<Coordinate, Choice>(),
     currentPlayer: 'x' as Choice,
     room: {rules: []},
+    board: new Board({
+      columns: 3,
+      rows: 3,
+      selections: new Map<Coordinate, Choice>(),
+    }),
   };
 
-  state.selections.set('0,0', 'x');
-  state.selections.set('1,0', 'x');
-  state.selections.set('2,0', 'o');
-  state.selections.set('0,1', 'x');
-  state.selections.set('1,1', 'x');
-  state.selections.set('2,1', 'o');
-  state.selections.set('0,2', 'o');
-  state.selections.set('1,2', 'o');
-  state.selections.set('2,2', 'x');
+  state.board.selections.set('0,0', 'x');
+  state.board.selections.set('1,0', 'x');
+  state.board.selections.set('2,0', 'o');
+  state.board.selections.set('0,1', 'x');
+  state.board.selections.set('1,1', 'x');
+  state.board.selections.set('2,1', 'o');
+  state.board.selections.set('0,2', 'o');
+  state.board.selections.set('1,2', 'o');
+  state.board.selections.set('2,2', 'x');
   return state;
 }
 
@@ -28,7 +31,7 @@ describe('minimax', () => {
   describe('getBestMove', () => {
     it('finds a winning terminal move for x', () => {
       const input = getFullBoardState();
-      input.selections.delete('2,2');
+      input.board.selections.delete('2,2');
 
       const result = getBestMove(input);
 
@@ -38,7 +41,7 @@ describe('minimax', () => {
 
     it('finds a winning terminal move for o', () => {
       const input = getFullBoardState();
-      input.selections.delete('2,2');
+      input.board.selections.delete('2,2');
       input.currentPlayer = 'o';
 
       const result = getBestMove(input);
@@ -49,11 +52,11 @@ describe('minimax', () => {
 
     it('finds move in two turns for x', () => {
       const input = getFullBoardState();
-      input.selections = new Map();
-      input.selections.set('0,0', 'x');
-      input.selections.set('1,1', 'o');
-      input.selections.set('2,0', 'o');
-      input.selections.set('2,2', 'x');
+      input.board.selections = new Map();
+      input.board.selections.set('0,0', 'x');
+      input.board.selections.set('1,1', 'o');
+      input.board.selections.set('2,0', 'o');
+      input.board.selections.set('2,2', 'x');
 
       const result = getBestMove(input);
 
@@ -63,14 +66,14 @@ describe('minimax', () => {
 
     it('finds blocking move to end in cat game for x', () => {
       const input = getFullBoardState();
-      input.selections = new Map();
-      input.selections.set('0,0', 'o');
-      input.selections.set('1,0', 'o');
-      input.selections.set('2,0', 'x');
-      input.selections.set('0,1', 'x');
-      input.selections.set('2,1', 'o');
-      input.selections.set('1,2', 'o');
-      input.selections.set('2,2', 'x');
+      input.board.selections = new Map();
+      input.board.selections.set('0,0', 'o');
+      input.board.selections.set('1,0', 'o');
+      input.board.selections.set('2,0', 'x');
+      input.board.selections.set('0,1', 'x');
+      input.board.selections.set('2,1', 'o');
+      input.board.selections.set('1,2', 'o');
+      input.board.selections.set('2,2', 'x');
 
       const result = getBestMove(input);
 
@@ -81,12 +84,12 @@ describe('minimax', () => {
     it('finds blocking move in 4x4 to end in cat game', () => {
       const input = getFullBoardState();
       input.currentPlayer = 'o';
-      input.columns = 4;
-      input.rows = 4;
-      input.selections = new Map();
-      input.selections.set('0,0', 'o');
-      input.selections.set('2,0', 'x');
-      input.selections.set('2,1', 'x');
+      input.board.columns = 4;
+      input.board.rows = 4;
+      input.board.selections = new Map();
+      input.board.selections.set('0,0', 'o');
+      input.board.selections.set('2,0', 'x');
+      input.board.selections.set('2,1', 'x');
 
       const result = getBestMove(input);
 
@@ -97,10 +100,10 @@ describe('minimax', () => {
     it('finds cat game from middle', () => {
       const input = getFullBoardState();
       input.currentPlayer = 'o';
-      input.selections = new Map();
-      input.selections.set('0,0', 'x');
-      input.selections.set('1,1', 'o');
-      input.selections.set('2,2', 'x');
+      input.board.selections = new Map();
+      input.board.selections.set('0,0', 'x');
+      input.board.selections.set('1,1', 'o');
+      input.board.selections.set('2,2', 'x');
 
       const result = getBestMove(input);
 
@@ -111,21 +114,15 @@ describe('minimax', () => {
 
   describe('boardToTranspositionTableKeys', () => {
     it('translates empty 3x3', () => {
-      const input = getFullBoardState();
-      input.selections = new Map();
-
-      expect(boardToTranspositionTableKeys(input)).toEqual(['___,___,___', '___,___,___']);
+      expect(boardToTranspositionTableKeys(new Map(), 3, 3)).toEqual(['___,___,___', '___,___,___']);
     });
 
     it('translates populated 4x3, including inverting and 180 degrees', () => {
-      const input = getFullBoardState();
-      input.columns = 3;
-      input.rows = 4;
-      input.selections = new Map();
-      input.selections.set('1,0', 'x');
-      input.selections.set('0,1', 'o');
+      const selections = new Map();
+      selections.set('1,0', 'x');
+      selections.set('0,1', 'o');
 
-      expect(boardToTranspositionTableKeys(input)).toEqual(['_x__,o___,____', '_o__,x___,____']);
+      expect(boardToTranspositionTableKeys(selections, 3, 4)).toEqual(['_x__,o___,____', '_o__,x___,____']);
     });
   });
 });

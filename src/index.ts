@@ -1,5 +1,6 @@
 import './index.scss';
 import * as P5 from 'p5';
+import {Board} from './board';
 import {COLORS} from './colors';
 import {coordsToNumberCoords} from './coordinatesHelper';
 import {getBestMove} from './minimax';
@@ -31,12 +32,14 @@ const columns = urlParams.get('columns') || '3';
 const rows = urlParams.get('rows') || '3';
 
 const state = {
-  columns: Number.parseInt(columns, 10),
-  rows: Number.parseInt(rows, 10),
   requiredWin: 3,
-  selections: new Map<Coordinate, Choice>(),
   currentPlayer: 'x' as Choice,
   maxDepth: 3,
+  board: new Board({
+    columns: Number.parseInt(columns, 10),
+    rows: Number.parseInt(rows, 10),
+    selections: new Map<Coordinate, Choice>(),
+  }),
   room: {
     rules: [
       {
@@ -53,18 +56,18 @@ const state = {
 } as State;
 
 function getCellWidth(): number {
-  return gameWidth / state.columns;
+  return gameWidth / state.board.columns;
 }
 
 function getCellHeight(): number {
-  return gameHeight / state.rows;
+  return gameHeight / state.board.rows;
 }
 
 function getCellCoordinatesFromClick(x: number, y: number): NumberCoordinates {
   // not strictly accurate since there are axes to consider but fine for now
   return {
-    x: Math.floor((x / gameWidth) * state.columns),
-    y: Math.floor((y / gameHeight) * state.rows),
+    x: Math.floor((x / gameWidth) * state.board.columns),
+    y: Math.floor((y / gameHeight) * state.board.rows),
   };
 }
 
@@ -77,7 +80,7 @@ function redrawBoard(): void {
   p5.drawingContext.shadowBlur = 40;
   p5.drawingContext.shadowColor = COLORS.gameAxes;
 
-  for (let col = 1; col < state.columns; col++) {
+  for (let col = 1; col < state.board.columns; col++) {
     p5.line(
       cellWidth * col - gameInnerPadding / 2,
       gameInnerPadding,
@@ -91,7 +94,7 @@ function redrawBoard(): void {
       gameHeight - gameInnerPadding * 2,
     );
   }
-  for (let row = 1; row < state.rows; row++) {
+  for (let row = 1; row < state.board.rows; row++) {
     p5.line(
       gameInnerPadding,
       cellHeight * row - gameInnerPadding / 2,
@@ -142,7 +145,7 @@ function drawX(x: number, y: number): void {
 }
 
 function redrawSelections(): void {
-  state.selections.forEach((key, value) => {
+  state.board.selections.forEach((key, value) => {
     const {x, y} = coordsToNumberCoords(value);
     if (key === 'x') {
       drawX(x, y);
@@ -167,21 +170,21 @@ function handleClick(): void {
   const {x, y} = getCellCoordinatesFromClick(p5.mouseX, p5.mouseY);
   if (
     !loading &&
-    state.selections.get(`${x},${y}`) === undefined &&
+    state.board.selections.get(`${x},${y}`) === undefined &&
     x > -1 &&
     y > -1 &&
-    x < state.columns &&
-    y < state.rows
+    x < state.board.columns &&
+    y < state.board.rows
   ) {
     loading = true;
     document.getElementById('loading')?.classList.add('loading');
-    state.selections.set(`${x},${y}`, 'x');
+    state.board.selections.set(`${x},${y}`, 'x');
     setTimeout(() => {
       const response = getBestMove(state, false);
       document.getElementById('loading')?.classList.remove('loading');
       loading = false;
       if (response.bestMove) {
-        state.selections.set(`${response.bestMove.x},${response.bestMove.y}`, 'o');
+        state.board.selections.set(`${response.bestMove.x},${response.bestMove.y}`, 'o');
       }
     }, 10);
   }
