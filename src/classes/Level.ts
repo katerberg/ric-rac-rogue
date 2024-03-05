@@ -1,5 +1,4 @@
 import {getUrlParams, isDebug} from '../environment';
-import {getBestMove} from '../minimax';
 import {generateRules} from '../rules';
 import {Choice, Coordinate, Rule} from '../types';
 import {Board} from './Board';

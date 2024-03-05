@@ -1,7 +1,7 @@
 import './index.scss';
 import './start-screen.scss';
 import {Game} from './classes/Game';
-import {isDebug, skipMenu} from './environment';
+import {skipMenu} from './environment';
 
 function openStartMenu(): void {
   const startScreen = document.getElementById('start-screen');

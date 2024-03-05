@@ -5,3 +5,4 @@
 /server/**/*.js
 /types/**/*.js
 .env
+/public
