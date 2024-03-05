@@ -221,12 +221,14 @@ export class Game {
 
   private redrawRules(): void {
     const container = document.getElementById('rules-container');
-    if (container) {
+    const level = document.getElementById('level-container');
+    if (container && level) {
       let innerHtml = '';
       this.level.rules.forEach((rule) => {
         innerHtml += `<div class="rule">${rule.name}</div>`;
       });
       container.innerHTML = innerHtml;
+      level.innerHTML = `${this.level.level}`;
     }
   }
 
