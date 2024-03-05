@@ -1,10 +1,4 @@
-$color-background: #000;
-$color-text: #fff;
-$color-canvas-border: #fff;
-$color-game-axes: #60DEA4;
-$color-game-x: #E6F603;
-$color-game-o: #C422D7;
-$color-action-button: $color-game-axes;
+@import 'colors';
 $action-button-transition-duration: 100ms;
 $spinner-border: 1.5px;
 
@@ -25,16 +19,16 @@ body {
     font-family: 'Orbitron', 'Roboto', sans-serif;
 }
 
-#start-screen {
-    display: none;
-
-    h1 {
-        margin-top: 0;
-    }
+#game {
+    height: 100%;
 }
 
-#topbar {
-    display: flex;
+#top-bar {
+    display: none;
+
+    &.visible {
+        display: flex;
+    }
 
     h2 {
         display: inline-block;
@@ -68,9 +62,13 @@ body {
     }
 
     #sidebar {
-        width: 20vw;
+        display: none;
 
-        display: flex;
+        &.visible {
+            display: flex;
+        }
+
+        width: 20vw;
         flex-direction: column;
         align-items: center;
 

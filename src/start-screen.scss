@@ -1,0 +1,103 @@
+@import 'colors';
+
+$button-transition-duration: 100ms;
+
+#start-screen {
+    display: none;
+    height: 100%;
+
+    &.visible {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .start-screen-header {
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 60px;
+
+        h1 {
+            display: inline-block;
+            color: $color-start-screen-header;
+            text-align: center;
+            font-size: 80px;
+            padding-bottom: 20px;
+            position: relative;
+
+            &::after {
+                content: '';
+                position: absolute;
+                background: $color-start-screen-header;
+                height: 2px;
+                width: 100%;
+                top: 100%;
+                left: 0;
+                opacity: 0.4;
+                transition: opacity 100ms, scale 100ms, filter 100ms, height 0ms;
+            }
+
+            &:hover {
+                &::after {
+                    opacity: 1;
+                    transform: perspective(1.5em) rotateX(30deg) scale(1.3, 0.25) translateY(-6em);
+                    filter: blur(2em);
+                    height: 100%;
+                }
+            }
+        }
+    }
+
+    .start-screen-options {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        margin-left: auto;
+        margin-right: auto;
+        justify-content: flex-start;
+
+        button {
+            margin-bottom: 80px;
+        }
+    }
+
+    button {
+        border: 2px solid $color-start-screen-button;
+        color: $color-start-screen-button;
+        background-color: $color-background;
+        cursor: pointer;
+        font-weight: 100;
+        padding: 20px;
+        font-family: 'Orbitron', 'Roboto', sans-serif;
+        font-size: 20px;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+        border-radius: 500px;
+        transition: text-shadow $button-transition-duration, box-shadow $button-transition-duration, font-size $button-transition-duration, padding $button-transition-duration, letter-spacing $button-transition-duration, box-shadow 100ms;
+        position: relative;
+
+
+        &::before {
+            transition: 1s;
+            content: '';
+            position: absolute;
+            background: $color-start-screen-button;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: perspective(1.5em) rotateX(30deg) scale(0.75, 0.25);
+            filter: blur(2em);
+            opacity: 0.4;
+            transition: 100ms;
+        }
+
+        &:hover {
+            box-shadow: 0 3px 20px 0 $color-start-screen-button inset, 0 3px 20px 0 $color-start-screen-button, 0 3px 20px 0 $color-start-screen-button inset, 0 3px 20px 0 $color-start-screen-button;
+            text-shadow: 0 0 3px $color-start-screen-button, 0 0 3px $color-start-screen-button;
+
+            &::before {
+                opacity: 1;
+            }
+        }
+    }
+}

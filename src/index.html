@@ -5,6 +5,11 @@
   <meta charset="utf-8" />
   <meta name="theme-color" content="#ffffff">
   <title>Ric Rac Rogue</title>
+  <style>
+    html {
+      background: black;
+    }
+  </style>
 </head>
 
 <body style="margin: 0">
@@ -15,10 +20,16 @@
     <div class="loading-spinner"></div>
   </div>
   <div id="game">
-    <div id="start-screen" class="start-screen visible">
-      <h1>&nbsp;</h1>
+    <div id="start-screen" class="start-screen">
+      <div class="start-screen-header">
+        <h1>Ric-Rac-Rogue</h1>
+      </div>
+      <div class="start-screen-options">
+        <button id="start-game-button">Start New Game</button>
+        <button id="how-to-play-button">How to Play</button>
+      </div>
     </div>
-    <div id="topbar">
+    <div id="top-bar">
       <h2>Rules:</h2>
       <span id="rules-container"></span>
     </div>

@@ -1,11 +1,12 @@
 import * as P5 from 'p5';
 import {COLORS} from '../colors';
 import {coordsToNumberCoords} from '../coordinatesHelper';
+import {getUrlParams} from '../environment';
 import {getBestMove} from '../minimax';
 import {Choice, Coordinate, NumberCoordinates, State} from '../types';
 import {Board} from './Board';
 
-const urlParams = new URLSearchParams(window.location.search);
+const urlParams = getUrlParams();
 const columns = urlParams.get('columns') || '3';
 const rows = urlParams.get('rows') || '3';
 
@@ -26,7 +27,10 @@ export class Game {
 
   loading: boolean;
 
+  startTime: number;
+
   constructor() {
+    this.startTime = Date.now();
     const sketch = (p: P5): void => {
       p.setup = (): void => {
         const canvas = p.createCanvas(this.gameWidth, this.gameHeight);
@@ -99,7 +103,6 @@ export class Game {
   }
 
   private handleClick(): void {
-    console.log('clicking', this.p5);
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
     if (
       !this.loading &&
@@ -107,7 +110,8 @@ export class Game {
       x > -1 &&
       y > -1 &&
       x < this.state.board.columns &&
-      y < this.state.board.rows
+      y < this.state.board.rows &&
+      this.startTime + 100 < Date.now()
     ) {
       this.loading = true;
       document.getElementById('loading')?.classList.add('loading');
