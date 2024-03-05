@@ -28,12 +28,12 @@ function resizeP(): void {
 }
 
 const state = {
-  columns: 4,
-  rows: 4,
+  columns: 5,
+  rows: 5,
   requiredWin: 3,
   selections: new Map<Coordinate, Choice>(),
   currentPlayer: 'x' as Choice,
-  maxDepth: 1200,
+  maxDepth: 3,
 } as State;
 
 function getCellWidth(): number {
@@ -93,7 +93,8 @@ function redrawBoard(): void {
 function drawO(x: number, y: number): void {
   p5.stroke(COLORS.o);
   p5.fill(p5.color(0, 0));
-  p5.drawingContext.shadowBlur = 20;
+  p5.strokeWeight(gameAxisWidth * 1.5);
+  p5.drawingContext.shadowBlur = 40;
   p5.drawingContext.shadowColor = COLORS.o;
   const cellWidth = getCellWidth();
   const cellHeight = getCellHeight();
@@ -108,6 +109,7 @@ function drawO(x: number, y: number): void {
 function drawX(x: number, y: number): void {
   p5.stroke(COLORS.x);
   p5.strokeCap(p5.ROUND);
+  p5.strokeWeight(gameAxisWidth);
   p5.drawingContext.shadowBlur = 20;
   p5.drawingContext.shadowColor = COLORS.x;
   const cellWidth = getCellWidth();
@@ -136,7 +138,14 @@ function redrawSelections(): void {
 
 function handleClick(): void {
   const {x, y} = getCellCoordinatesFromClick(p5.mouseX, p5.mouseY);
-  if (!loading && state.selections.get(`${x},${y}`) === undefined && x > -1 && y > -1) {
+  if (
+    !loading &&
+    state.selections.get(`${x},${y}`) === undefined &&
+    x > -1 &&
+    y > -1 &&
+    x < state.columns &&
+    y < state.rows
+  ) {
     loading = true;
     document.getElementById('loading')?.classList.add('loading');
     state.selections.set(`${x},${y}`, 'x');
@@ -169,7 +178,7 @@ const sketch = (p: P5): void => {
 };
 
 window.addEventListener('load', () => {
-  p5 = new P5(sketch, document.getElementById('game')!);
+  p5 = new P5(sketch, document.getElementById('canvas-container')!);
 
   resizeP();
   redrawBoard();
