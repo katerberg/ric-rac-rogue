@@ -178,10 +178,10 @@ export class Game {
     const xStart = x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
     const yStart = y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
     const radius = Math.max(Math.min(cellWidth, cellHeight) * 0.8 - gameAxisWidth * 4, 10);
-    this.p5.arc(xStart, yStart, radius, radius, 1.74533, 1.309);
+    this.p5.arc(xStart, yStart, radius * 1.2, radius, 1.74533, 1.309);
     // repeat here as needed
-    this.p5.arc(xStart, yStart, radius, radius, 1.74533, 1.309);
-    this.p5.arc(xStart, yStart, radius, radius, 1.74533, 1.309);
+    this.p5.arc(xStart, yStart, radius * 1.2, radius, 1.74533, 1.309);
+    this.p5.arc(xStart, yStart, radius * 1.2, radius, 1.74533, 1.309);
   }
 
   private drawX(x: number, y: number): void {
