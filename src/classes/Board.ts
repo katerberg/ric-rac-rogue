@@ -1,4 +1,5 @@
-import {Moves, NumberCoordinates} from '../types';
+import {numberCoordsToCoords} from '../coordinatesHelper';
+import {Choice, Moves, NumberCoordinates} from '../types';
 
 type BoardProps = {
   columns: number;
@@ -29,5 +30,13 @@ export class Board {
       }
     }
     return moves;
+  }
+
+  setRandomMove(player: Choice): void {
+    const availableMoves = this.getAvailableMoves();
+    this.selections.set(
+      numberCoordsToCoords(availableMoves[Math.floor(Math.random() * availableMoves.length)]),
+      player,
+    );
   }
 }

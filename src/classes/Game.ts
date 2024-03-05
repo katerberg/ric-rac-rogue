@@ -1,6 +1,7 @@
 import * as P5 from 'p5';
 import {COLORS} from '../colors';
 import {coordsToNumberCoords} from '../coordinatesHelper';
+import {getUrlParams, isDebug} from '../environment';
 import {getBestMove} from '../minimax';
 import {NumberCoordinates} from '../types';
 import {Level} from './Level';
@@ -44,7 +45,7 @@ export class Game {
     this.gameWidth = this.p5.windowWidth - horizontalPadding;
     this.gameHeight = this.p5.windowHeight - verticalPadding;
     this.loading = false;
-    this.level = new Level(1);
+    this.level = new Level(isDebug() ? Number.parseInt(getUrlParams().get('level') || '1', 10) : 1);
   }
 
   private resizeP(): void {
