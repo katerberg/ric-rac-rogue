@@ -1,14 +1,9 @@
 import * as P5 from 'p5';
 import {COLORS} from '../colors';
 import {coordsToNumberCoords} from '../coordinatesHelper';
-import {getUrlParams} from '../environment';
 import {getBestMove} from '../minimax';
-import {Choice, Coordinate, NumberCoordinates, State} from '../types';
-import {Board} from './Board';
-
-const urlParams = getUrlParams();
-const columns = urlParams.get('columns') || '3';
-const rows = urlParams.get('rows') || '3';
+import {NumberCoordinates} from '../types';
+import {Level} from './Level';
 
 const gameAxisWidth = 10;
 const gameInnerPadding = 24;
@@ -17,7 +12,7 @@ const verticalPadding = 80;
 const horizontalPadding = 0;
 
 export class Game {
-  state: State;
+  level: Level;
 
   p5: P5;
 
@@ -49,29 +44,7 @@ export class Game {
     this.gameWidth = this.p5.windowWidth - horizontalPadding;
     this.gameHeight = this.p5.windowHeight - verticalPadding;
     this.loading = false;
-    this.state = {
-      requiredWin: 3,
-      currentPlayer: 'x' as Choice,
-      maxDepth: 3,
-      board: new Board({
-        columns: Number.parseInt(columns, 10),
-        rows: Number.parseInt(rows, 10),
-        selections: new Map<Coordinate, Choice>(),
-      }),
-      room: {
-        rules: [
-          {
-            name: 'Win: 3 in a row',
-          },
-          {
-            name: 'Take turns',
-          },
-          {
-            name: 'X goes first',
-          },
-        ],
-      },
-    } as State;
+    this.level = new Level(1);
   }
 
   private resizeP(): void {
@@ -89,39 +62,47 @@ export class Game {
   private getCellCoordinatesFromClick(x: number, y: number): NumberCoordinates {
     // not strictly accurate since there are axes to consider but fine for now
     return {
-      x: Math.floor((x / this.gameWidth) * this.state.board.columns),
-      y: Math.floor((y / this.gameHeight) * this.state.board.rows),
+      x: Math.floor((x / this.gameWidth) * this.level.board.columns),
+      y: Math.floor((y / this.gameHeight) * this.level.board.rows),
     };
   }
 
   private getCellWidth(): number {
-    return this.gameWidth / this.state.board.columns;
+    return this.gameWidth / this.level.board.columns;
   }
 
   private getCellHeight(): number {
-    return this.gameHeight / this.state.board.rows;
+    return this.gameHeight / this.level.board.rows;
   }
 
   private handleClick(): void {
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
     if (
       !this.loading &&
-      this.state.board.selections.get(`${x},${y}`) === undefined &&
+      this.level.board.selections.get(`${x},${y}`) === undefined &&
       x > -1 &&
       y > -1 &&
-      x < this.state.board.columns &&
-      y < this.state.board.rows &&
+      x < this.level.board.columns &&
+      y < this.level.board.rows &&
       this.startTime + 100 < Date.now()
     ) {
       this.loading = true;
       document.getElementById('loading')?.classList.add('loading');
-      this.state.board.selections.set(`${x},${y}`, 'x');
+      this.level.board.selections.set(`${x},${y}`, 'x');
       setTimeout(() => {
-        const response = getBestMove(this.state, false);
+        const response = getBestMove(
+          {
+            board: this.level.board,
+            maxDepth: this.level.maxDepth,
+            requiredWin: this.level.requiredWin,
+            currentPlayer: this.level.currentPlayer,
+          },
+          false,
+        );
         document.getElementById('loading')?.classList.remove('loading');
         this.loading = false;
         if (response.bestMove) {
-          this.state.board.selections.set(`${response.bestMove.x},${response.bestMove.y}`, 'o');
+          this.level.board.selections.set(`${response.bestMove.x},${response.bestMove.y}`, 'o');
         }
       }, 10);
     }
@@ -136,7 +117,7 @@ export class Game {
     this.p5.drawingContext.shadowBlur = 40;
     this.p5.drawingContext.shadowColor = COLORS.gameAxes;
 
-    for (let col = 1; col < this.state.board.columns; col++) {
+    for (let col = 1; col < this.level.board.columns; col++) {
       this.p5.line(
         cellWidth * col - gameInnerPadding / 2,
         gameInnerPadding,
@@ -150,7 +131,7 @@ export class Game {
         this.gameHeight - gameInnerPadding * 2,
       );
     }
-    for (let row = 1; row < this.state.board.rows; row++) {
+    for (let row = 1; row < this.level.board.rows; row++) {
       this.p5.line(
         gameInnerPadding,
         cellHeight * row - gameInnerPadding / 2,
@@ -227,7 +208,7 @@ export class Game {
   }
 
   private redrawSelections(): void {
-    this.state.board.selections.forEach((key, value) => {
+    this.level.board.selections.forEach((key, value) => {
       const {x, y} = coordsToNumberCoords(value);
       if (key === 'x') {
         this.drawX(x, y);
@@ -241,7 +222,7 @@ export class Game {
     const container = document.getElementById('rules-container');
     if (container) {
       let innerHtml = '';
-      this.state.room.rules.forEach((rule) => {
+      this.level.rules.forEach((rule) => {
         innerHtml += `<div class="rule">${rule.name}</div>`;
       });
       container.innerHTML = innerHtml;

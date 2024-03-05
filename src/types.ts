@@ -15,5 +15,4 @@ export type State = {
   requiredWin: number;
   currentPlayer: Choice;
   maxDepth: number;
-  room: Room;
 };

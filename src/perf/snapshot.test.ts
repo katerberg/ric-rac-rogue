@@ -12,7 +12,6 @@ function getEmptyBoardState(rows = 3, columns = 3): State {
       selections: new Map(),
     }),
     currentPlayer: 'x',
-    room: {rules: []},
   };
 }
 

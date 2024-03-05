@@ -32,7 +32,7 @@ function bindClickListeners(): void {
 window.addEventListener('load', () => {
   bindClickListeners();
   if (isDebug()) {
-    new Game().start();
+    startNewGame();
   } else {
     openStartMenu();
   }
