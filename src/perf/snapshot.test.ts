@@ -9,6 +9,7 @@ function getEmptyBoardState(): State {
     maxDepth: 1200,
     selections: new Map(),
     currentPlayer: 'x',
+    room: {rules: []},
   };
 }
 

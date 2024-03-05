@@ -34,6 +34,19 @@ const state = {
   selections: new Map<Coordinate, Choice>(),
   currentPlayer: 'x' as Choice,
   maxDepth: 3,
+  room: {
+    rules: [
+      {
+        name: 'Win: 3 in a row',
+      },
+      {
+        name: 'Take turns',
+      },
+      {
+        name: 'X goes first',
+      },
+    ],
+  },
 } as State;
 
 function getCellWidth(): number {
@@ -136,6 +149,17 @@ function redrawSelections(): void {
   });
 }
 
+function redrawRules(): void {
+  const container = document.getElementById('rules-container');
+  if (container) {
+    let innerHtml = '';
+    state.room.rules.forEach((rule) => {
+      innerHtml += `<div class="rule">${rule.name}</div>`;
+    });
+    container.innerHTML = innerHtml;
+  }
+}
+
 function handleClick(): void {
   const {x, y} = getCellCoordinatesFromClick(p5.mouseX, p5.mouseY);
   if (
@@ -156,7 +180,7 @@ function handleClick(): void {
       if (response.bestMove) {
         state.selections.set(`${response.bestMove.x},${response.bestMove.y}`, 'o');
       }
-    }, 1);
+    }, 10);
   }
 }
 
@@ -182,4 +206,5 @@ window.addEventListener('load', () => {
 
   resizeP();
   redrawBoard();
+  redrawRules();
 });

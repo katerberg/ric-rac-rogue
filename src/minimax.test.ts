@@ -9,6 +9,7 @@ function getFullBoardState(): State {
     maxDepth: 1200,
     selections: new Map<Coordinate, Choice>(),
     currentPlayer: 'x' as Choice,
+    room: {rules: []},
   };
 
   state.selections.set('0,0', 'x');
