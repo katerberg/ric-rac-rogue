@@ -1,4 +1,4 @@
-import {Board} from '../board';
+import {Board} from '../classes/Board';
 import {getBestMove} from '../minimax';
 import {State} from '../types';
 

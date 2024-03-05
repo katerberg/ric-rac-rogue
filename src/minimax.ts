@@ -1,4 +1,4 @@
-import {Board} from './board';
+import {Board} from './classes/Board';
 import {numberCoordsToCoords} from './coordinatesHelper';
 import {Moves, NumberCoordinates, State} from './types';
 import {checkTerminal, getTotalScore} from './winCalculation';

@@ -1,4 +1,4 @@
-import {Board} from './board';
+import {Board} from './classes/Board';
 
 export type Coordinate = `${number},${number}`;
 export type NumberCoordinates = {x: number; y: number};

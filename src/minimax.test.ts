@@ -1,4 +1,4 @@
-import {Board} from './board';
+import {Board} from './classes/Board';
 import {boardToTranspositionTableKeys, getBestMove} from './minimax';
 import {Choice, Coordinate, State} from './types';
 

@@ -1,4 +1,4 @@
-import {Moves, NumberCoordinates} from './types';
+import {Moves, NumberCoordinates} from '../types';
 
 type BoardProps = {
   columns: number;
