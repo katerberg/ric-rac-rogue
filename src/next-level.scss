@@ -1,0 +1,151 @@
+@use 'sass:math';
+@import 'colors';
+$stars: 450; // Number of start per layer
+$depth: 300; // Depth between star layers
+$speed: 10s; // Number of seconds to transition between layers
+$width: 3000; // Width of the starfield
+$height: 960; // Height of the starfield
+$action-button-transition-duration: 100ms;
+
+
+
+#next-level-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(#050526 0%, $color-background 90%) -20vw 10vh no-repeat $color-background;
+    z-index: 100;
+    display: none;
+
+    &.visible {
+        display: block;
+    }
+
+    #next-level-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .next-level-message {
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 80px;
+
+            h1 {
+                display: inline-block;
+                color: $color-next-level-header;
+                text-align: center;
+                font-size: 80px;
+                padding-bottom: 20px;
+                position: relative;
+                text-transform: uppercase;
+                margin-bottom: 60px;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    background: $color-next-level-header;
+                    width: 100%;
+                    top: 100%;
+                    left: 0;
+                    opacity: 1;
+                    transform: perspective(1.5em) rotateX(30deg) scale(1.3, 0.25) translateY(-6em);
+                    filter: blur(2em);
+                    height: 100%;
+                }
+
+                &:hover {
+                    &::after {}
+                }
+            }
+        }
+
+        .next-level-button {
+            display: inline-block;
+            border: 2px solid $color-action-button;
+            color: $color-action-button;
+            background-color: $color-background;
+            cursor: pointer;
+            font-weight: 100;
+            padding: 20px;
+            font-family: 'Orbitron', 'Roboto', sans-serif;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            border-radius: 500px;
+            transition: text-shadow $action-button-transition-duration, box-shadow $action-button-transition-duration, font-size $action-button-transition-duration, padding $action-button-transition-duration, letter-spacing $action-button-transition-duration, box-shadow 100ms;
+            position: relative;
+
+
+            &::before {
+                transition: 1s;
+                content: '';
+                position: absolute;
+                background: $color-action-button;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                transform: perspective(1.5em) rotateX(30deg) scale(0.75, 0.25);
+                filter: blur(2em);
+                opacity: 0;
+                transition: 100ms;
+            }
+
+            &:hover {
+                box-shadow: 0 3px 20px 0 $color-action-button inset, 0 3px 20px 0 $color-action-button, 0 3px 20px 0 $color-action-button inset, 0 3px 20px 0 $color-action-button;
+                text-shadow: 0 0 3px $color-action-button, 0 0 3px $color-action-button;
+
+                &::before {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    .stars {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 2px;
+        height: 2px;
+
+
+        $box-shadow: (
+        );
+
+    @for $i from 0 through $stars {
+        $box-shadow: $box-shadow, (random($width)- math.div($width, 2) + px) (random($height)- math.div($height, 2) + px) hsl(90, 0%, math.percentage(75+random(25)));
+    }
+
+    box-shadow: $box-shadow;
+    animation: fly $speed linear infinite;
+    transform-style: preserve-3d;
+
+    &:before,
+    &:after {
+        content: "";
+        position: absolute;
+        width: inherit;
+        height: inherit;
+        box-shadow: inherit;
+    }
+
+    &:before {
+        transform: translateZ(-$depth + px);
+        animation: fade1 $speed linear infinite;
+    }
+
+    &:after {
+        transform: translateZ(-$depth * 2 + px);
+        animation: fade2 $speed linear infinite;
+    }
+}
+
+}
+
+// Used the following as reference
+//Copyright (c) 2024 by Ion Emil Negoita (https://codepen.io/inegoita/pen/wLxObg)
+//Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

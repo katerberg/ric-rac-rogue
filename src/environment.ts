@@ -1,8 +1,8 @@
 export function getUrlParams(): URLSearchParams {
   return new URLSearchParams(window.location.search);
 }
-export function isDebug(): boolean {
-  return getUrlParams().get('debug') !== null;
+export function isDebug(param?: string): boolean {
+  return getUrlParams().get('debug') !== null && (!param || getUrlParams().get(param) !== null);
 }
 
 export function skipMenu(): boolean {

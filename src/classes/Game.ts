@@ -3,9 +3,10 @@ import {COLORS} from '../colors';
 import {coordsToNumberCoords} from '../coordinatesHelper';
 import {getUrlParams, isDebug} from '../environment';
 import {getBestMove} from '../minimax';
-import {Choice, Coordinate, NumberCoordinates} from '../types';
+import {Choice, Coordinate, NumberCoordinates, TerminalStatus} from '../types';
 import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
+import '../next-level.scss';
 
 const gameAxisWidth = 10;
 const gameInnerPadding = 24;
@@ -232,17 +233,57 @@ export class Game {
     }
   }
 
+  private endLevel(term: TerminalStatus): void {
+    const nextLevelScreen = document.getElementById('next-level-screen');
+    const nextLevelContent = document.getElementById('next-level-content');
+    if (nextLevelScreen && nextLevelContent) {
+      this.loading = true;
+      const nextScreenPromise = new Promise<void>((resolve) => {
+        nextLevelContent.innerHTML = '';
+        const message = document.createElement('div');
+        message.classList.add('next-level-message');
+        let content = '<h1>';
+        if (term.winner) {
+          if (term.winner === 'x') {
+            content += 'You win!';
+          } else {
+            content += 'You lose.';
+          }
+        } else if (term.isCat) {
+          content += 'Tie';
+        } else {
+          content += 'Level done';
+        }
+        content += '</h1>';
+        message.innerHTML = content;
+        const button = document.createElement('button');
+        button.classList.add('next-level-button');
+        button.innerHTML = 'Next Level';
+
+        button.addEventListener('click', () => {
+          resolve();
+        });
+
+        nextLevelScreen.classList.add('visible');
+        nextLevelContent.appendChild(message);
+        nextLevelContent.appendChild(button);
+      });
+
+      nextScreenPromise.then(() => {
+        this.startTime = Date.now();
+        this.loading = false;
+        nextLevelScreen.classList.remove('visible');
+        this.level = new Level(this.level.level + 1);
+        this.redrawRules();
+      });
+    }
+  }
+
   makePlay(move: Coordinate, player: Choice): boolean {
     this.level.board.selections.set(move, player);
     const term = checkTerminal(this.level.board, this.level.requiredWin, player);
     if (term.isTerminal) {
-      if (term.winner) {
-        window.alert(`${player} wins`);
-      } else if (term.isCat) {
-        window.alert('tie');
-      }
-      this.level = new Level(this.level.level + 1);
-      this.redrawRules();
+      this.endLevel(term);
       return true;
     }
     return false;
@@ -252,5 +293,8 @@ export class Game {
     this.resizeP();
     this.redrawBoard();
     this.redrawRules();
+    if (isDebug('endlevel')) {
+      this.endLevel({isTerminal: true, winner: 'x', isCat: false, isWinner: true});
+    }
   }
 }

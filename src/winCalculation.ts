@@ -1,5 +1,5 @@
 import {Board} from './classes/Board';
-import {Choice, Moves, NumberCoordinates} from './types';
+import {Choice, Moves, NumberCoordinates, TerminalStatus} from './types';
 
 function isColumnWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   for (let x = 0; x < columns; x++) {
@@ -94,16 +94,7 @@ export function isCat(selections: Moves, columns: number, rows: number): boolean
   return selections.size === columns * rows;
 }
 
-export function checkTerminal(
-  board: Board,
-  requiredWin: number,
-  currentPlayer: Choice,
-): {
-  isTerminal: boolean;
-  isCat: boolean;
-  isWinner: boolean;
-  winner: Choice | null;
-} {
+export function checkTerminal(board: Board, requiredWin: number, currentPlayer: Choice): TerminalStatus {
   const isCatGame = isCat(board.selections, board.columns, board.rows);
   const isWinner = isWin(board.selections, board.columns, board.rows, requiredWin);
   return {

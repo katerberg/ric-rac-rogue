@@ -13,3 +13,9 @@ export type State = {
   currentPlayer: Choice;
   maxDepth: number;
 };
+export type TerminalStatus = {
+  isTerminal: boolean;
+  isCat: boolean;
+  isWinner: boolean;
+  winner: Choice | null;
+};
