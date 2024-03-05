@@ -50,7 +50,10 @@ export function getBestMove(
   const availableMoves = getAvailableMoves(state);
   let [bestMove] = availableMoves;
   if (depth > state.maxDepth) {
-    return {bestScore: getTotalScore(state.selections, state.columns, state.rows), bestMove};
+    return {
+      bestScore: getTotalScore(state.selections, state.columns, state.rows) + 1000 * (maximizing ? -1 : 1),
+      bestMove,
+    };
   }
   //Initialize best to the worst possible value and have a default move
   const WORST_POSSIBLE_SCORE = maximizing ? -1_000_000 : 1_000_000;

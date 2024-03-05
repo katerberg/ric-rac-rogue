@@ -26,10 +26,13 @@ function resizeP(): void {
 
   p5.resizeCanvas(p5.windowWidth - horizontalPadding, p5.windowHeight - verticalPadding);
 }
+const urlParams = new URLSearchParams(window.location.search);
+const columns = urlParams.get('columns') || '3';
+const rows = urlParams.get('rows') || '3';
 
 const state = {
-  columns: 5,
-  rows: 5,
+  columns: Number.parseInt(columns, 10),
+  rows: Number.parseInt(rows, 10),
   requiredWin: 3,
   selections: new Map<Coordinate, Choice>(),
   currentPlayer: 'x' as Choice,
