@@ -79,7 +79,6 @@ export class Game {
     this.gameWidth = this.p5.windowWidth - horizontalPadding;
     this.gameHeight = this.p5.windowHeight - verticalPadding;
 
-    console.log('resize', this.gameHeight, this.gameWidth);
     this.p5.resizeCanvas(this.p5.windowWidth - horizontalPadding, this.p5.windowHeight - verticalPadding);
   }
 
@@ -174,9 +173,11 @@ export class Game {
 
     const xStart = x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
     const yStart = y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
-    this.p5.circle(xStart, yStart, Math.max(Math.min(cellWidth, cellHeight) * 0.8 - gameAxisWidth * 4, 10));
+    const radius = Math.max(Math.min(cellWidth, cellHeight) * 0.8 - gameAxisWidth * 4, 10);
+    this.p5.arc(xStart, yStart, radius, radius, 1.74533, 1.309);
     // repeat here as needed
-    this.p5.circle(xStart, yStart, Math.max(Math.min(cellWidth, cellHeight) * 0.8 - gameAxisWidth * 4, 10));
+    this.p5.arc(xStart, yStart, radius, radius, 1.74533, 1.309);
+    this.p5.arc(xStart, yStart, radius, radius, 1.74533, 1.309);
   }
 
   private drawX(x: number, y: number): void {
@@ -191,7 +192,30 @@ export class Game {
     const yStart = y * cellHeight + gameAxisWidth * 2;
     const xEnd = xStart + cellWidth * 0.9 - gameAxisWidth * 4;
     const yEnd = yStart + cellHeight * 0.8 - gameAxisWidth * 4;
+    // Long diagonal
     this.p5.line(xStart, yStart, xEnd, yEnd);
+    // const angle = Math.tan((((yStart - yEnd) / (xEnd - xStart)) * Math.PI) / 180);
+    // const distance = Math.sqrt(Math.pow(yStart - yEnd, 2) + Math.pow(xEnd - xStart, 2));
+    // const distanceToMiddle = distance / 2;
+    // console.log((angle * 180) / Math.PI, Math.sin(angle));
+    // console.log(Math.cos(angle), Math.sin(angle), distance);
+    // this.p5.line(xStart, yEnd, xStart + Math.cos(angle) * distance, yEnd - Math.sin(angle) * distance);
+
+    // // Working Lower diagonal
+    // this.p5.line(
+    //   xEnd,
+    //   yStart,
+    //   // Math.cos(angle)
+    //   xStart + gameAxisWidth * 2 + (xEnd - xStart) / 2,
+    //   yEnd - gameAxisWidth * 2 - (yEnd - yStart) / 2,
+    // );
+    // // Working Top diagonal
+    // this.p5.line(
+    //   xStart - gameAxisWidth * 2 + (xEnd - xStart) / 2,
+    //   yEnd + gameAxisWidth * 2 - (yEnd - yStart) / 2,
+    //   xStart,
+    //   yEnd,
+    // );
     this.p5.line(xEnd, yStart, xStart, yEnd);
     // repeat here as needed
     this.p5.line(xStart, yStart, xEnd, yEnd);
