@@ -32,6 +32,10 @@ export class Board {
     return moves;
   }
 
+  isAvailableMove({x, y}: NumberCoordinates): boolean {
+    return this.selections.get(`${x},${y}`) === undefined && x > -1 && y > -1 && x < this.columns && y < this.rows;
+  }
+
   setRandomMove(player: Choice): void {
     const availableMoves = this.getAvailableMoves();
     this.selections.set(

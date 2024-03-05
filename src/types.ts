@@ -7,10 +7,6 @@ export type Moves = Map<Coordinate, Choice | undefined>;
 export type Rule = {
   name: string;
 };
-
-export type Room = {
-  rules: Rule[];
-};
 export type State = {
   board: Board;
   requiredWin: number;

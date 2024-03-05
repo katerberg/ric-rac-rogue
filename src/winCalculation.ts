@@ -1,13 +1,16 @@
-import {Choice, Moves, NumberCoordinates, State} from './types';
+import {Board} from './classes/Board';
+import {Choice, Moves, NumberCoordinates} from './types';
 
 function isColumnWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
   for (let x = 0; x < columns; x++) {
-    for (let y = 0; y < rows - 2; y++) {
+    for (let y = 0; y < rows - winNumber + 1; y++) {
       let isWinningColumn = selections.get(`${x},${y}`) !== undefined;
-      for (let winCheck = 1; winCheck < winNumber; winCheck++) {
-        if (selections.get(`${x},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
-          isWinningColumn = false;
-          break;
+      if (isWinningColumn) {
+        for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+          if (selections.get(`${x},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
+            isWinningColumn = false;
+            break;
+          }
         }
       }
       if (isWinningColumn) {
@@ -19,13 +22,15 @@ function isColumnWin(selections: Moves, columns: number, rows: number, winNumber
 }
 
 function isRowWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
-  for (let x = 0; x < columns - 2; x++) {
+  for (let x = 0; x < columns - winNumber + 1; x++) {
     for (let y = 0; y < rows; y++) {
       let isWinningRow = selections.get(`${x},${y}`) !== undefined;
-      for (let winCheck = 1; winCheck < winNumber; winCheck++) {
-        if (selections.get(`${x + winCheck},${y}`) !== selections.get(`${x},${y}`)) {
-          isWinningRow = false;
-          break;
+      if (isWinningRow) {
+        for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+          if (selections.get(`${x + winCheck},${y}`) !== selections.get(`${x},${y}`)) {
+            isWinningRow = false;
+            break;
+          }
         }
       }
       if (isWinningRow) {
@@ -37,13 +42,15 @@ function isRowWin(selections: Moves, columns: number, rows: number, winNumber: n
 }
 
 function isDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
-  for (let x = 0; x < columns - 2; x++) {
-    for (let y = 0; y < rows - 2; y++) {
+  for (let x = 0; x < columns - winNumber + 1; x++) {
+    for (let y = 0; y < rows - winNumber + 1; y++) {
       let isWinningDiagonal = selections.get(`${x},${y}`) !== undefined;
-      for (let winCheck = 1; winCheck < winNumber; winCheck++) {
-        if (selections.get(`${x + winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
-          isWinningDiagonal = false;
-          break;
+      if (isWinningDiagonal) {
+        for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+          if (selections.get(`${x + winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
+            isWinningDiagonal = false;
+            break;
+          }
         }
       }
       if (isWinningDiagonal) {
@@ -55,13 +62,15 @@ function isDiagonalWin(selections: Moves, columns: number, rows: number, winNumb
 }
 
 function isReverseDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
-  for (let x = 2; x < columns; x++) {
-    for (let y = 0; y < rows - 2; y++) {
+  for (let x = winNumber - 1; x < columns; x++) {
+    for (let y = 0; y < rows - winNumber + 1; y++) {
       let isWinningDiagonal = selections.get(`${x},${y}`) !== undefined;
-      for (let winCheck = 1; winCheck < winNumber; winCheck++) {
-        if (selections.get(`${x - winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
-          isWinningDiagonal = false;
-          break;
+      if (isWinningDiagonal) {
+        for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+          if (selections.get(`${x - winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
+            isWinningDiagonal = false;
+            break;
+          }
         }
       }
       if (isWinningDiagonal) {
@@ -85,19 +94,23 @@ export function isCat(selections: Moves, columns: number, rows: number): boolean
   return selections.size === columns * rows;
 }
 
-export function checkTerminal(state: State): {
+export function checkTerminal(
+  board: Board,
+  requiredWin: number,
+  currentPlayer: Choice,
+): {
   isTerminal: boolean;
   isCat: boolean;
   isWinner: boolean;
   winner: Choice | null;
 } {
-  const isCatGame = isCat(state.board.selections, state.board.columns, state.board.rows);
-  const isWinner = isWin(state.board.selections, state.board.columns, state.board.rows, state.requiredWin);
+  const isCatGame = isCat(board.selections, board.columns, board.rows);
+  const isWinner = isWin(board.selections, board.columns, board.rows, requiredWin);
   return {
     isTerminal: isWinner || isCatGame,
     isWinner,
     isCat: isCatGame,
-    winner: isWinner ? state.currentPlayer : null,
+    winner: isWinner ? currentPlayer : null,
   };
 }
 

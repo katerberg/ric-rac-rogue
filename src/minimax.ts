@@ -77,7 +77,7 @@ export function getBestMove(
       currentPlayer: maximizing ? 'o' : 'x',
     };
     child.board.selections.set(numberCoordsToCoords(move), maximizing ? 'x' : 'o');
-    const terminalState = checkTerminal(child);
+    const terminalState = checkTerminal(child.board, child.requiredWin, child.currentPlayer);
     if (terminalState.isTerminal) {
       if (terminalState.isWinner) {
         // if it's terminal, get the best score minus how long it took to get there

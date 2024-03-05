@@ -3,7 +3,8 @@ import {COLORS} from '../colors';
 import {coordsToNumberCoords} from '../coordinatesHelper';
 import {getUrlParams, isDebug} from '../environment';
 import {getBestMove} from '../minimax';
-import {NumberCoordinates} from '../types';
+import {Choice, Coordinate, NumberCoordinates} from '../types';
+import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
 
 const gameAxisWidth = 10;
@@ -81,15 +82,14 @@ export class Game {
     if (
       !this.loading &&
       this.level.board.selections.get(`${x},${y}`) === undefined &&
-      x > -1 &&
-      y > -1 &&
-      x < this.level.board.columns &&
-      y < this.level.board.rows &&
+      this.level.board.isAvailableMove({x, y}) &&
       this.startTime + 100 < Date.now()
     ) {
+      if (this.makePlay(`${x},${y}`, 'x')) {
+        return;
+      }
       this.loading = true;
       document.getElementById('loading')?.classList.add('loading');
-      this.level.board.selections.set(`${x},${y}`, 'x');
       setTimeout(() => {
         const response = getBestMove(
           {
@@ -103,7 +103,7 @@ export class Game {
         document.getElementById('loading')?.classList.remove('loading');
         this.loading = false;
         if (response.bestMove) {
-          this.level.board.selections.set(`${response.bestMove.x},${response.bestMove.y}`, 'o');
+          this.makePlay(`${response.bestMove.x},${response.bestMove.y}`, 'o');
         }
       }, 10);
     }
@@ -228,6 +228,22 @@ export class Game {
       });
       container.innerHTML = innerHtml;
     }
+  }
+
+  makePlay(move: Coordinate, player: Choice): boolean {
+    this.level.board.selections.set(move, player);
+    const term = checkTerminal(this.level.board, this.level.requiredWin, player);
+    if (term.isTerminal) {
+      if (term.winner) {
+        window.alert(`${player} wins`);
+      } else if (term.isCat) {
+        window.alert('tie');
+      }
+      this.level = new Level(this.level.level + 1);
+      this.redrawRules();
+      return true;
+    }
+    return false;
   }
 
   start(): void {

@@ -36,6 +36,20 @@ describe('winCalculation', () => {
     it('should return true when there are 3 in a row reverse-diagonally', () => {
       expect(isWin(objectToMap({'2,1': 'x', '1,2': 'x', '0,3': 'x'}), 5, 5, 3)).toBe(true);
     });
+
+    it('detects two long reverse wins', () => {
+      expect(isWin(objectToMap({'0,2': 'x', '1,1': 'x', '0,3': 'o'}), 5, 5, 2)).toBe(true);
+    });
+
+    it('detects two long diagonal wins', () => {
+      expect(isWin(objectToMap({'0,0': 'x', '1,1': 'x', '0,1': 'o'}), 2, 2, 2)).toBe(true);
+    });
+    it('detects two long column wins', () => {
+      expect(isWin(objectToMap({'0,0': 'x', '0,1': 'x', '1,0': 'o'}), 2, 2, 2)).toBe(true);
+    });
+    it('detects two long row wins', () => {
+      expect(isWin(objectToMap({'0,0': 'x', '1,0': 'x', '0,1': 'o'}), 2, 2, 2)).toBe(true);
+    });
   });
 
   describe('isCat', () => {
