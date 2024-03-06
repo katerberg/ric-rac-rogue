@@ -1,0 +1,42 @@
+@import 'colors';
+
+@mixin button($color: $color-action-button, $duration: 100ms) {
+    border: 2px solid $color;
+    color: $color;
+    background-color: $color-background;
+    cursor: pointer;
+    font-weight: 100;
+    padding: 20px;
+    font-family: 'Orbitron', 'Roboto', sans-serif;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    border-radius: 500px;
+    transition: text-shadow $duration, box-shadow $duration, font-size $duration, padding $duration, letter-spacing $duration, box-shadow 100ms;
+    position: relative;
+
+
+    &::before {
+        transition: 1s;
+        content: '';
+        position: absolute;
+        background: $color;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transform: perspective(1.5em) rotateX(30deg) scale(0.75, 0.25);
+        filter: blur(2em);
+        opacity: 0;
+        transition: 100ms;
+    }
+
+    &:hover {
+        box-shadow: 0 3px 20px 0 $color inset, 0 3px 20px 0 $color, 0 3px 20px 0 $color inset, 0 3px 20px 0 $color;
+        text-shadow: 0 0 3px $color, 0 0 3px $color;
+
+        &::before {
+            opacity: 1;
+        }
+    }
+}

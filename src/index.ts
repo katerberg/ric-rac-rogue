@@ -1,11 +1,31 @@
 import './index.scss';
 import './start-screen.scss';
+import './credits.scss';
 import {Howl} from 'howler';
 import {Game} from './classes/Game';
-import {skipMenu} from './environment';
+import {isDebug, skipMenu} from './environment';
 
 let menuSound: Howl | undefined;
 let gameSound: Howl;
+
+function openCredits(): void {
+  const startScreen = document.getElementById('start-screen');
+  const creditsScreen = document.getElementById('credits-screen');
+  if (startScreen && creditsScreen) {
+    startScreen.classList.remove('visible');
+    creditsScreen.classList.add('visible');
+  }
+}
+
+function closeCredits(): void {
+  const startScreen = document.getElementById('start-screen');
+  const creditsScreen = document.getElementById('credits-screen');
+  if (startScreen && creditsScreen) {
+    startScreen.classList.add('visible');
+    creditsScreen.classList.remove('visible');
+  }
+}
+
 function openStartMenu(): void {
   const startScreen = document.getElementById('start-screen');
   if (startScreen) {
@@ -43,8 +63,12 @@ function startNewGame(): void {
 
 function bindClickListeners(): void {
   const startGameButton = document.getElementById('start-game-button');
-  if (startGameButton) {
+  const creditsButton = document.getElementById('credits-button');
+  const creditsCloseButton = document.getElementById('credits-close-button');
+  if (startGameButton && creditsButton && creditsCloseButton) {
     startGameButton.addEventListener('click', startNewGame);
+    creditsButton.addEventListener('click', openCredits);
+    creditsCloseButton.addEventListener('click', closeCredits);
   }
 }
 
@@ -61,6 +85,8 @@ window.addEventListener('load', () => {
   bindClickListeners();
   if (skipMenu()) {
     startNewGame();
+  } else if (isDebug('credits')) {
+    openCredits();
   } else {
     openStartMenu();
   }

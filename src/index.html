@@ -6,6 +6,10 @@
   <meta name="theme-color" content="#ffffff">
   <title>Ric Rac Rogue</title>
   <style>
+    button {
+      display: none;
+    }
+
     html {
       background: black;
     }
@@ -23,6 +27,20 @@
     <div class="stars"></div>
     <div id="next-level-content"></div>
   </div>
+  <div id="credits-screen">
+    <div class="panel left">
+      <h1>Ric-Rac-Rogue</h1>
+    </div>
+    <div class="panel right">
+      <div class="scrolling-credits">
+        <h2>Game by <a href="https://katerberg.net">Mark Katerberg</a></h2>
+        <h2>Music by <a href="https://opengameart.org/content/synth-wave">Alex McCulloch</a></h2>
+        <h2>CSS Magic by <a href="https://codepen.io/inegoita/pen/wLxObg">Ion Emil Negoita</a></h2>
+      </div>
+      <button id="credits-close-button">Close</button>
+    </div>
+
+  </div>
   <div id="game">
     <div id="start-screen" class="start-screen">
       <div class="start-screen-header">
@@ -31,6 +49,7 @@
       <div class="start-screen-options">
         <button id="start-game-button">Start New Game</button>
         <button id="how-to-play-button">How to Play</button>
+        <button id="credits-button">Credits</button>
       </div>
     </div>
     <div id="top-bar">
