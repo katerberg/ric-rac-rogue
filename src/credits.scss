@@ -37,6 +37,7 @@ $spacing-from-panel: 5em;
         }
 
         &.left {
+            color: $color-game-axes;
             display: flex;
             text-align: right;
             justify-content: flex-end;
