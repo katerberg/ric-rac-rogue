@@ -78,7 +78,7 @@ $action-button-transition-duration: 100ms;
                 }
             }
 
-            &:disabled {
+            &.disabled {
 
                 border-color: darken($color: $color, $amount: 50);
                 color: darken($color: $color, $amount: 50);

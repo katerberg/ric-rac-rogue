@@ -66,7 +66,11 @@ export class Game {
     this.loading = false;
     this.energyMax = 100;
     this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
-    this.powerUps = [new PowerUp({type: PowerUpType.EXTRA_TURN}), new PowerUp({type: PowerUpType.FLIP_TILE})];
+    this.powerUps = [
+      new PowerUp({type: PowerUpType.EXTRA_TURN}),
+      new PowerUp({type: PowerUpType.FLIP_TILE}),
+      new PowerUp({type: PowerUpType.RESET_COOLDOWN}),
+    ];
     this.activeStatusEffects = [];
     this.currentAction = null;
     this.level = new Level(isDebug('level') ? Number.parseInt(getUrlParams().get('level') || '1', 10) : 1);
@@ -114,14 +118,25 @@ export class Game {
     }
   }
 
+  private isTimeForClick(): boolean {
+    return !this.loading && this.startTime + 100 < Date.now();
+  }
+
   private handleClick(): void {
+    if (!this.isTimeForClick()) {
+      return;
+    }
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
-    if (!this.loading && this.startTime + 100 < Date.now() && this.level.board.isMoveOnBoard({x, y})) {
+    if (this.level.board.isMoveOnBoard({x, y})) {
       if (this.currentAction?.type === PowerUpType.FLIP_TILE) {
         if (this.level.board.flipTile({x, y})) {
           this.currentAction = null;
           return;
         }
+        this.resetCurrentAction();
+        return;
+      }
+      if (this.currentAction?.type === PowerUpType.RESET_COOLDOWN) {
         this.resetCurrentAction();
         return;
       }
@@ -301,7 +316,7 @@ export class Game {
       this.powerUps.forEach((powerUp) => {
         const button = document.createElement('button');
         if (powerUp.cooldownRemaining > 0) {
-          button.setAttribute('disabled', 'disabled');
+          button.classList.add('disabled');
         }
         button.addEventListener('click', () => {
           if (powerUp.cooldownRemaining < 1) {
@@ -310,6 +325,10 @@ export class Game {
             this.redrawActions();
             this.checkLossCondition();
             this.activatePowerUp(powerUp);
+          } else if (this.currentAction?.type === PowerUpType.RESET_COOLDOWN) {
+            powerUp.cooldownRemaining = 0;
+            this.currentAction = null;
+            this.redrawActions();
           }
         });
         const title = document.createElement('div');
@@ -334,11 +353,13 @@ export class Game {
   }
 
   private activatePowerUp(powerUp: PowerUp): void {
+    this.resetCurrentAction();
     switch (powerUp.type) {
       case PowerUpType.EXTRA_TURN:
         this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.EXTRA_TURN}));
         break;
       case PowerUpType.FLIP_TILE:
+      case PowerUpType.RESET_COOLDOWN:
         this.currentAction = powerUp;
         break;
 

@@ -14,8 +14,23 @@ function getDefaultCost(type: PowerUpType): number {
       return 20;
     case PowerUpType.FLIP_TILE:
       return 20;
+    case PowerUpType.RESET_COOLDOWN:
+      return 10;
     default:
       return 10;
+  }
+}
+
+function getDefaultCooldown(type: PowerUpType): number {
+  switch (type) {
+    case PowerUpType.EXTRA_TURN:
+      return 4;
+    case PowerUpType.FLIP_TILE:
+      return 3;
+    case PowerUpType.RESET_COOLDOWN:
+      return 8;
+    default:
+      return 3;
   }
 }
 
@@ -28,10 +43,10 @@ export class PowerUp {
 
   cooldownRemaining: number;
 
-  constructor({type, cost = 20, cooldown = 3, cooldownRemaining = 0}: PowerUpProps) {
+  constructor({type, cost, cooldown, cooldownRemaining = 0}: PowerUpProps) {
     this.type = type;
     this.cost = cost ?? getDefaultCost(type);
-    this.cooldown = cooldown;
+    this.cooldown = cooldown ?? getDefaultCooldown(type);
     this.cooldownRemaining = cooldownRemaining;
   }
 
@@ -41,6 +56,8 @@ export class PowerUp {
         return 'Extra Turn';
       case PowerUpType.FLIP_TILE:
         return 'Flip Tile';
+      case PowerUpType.RESET_COOLDOWN:
+        return 'Reset Cooldown';
       default:
         return 'Power Up';
     }
