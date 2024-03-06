@@ -3,12 +3,13 @@ import {COLORS} from '../colors';
 import {coordsToNumberCoords} from '../coordinatesHelper';
 import {getUrlParams, isDebug} from '../environment';
 import {getBestMove} from '../minimax';
-import {Choice, Coordinate, NumberCoordinates, PowerUpType, TerminalStatus} from '../types';
+import {Choice, Coordinate, NumberCoordinates, PowerUpType, StatusEffectType, TerminalStatus} from '../types';
 import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
 import '../next-level.scss';
 import '../sidebar.scss';
 import {PowerUp} from './PowerUp';
+import {StatusEffect} from './StatusEffect';
 
 const gameAxisWidth = 10;
 const gameInnerPadding = 24;
@@ -34,6 +35,8 @@ export class Game {
   loading: boolean;
 
   startTime: number;
+
+  activeStatusEffects: StatusEffect[];
 
   gameEndCallback: () => void;
 
@@ -62,6 +65,7 @@ export class Game {
     this.energyMax = 100;
     this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
     this.powerUps = [new PowerUp({displayName: 'Extra Turn', type: PowerUpType.EXTRA_TURN})];
+    this.activeStatusEffects = [];
     this.level = new Level(isDebug('level') ? Number.parseInt(getUrlParams().get('level') || '1', 10) : 1);
     this.gameEndCallback = gameEndCallback;
   }
@@ -110,6 +114,15 @@ export class Game {
       if (this.makePlay(`${x},${y}`, 'x')) {
         return;
       }
+      const extraTurnPosition = this.activeStatusEffects.findIndex(
+        (activeStatusEffect) => activeStatusEffect.type === StatusEffectType.EXTRA_TURN,
+      );
+      if (extraTurnPosition !== -1) {
+        console.log('removing extra turn', this.activeStatusEffects);
+        this.activeStatusEffects.splice(extraTurnPosition, 1);
+        console.log('removed extra turn', this.activeStatusEffects);
+        return;
+      }
       this.loading = true;
       document.getElementById('loading')?.classList.add('loading');
       setTimeout(() => {
@@ -127,6 +140,12 @@ export class Game {
         if (response.bestMove) {
           this.makePlay(`${response.bestMove.x},${response.bestMove.y}`, 'o');
         }
+        this.activeStatusEffects = this.activeStatusEffects
+          .map((activeStatusEffect) => {
+            activeStatusEffect.turnsRemaining -= 1;
+            return activeStatusEffect;
+          })
+          .filter((activeStatusEffect) => activeStatusEffect.turnsRemaining > 0);
       }, 10);
     }
   }
@@ -285,13 +304,22 @@ export class Game {
           button.setAttribute('disabled', 'disabled');
         }
         button.addEventListener('click', () => {
-          this.energyCurrent -= powerUp.cost;
-          powerUp.cooldownRemaining = powerUp.cooldown;
-          this.redrawActions();
-          this.checkLossCondition();
+          if (powerUp.cooldownRemaining < 1) {
+            this.energyCurrent -= powerUp.cost;
+            powerUp.cooldownRemaining = powerUp.cooldown;
+            this.redrawActions();
+            this.checkLossCondition();
+            this.activatePowerUp(powerUp);
+          }
         });
         actionsContainer.appendChild(button);
       });
+    }
+  }
+
+  private activatePowerUp(powerUp: PowerUp): void {
+    if (powerUp.type === PowerUpType.EXTRA_TURN) {
+      this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.EXTRA_TURN}));
     }
   }
 
@@ -346,6 +374,7 @@ export class Game {
         this.loading = false;
         nextLevelScreen.classList.remove('visible');
         this.level = new Level(this.level.level + 1);
+        this.activeStatusEffects = [];
         this.redrawRules();
       });
     }
