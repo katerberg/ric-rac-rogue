@@ -19,6 +19,10 @@ export class Game {
 
   p5: P5;
 
+  energyMax: number;
+
+  energyCurrent: number;
+
   gameWidth: number;
 
   gameHeight: number;
@@ -33,6 +37,7 @@ export class Game {
       p.setup = (): void => {
         const canvas = p.createCanvas(this.gameWidth, this.gameHeight);
         canvas.id('game-canvas');
+        p.textFont('Orbitron');
       };
       p.windowResized = (): void => this.resizeP();
       p.mouseClicked = (): void => this.handleClick();
@@ -41,13 +46,16 @@ export class Game {
         p.background(0, 0, 0);
         this.redrawBoard();
         this.redrawSelections();
+        this.redrawEnergy();
       };
     };
     this.p5 = new P5(sketch, document.getElementById('canvas-container')!);
     this.gameWidth = this.p5.windowWidth - horizontalPadding;
     this.gameHeight = this.p5.windowHeight - verticalPadding;
     this.loading = false;
-    this.level = new Level(isDebug() ? Number.parseInt(getUrlParams().get('level') || '1', 10) : 1);
+    this.energyMax = 100;
+    this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
+    this.level = new Level(isDebug('level') ? Number.parseInt(getUrlParams().get('level') || '1', 10) : 1);
   }
 
   private resizeP(): void {
@@ -218,6 +226,26 @@ export class Game {
         this.drawO(x, y);
       }
     });
+  }
+
+  private redrawEnergy(): void {
+    const strokeWidth = gameAxisWidth * 2;
+    this.p5.stroke(COLORS.energy);
+    this.p5.strokeCap(this.p5.ROUND);
+    this.p5.strokeWeight(gameAxisWidth);
+    this.p5.drawingContext.shadowBlur = 40;
+    this.p5.drawingContext.shadowColor = COLORS.energy;
+    const y = this.gameHeight - strokeWidth;
+    const percentage = this.energyCurrent / this.energyMax;
+    this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
+    this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
+    this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
+    this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
+
+    this.p5.textStyle(this.p5.NORMAL);
+    this.p5.textSize(30);
+    this.p5.fill(COLORS.background);
+    this.p5.text(`ENERGY  ${this.energyCurrent} / ${this.energyMax}`, 50, y + 10);
   }
 
   private redrawRules(): void {
