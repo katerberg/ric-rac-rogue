@@ -70,6 +70,8 @@ export class Game {
       new PowerUp({type: PowerUpType.EXTRA_TURN}),
       new PowerUp({type: PowerUpType.FLIP_TILE}),
       new PowerUp({type: PowerUpType.RESET_COOLDOWN}),
+      new PowerUp({type: PowerUpType.COPY_COLUMN}),
+      new PowerUp({type: PowerUpType.COPY_ROW}),
     ];
     this.activeStatusEffects = [];
     this.currentAction = null;
@@ -128,15 +130,21 @@ export class Game {
     }
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
     if (this.level.board.isMoveOnBoard({x, y})) {
-      if (this.currentAction?.type === PowerUpType.FLIP_TILE) {
-        if (this.level.board.flipTile({x, y})) {
-          this.currentAction = null;
-          return;
-        }
-        this.resetCurrentAction();
+      if (this.currentAction?.type === PowerUpType.FLIP_TILE && this.level.board.flipTile({x, y})) {
+        this.currentAction = null;
         return;
       }
-      if (this.currentAction?.type === PowerUpType.RESET_COOLDOWN) {
+      if (this.currentAction?.type === PowerUpType.COPY_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
+        this.level.board.copyColumn(x);
+        this.currentAction = null;
+        return;
+      }
+      if (this.currentAction?.type === PowerUpType.COPY_ROW && this.level.board.isMoveOnBoard({x, y})) {
+        this.level.board.copyRow(y);
+        this.currentAction = null;
+        return;
+      }
+      if (this.currentAction && [PowerUpType.RESET_COOLDOWN, PowerUpType.FLIP_TILE].includes(this.currentAction.type)) {
         this.resetCurrentAction();
         return;
       }
@@ -360,6 +368,8 @@ export class Game {
         break;
       case PowerUpType.FLIP_TILE:
       case PowerUpType.RESET_COOLDOWN:
+      case PowerUpType.COPY_COLUMN:
+      case PowerUpType.COPY_ROW:
         this.currentAction = powerUp;
         break;
 

@@ -24,6 +24,8 @@ export enum PowerUpType {
   EXTRA_TURN,
   FLIP_TILE,
   RESET_COOLDOWN,
+  COPY_COLUMN,
+  COPY_ROW,
 }
 
 export enum StatusEffectType {

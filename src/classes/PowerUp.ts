@@ -16,6 +16,10 @@ function getDefaultCost(type: PowerUpType): number {
       return 20;
     case PowerUpType.RESET_COOLDOWN:
       return 10;
+    case PowerUpType.COPY_COLUMN:
+      return 20;
+    case PowerUpType.COPY_ROW:
+      return 20;
     default:
       return 10;
   }
@@ -58,6 +62,10 @@ export class PowerUp {
         return 'Flip Tile';
       case PowerUpType.RESET_COOLDOWN:
         return 'Reset Cooldown';
+      case PowerUpType.COPY_COLUMN:
+        return 'Copy Column';
+      case PowerUpType.COPY_ROW:
+        return 'Copy Row';
       default:
         return 'Power Up';
     }

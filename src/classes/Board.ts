@@ -53,6 +53,42 @@ export class Board {
     return false;
   }
 
+  copyRow(rowNumberToCopy: number): void {
+    if (rowNumberToCopy > -1 && rowNumberToCopy < this.rows) {
+      for (let y = this.rows - 1; y >= rowNumberToCopy; y--) {
+        for (let x = 0; x < this.columns; x++) {
+          const valueToCopy = this.selections.get(`${x},${y}`);
+          if (valueToCopy !== undefined) {
+            //Move previous selections
+            this.selections.set(`${x},${y + 1}`, this.selections.get(`${x},${y}`));
+          }
+          if (y !== rowNumberToCopy) {
+            this.selections.delete(`${x},${y}`);
+          }
+        }
+      }
+      this.rows++;
+    }
+  }
+
+  copyColumn(columnNumberToCopy: number): void {
+    if (columnNumberToCopy > -1 && columnNumberToCopy < this.columns) {
+      for (let x = this.columns - 1; x >= columnNumberToCopy; x--) {
+        for (let y = 0; y < this.rows; y++) {
+          const valueToCopy = this.selections.get(`${x},${y}`);
+          if (valueToCopy !== undefined) {
+            //Move previous selections
+            this.selections.set(`${x + 1},${y}`, this.selections.get(`${x},${y}`));
+          }
+          if (x !== columnNumberToCopy) {
+            this.selections.delete(`${x},${y}`);
+          }
+        }
+      }
+      this.columns++;
+    }
+  }
+
   setRandomMove(player: Choice): void {
     const availableMoves = this.getAvailableMoves();
     this.selections.set(
