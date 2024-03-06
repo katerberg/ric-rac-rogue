@@ -22,6 +22,7 @@ export type TerminalStatus = {
 
 export enum PowerUpType {
   EXTRA_TURN,
+  FLIP_TILE,
 }
 
 export enum StatusEffectType {

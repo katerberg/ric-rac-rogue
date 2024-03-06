@@ -32,8 +32,25 @@ export class Board {
     return moves;
   }
 
+  isMoveOnBoard({x, y}: NumberCoordinates): boolean {
+    return x > -1 && y > -1 && x < this.columns && y < this.rows;
+  }
+
   isAvailableMove({x, y}: NumberCoordinates): boolean {
-    return this.selections.get(`${x},${y}`) === undefined && x > -1 && y > -1 && x < this.columns && y < this.rows;
+    return this.selections.get(`${x},${y}`) === undefined && this.isMoveOnBoard({x, y});
+  }
+
+  isTakenMove({x, y}: NumberCoordinates): boolean {
+    return this.selections.get(`${x},${y}`) !== undefined && this.isMoveOnBoard({x, y});
+  }
+
+  flipTile({x, y}: NumberCoordinates): boolean {
+    if (this.isTakenMove({x, y})) {
+      const currentValue = this.selections.get(`${x},${y}`);
+      this.selections.set(`${x},${y}`, currentValue === 'x' ? 'o' : 'x');
+      return true;
+    }
+    return false;
   }
 
   setRandomMove(player: Choice): void {

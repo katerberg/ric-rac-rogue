@@ -38,6 +38,8 @@ export class Game {
 
   activeStatusEffects: StatusEffect[];
 
+  currentAction: PowerUp | null;
+
   gameEndCallback: () => void;
 
   constructor(gameEndCallback: () => void) {
@@ -64,8 +66,9 @@ export class Game {
     this.loading = false;
     this.energyMax = 100;
     this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
-    this.powerUps = [new PowerUp({displayName: 'Extra Turn', type: PowerUpType.EXTRA_TURN})];
+    this.powerUps = [new PowerUp({type: PowerUpType.EXTRA_TURN}), new PowerUp({type: PowerUpType.FLIP_TILE})];
     this.activeStatusEffects = [];
+    this.currentAction = null;
     this.level = new Level(isDebug('level') ? Number.parseInt(getUrlParams().get('level') || '1', 10) : 1);
     this.gameEndCallback = gameEndCallback;
   }
@@ -98,53 +101,69 @@ export class Game {
     return this.gameHeight / this.level.board.rows;
   }
 
+  private getStatusEffectPosition(statusEffect: StatusEffectType): number {
+    return this.activeStatusEffects.findIndex((activeStatusEffect) => activeStatusEffect.type === statusEffect);
+  }
+
+  private resetCurrentAction(): void {
+    if (this.currentAction) {
+      this.currentAction.cooldownRemaining = 0;
+      this.energyCurrent += this.currentAction.cost;
+      this.currentAction = null;
+      this.redrawActions();
+    }
+  }
+
   private handleClick(): void {
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
-    if (
-      !this.loading &&
-      this.level.board.selections.get(`${x},${y}`) === undefined &&
-      this.level.board.isAvailableMove({x, y}) &&
-      this.startTime + 100 < Date.now()
-    ) {
-      this.energyCurrent -= 10;
-      this.powerUps.forEach((powerUp) => {
-        powerUp.cooldownRemaining -= 1;
-      });
-      this.redrawActions();
-      if (this.makePlay(`${x},${y}`, 'x')) {
-        return;
-      }
-      const extraTurnPosition = this.activeStatusEffects.findIndex(
-        (activeStatusEffect) => activeStatusEffect.type === StatusEffectType.EXTRA_TURN,
-      );
-      if (extraTurnPosition !== -1) {
-        this.activeStatusEffects.splice(extraTurnPosition, 1);
-        return;
-      }
-      this.loading = true;
-      document.getElementById('loading')?.classList.add('loading');
-      setTimeout(() => {
-        const response = getBestMove(
-          {
-            board: this.level.board,
-            maxDepth: this.level.maxDepth,
-            requiredWin: this.level.requiredWin,
-            currentPlayer: this.level.currentPlayer,
-          },
-          false,
-        );
-        document.getElementById('loading')?.classList.remove('loading');
-        this.loading = false;
-        if (response.bestMove) {
-          this.makePlay(`${response.bestMove.x},${response.bestMove.y}`, 'o');
+    if (!this.loading && this.startTime + 100 < Date.now() && this.level.board.isMoveOnBoard({x, y})) {
+      if (this.currentAction?.type === PowerUpType.FLIP_TILE) {
+        if (this.level.board.flipTile({x, y})) {
+          this.currentAction = null;
+          return;
         }
-        this.activeStatusEffects = this.activeStatusEffects
-          .map((activeStatusEffect) => {
-            activeStatusEffect.turnsRemaining -= 1;
-            return activeStatusEffect;
-          })
-          .filter((activeStatusEffect) => activeStatusEffect.turnsRemaining > 0);
-      }, 10);
+        this.resetCurrentAction();
+        return;
+      }
+      if (this.level.board.isAvailableMove({x, y})) {
+        this.energyCurrent -= 10;
+        this.powerUps.forEach((powerUp) => {
+          powerUp.cooldownRemaining -= 1;
+        });
+        this.redrawActions();
+        if (this.makePlay(`${x},${y}`, 'x')) {
+          return;
+        }
+        const extraTurnPosition = this.getStatusEffectPosition(StatusEffectType.EXTRA_TURN);
+        if (extraTurnPosition !== -1) {
+          this.activeStatusEffects.splice(extraTurnPosition, 1);
+          return;
+        }
+        this.loading = true;
+        document.getElementById('loading')?.classList.add('loading');
+        setTimeout(() => {
+          const response = getBestMove(
+            {
+              board: this.level.board,
+              maxDepth: this.level.maxDepth,
+              requiredWin: this.level.requiredWin,
+              currentPlayer: this.level.currentPlayer,
+            },
+            false,
+          );
+          document.getElementById('loading')?.classList.remove('loading');
+          this.loading = false;
+          if (response.bestMove) {
+            this.makePlay(`${response.bestMove.x},${response.bestMove.y}`, 'o');
+          }
+          this.activeStatusEffects = this.activeStatusEffects
+            .map((activeStatusEffect) => {
+              activeStatusEffect.turnsRemaining -= 1;
+              return activeStatusEffect;
+            })
+            .filter((activeStatusEffect) => activeStatusEffect.turnsRemaining > 0);
+        }, 10);
+      }
     }
   }
 
@@ -315,8 +334,15 @@ export class Game {
   }
 
   private activatePowerUp(powerUp: PowerUp): void {
-    if (powerUp.type === PowerUpType.EXTRA_TURN) {
-      this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.EXTRA_TURN}));
+    switch (powerUp.type) {
+      case PowerUpType.EXTRA_TURN:
+        this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.EXTRA_TURN}));
+        break;
+      case PowerUpType.FLIP_TILE:
+        this.currentAction = powerUp;
+        break;
+
+      default:
     }
   }
 
