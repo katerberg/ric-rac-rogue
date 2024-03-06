@@ -4,7 +4,7 @@ import {Howl} from 'howler';
 import {Game} from './classes/Game';
 import {skipMenu} from './environment';
 
-let menuSound: Howl;
+let menuSound: Howl | undefined;
 let gameSound: Howl;
 function openStartMenu(): void {
   const startScreen = document.getElementById('start-screen');
@@ -18,7 +18,6 @@ function startNewGame(): void {
   const topBar = document.getElementById('top-bar');
   const sidebar = document.getElementById('sidebar');
   if (startScreen && topBar && sidebar) {
-    menuSound.fade(1, 0, 3000);
     import('./assets/game.mp3').then((gameMp3) => {
       if (!gameSound) {
         gameSound = new Howl({
@@ -28,6 +27,7 @@ function startNewGame(): void {
         });
       }
       gameSound.fade(0, 1, 1000);
+      menuSound?.fade(1, 0, 3000);
     });
 
     startScreen.classList.remove('visible');
@@ -35,7 +35,7 @@ function startNewGame(): void {
     sidebar.classList.add('visible');
     const gameEndCallback = (): void => {
       gameSound.fade(1, 0, 4000);
-      menuSound.fade(0, 1, 2000);
+      menuSound?.fade(0, 1, 2000);
     };
     new Game(gameEndCallback).start();
   }

@@ -39,7 +39,7 @@ describe('snapshot', () => {
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
 
-    it.skip('4x10 with 3 in a row', () => {
+    it('4x10 with 3 in a row', () => {
       const input = {...getEmptyBoardState(4, 10)};
 
       const time = new Date().getTime();
@@ -48,7 +48,7 @@ describe('snapshot', () => {
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
 
-    it.skip('4x20 with 3 in a row', () => {
+    it('4x20 with 3 in a row', () => {
       const input = {...getEmptyBoardState(4, 20)};
 
       const time = new Date().getTime();
@@ -67,7 +67,7 @@ describe('snapshot', () => {
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
 
-    it.skip('4x4 with 4 in a row', () => {
+    it('4x4 with 4 in a row', () => {
       const input = {...getEmptyBoardState(4, 4), requiredWin: 4, maxDepth: 10};
 
       const time = new Date().getTime();

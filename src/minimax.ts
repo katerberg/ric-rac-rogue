@@ -58,8 +58,8 @@ export function getBestMove(
   }
   //Initialize best to the worst possible value and have a default move
   const WORST_POSSIBLE_SCORE = maximizing ? -1_000_000 : 1_000_000;
-  const DEPTH_MULTIPLIER = maximizing ? 0.1 : -0.1;
-  // const DEPTH_MULTIPLIER = 0;
+  // const DEPTH_MULTIPLIER = maximizing ? 0.1 : -0.1;
+  const DEPTH_MULTIPLIER = 0.1;
   let bestScore = WORST_POSSIBLE_SCORE;
   let newAlpha = alpha;
   let newBeta = beta;
@@ -114,11 +114,11 @@ export function getBestMove(
         bestMove = move;
         newAlpha = null || newAlpha;
         newBeta = null || newBeta;
-        // if (maximizing) {
-        //   newAlpha = Math.max(bestScore, newAlpha);
-        // } else if (!maximizing) {
-        //   newBeta = Math.min(bestScore, newBeta);
-        // }
+        if (maximizing) {
+          newAlpha = Math.max(bestScore, newAlpha);
+        } else if (!maximizing) {
+          newBeta = Math.min(bestScore, newBeta);
+        }
       }
     }
     if (newBeta <= newAlpha) {
