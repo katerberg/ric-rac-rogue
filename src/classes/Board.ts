@@ -89,6 +89,46 @@ export class Board {
     }
   }
 
+  removeRow(rowNumberToRemove: number): void {
+    if (rowNumberToRemove > -1 && rowNumberToRemove < this.rows) {
+      for (let y = rowNumberToRemove; y < this.rows; y++) {
+        for (let x = 0; x < this.columns; x++) {
+          if (rowNumberToRemove === y) {
+            this.selections.delete(`${x},${y}`);
+          }
+          const valueToCopy = this.selections.get(`${x},${y + 1}`);
+          if (valueToCopy !== undefined) {
+            //Move previous selections
+            this.selections.set(`${x},${y}`, valueToCopy);
+          } else {
+            this.selections.delete(`${x},${y}`);
+          }
+        }
+      }
+      this.rows--;
+    }
+  }
+
+  removeColumn(columnNumberToRemove: number): void {
+    if (columnNumberToRemove > -1 && columnNumberToRemove < this.columns) {
+      for (let x = columnNumberToRemove; x < this.columns; x++) {
+        for (let y = 0; y < this.rows; y++) {
+          if (columnNumberToRemove === x) {
+            this.selections.delete(`${x},${y}`);
+          }
+          const valueToCopy = this.selections.get(`${x + 1},${y}`);
+          if (valueToCopy !== undefined) {
+            //Move previous selections
+            this.selections.set(`${x},${y}`, valueToCopy);
+          } else {
+            this.selections.delete(`${x},${y}`);
+          }
+        }
+      }
+      this.columns--;
+    }
+  }
+
   setRandomMove(player: Choice): void {
     const availableMoves = this.getAvailableMoves();
     this.selections.set(

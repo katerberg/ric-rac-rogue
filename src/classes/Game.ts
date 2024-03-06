@@ -72,6 +72,8 @@ export class Game {
       new PowerUp({type: PowerUpType.RESET_COOLDOWN}),
       new PowerUp({type: PowerUpType.COPY_COLUMN}),
       new PowerUp({type: PowerUpType.COPY_ROW}),
+      new PowerUp({type: PowerUpType.REMOVE_COLUMN}),
+      new PowerUp({type: PowerUpType.REMOVE_ROW}),
       new PowerUp({type: PowerUpType.INCREASE_ENERGY}),
       new PowerUp({type: PowerUpType.INCREASE_MAX_ENERGY}),
     ];
@@ -133,6 +135,16 @@ export class Game {
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
     if (this.level.board.isMoveOnBoard({x, y})) {
       if (this.currentAction?.type === PowerUpType.FLIP_TILE && this.level.board.flipTile({x, y})) {
+        this.currentAction = null;
+        return;
+      }
+      if (this.currentAction?.type === PowerUpType.REMOVE_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
+        this.level.board.removeColumn(x);
+        this.currentAction = null;
+        return;
+      }
+      if (this.currentAction?.type === PowerUpType.REMOVE_ROW && this.level.board.isMoveOnBoard({x, y})) {
+        this.level.board.removeRow(y);
         this.currentAction = null;
         return;
       }
@@ -375,6 +387,8 @@ export class Game {
       case PowerUpType.RESET_COOLDOWN:
       case PowerUpType.COPY_COLUMN:
       case PowerUpType.COPY_ROW:
+      case PowerUpType.REMOVE_COLUMN:
+      case PowerUpType.REMOVE_ROW:
         this.currentAction = powerUp;
         break;
 
