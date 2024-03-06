@@ -19,14 +19,16 @@ function startNewGame(): void {
   const sidebar = document.getElementById('sidebar');
   if (startScreen && topBar && sidebar) {
     menuSound.fade(1, 0, 3000);
-    if (!gameSound) {
-      gameSound = new Howl({
-        src: ['/assets/game.mp3'],
-        loop: true,
-      });
-      gameSound.play();
-    }
-    gameSound.fade(0, 1, 1000);
+    import('./assets/game.mp3').then((gameMp3) => {
+      if (!gameSound) {
+        gameSound = new Howl({
+          src: [gameMp3],
+          loop: true,
+          autoplay: true,
+        });
+      }
+      gameSound.fade(0, 1, 1000);
+    });
 
     startScreen.classList.remove('visible');
     topBar.classList.add('visible');
@@ -48,10 +50,12 @@ function bindClickListeners(): void {
 
 window.addEventListener('load', () => {
   if (!menuSound) {
-    menuSound = new Howl({
-      src: ['/assets/menu.mp3'],
-      loop: true,
-      autoplay: true,
+    import('./assets/menu.mp3').then((menuMp3) => {
+      menuSound = new Howl({
+        src: [menuMp3],
+        loop: true,
+        autoplay: true,
+      });
     });
   }
   bindClickListeners();
