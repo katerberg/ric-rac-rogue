@@ -118,9 +118,7 @@ export class Game {
         (activeStatusEffect) => activeStatusEffect.type === StatusEffectType.EXTRA_TURN,
       );
       if (extraTurnPosition !== -1) {
-        console.log('removing extra turn', this.activeStatusEffects);
         this.activeStatusEffects.splice(extraTurnPosition, 1);
-        console.log('removed extra turn', this.activeStatusEffects);
         return;
       }
       this.loading = true;
