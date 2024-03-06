@@ -3,10 +3,12 @@ import {COLORS} from '../colors';
 import {coordsToNumberCoords} from '../coordinatesHelper';
 import {getUrlParams, isDebug} from '../environment';
 import {getBestMove} from '../minimax';
-import {Choice, Coordinate, NumberCoordinates, TerminalStatus} from '../types';
+import {Choice, Coordinate, NumberCoordinates, PowerUpType, TerminalStatus} from '../types';
 import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
 import '../next-level.scss';
+import '../sidebar.scss';
+import {PowerUp} from './PowerUp';
 
 const gameAxisWidth = 10;
 const gameInnerPadding = 24;
@@ -22,6 +24,8 @@ export class Game {
   energyMax: number;
 
   energyCurrent: number;
+
+  powerUps: PowerUp[];
 
   gameWidth: number;
 
@@ -57,6 +61,7 @@ export class Game {
     this.loading = false;
     this.energyMax = 100;
     this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
+    this.powerUps = [new PowerUp({displayName: 'Extra Turn', type: PowerUpType.EXTRA_TURN})];
     this.level = new Level(isDebug('level') ? Number.parseInt(getUrlParams().get('level') || '1', 10) : 1);
     this.gameEndCallback = gameEndCallback;
   }
@@ -98,6 +103,10 @@ export class Game {
       this.startTime + 100 < Date.now()
     ) {
       this.energyCurrent -= 10;
+      this.powerUps.forEach((powerUp) => {
+        powerUp.cooldownRemaining -= 1;
+      });
+      this.redrawActions();
       if (this.makePlay(`${x},${y}`, 'x')) {
         return;
       }
@@ -265,6 +274,27 @@ export class Game {
     }
   }
 
+  private redrawActions(): void {
+    const actionsContainer = document.getElementById('actions-container');
+    if (actionsContainer) {
+      actionsContainer.innerHTML = '';
+      this.powerUps.forEach((powerUp) => {
+        const button = document.createElement('button');
+        button.innerText = powerUp.displayName;
+        if (powerUp.cooldownRemaining > 0) {
+          button.setAttribute('disabled', 'disabled');
+        }
+        button.addEventListener('click', () => {
+          this.energyCurrent -= powerUp.cost;
+          powerUp.cooldownRemaining = powerUp.cooldown;
+          this.redrawActions();
+          this.checkLossCondition();
+        });
+        actionsContainer.appendChild(button);
+      });
+    }
+  }
+
   private endLevel(term: TerminalStatus): void {
     const nextLevelScreen = document.getElementById('next-level-screen');
     const nextLevelContent = document.getElementById('next-level-content');
@@ -358,6 +388,7 @@ export class Game {
     this.resizeP();
     this.redrawBoard();
     this.redrawRules();
+    this.redrawActions();
     if (isDebug('endlevel')) {
       this.endLevel({isTerminal: true, winner: 'x', isCat: false, isWinner: true});
     }

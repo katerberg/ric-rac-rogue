@@ -19,3 +19,7 @@ export type TerminalStatus = {
   isWinner: boolean;
   winner: Choice | null;
 };
+
+export enum PowerUpType {
+  EXTRA_TURN,
+}

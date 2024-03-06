@@ -1,0 +1,72 @@
+@import 'colors';
+@import 'button';
+$action-button-transition-duration: 100ms;
+
+#sidebar {
+    display: none;
+
+    &.visible {
+        display: flex;
+    }
+
+    width: 20vw;
+    flex-direction: column;
+    align-items: center;
+
+    // Ideas:
+    button.test {
+        $duration: 100ms;
+        $color: $color-game-axes;
+        border: 2px solid $color-game-axes;
+        color: $color-game-axes;
+        background-color: $color-background;
+        cursor: pointer;
+        font-weight: 100;
+        padding: 20px;
+        font-family: 'Orbitron', 'Roboto', sans-serif;
+        border-radius: 24px;
+        transition: text-shadow $duration, box-shadow $duration, font-size $duration, padding $duration, letter-spacing $duration, box-shadow 100ms;
+        position: relative;
+
+        &:hover {
+            box-shadow: 0 3px 20px 0 $color inset, 0 3px 20px 0 $color, 0 3px 20px 0 $color inset, 0 3px 20px 0 $color;
+
+            .title {
+                text-shadow: 0 0 3px $color, 0 0 3px $color;
+            }
+        }
+
+        .title {
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .cooldown {
+            font-size: 10px;
+        }
+
+        .cost {
+            font-size: 10px;
+        }
+    }
+
+    #actions-container {
+        button {
+            @include button($color: $color-action-button, $duration: $action-button-transition-duration);
+
+            &:hover {
+                &::before {
+                    opacity: 0.6;
+                }
+            }
+
+            // &:disabled {
+            //     color: tomato;
+            // }
+        }
+
+        padding-bottom: 40px;
+    }
+}

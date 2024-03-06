@@ -1,6 +1,5 @@
 @import 'colors';
 @import 'button';
-$action-button-transition-duration: 100ms;
 $spinner-border: 1.5px;
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
@@ -63,28 +62,6 @@ button {
 
         * {
             width: 100% !important;
-        }
-    }
-
-    #sidebar {
-        display: none;
-
-        &.visible {
-            display: flex;
-        }
-
-        width: 20vw;
-        flex-direction: column;
-        align-items: center;
-
-        button {
-            @include button($color: $color-action-button, $duration: $action-button-transition-duration);
-
-            &:hover {
-                &::before {
-                    opacity: 0.6;
-                }
-            }
         }
     }
 }
