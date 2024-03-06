@@ -275,6 +275,7 @@ export class Game {
         if (term.winner) {
           if (term.winner === 'x') {
             content += 'You win!';
+            this.energyMax += 20;
             this.energyCurrent += Math.floor(this.energyMax * 0.3);
             if (this.energyCurrent > this.energyMax) {
               this.energyCurrent = this.energyMax;
@@ -283,6 +284,10 @@ export class Game {
             content += 'You lose.';
           }
         } else if (term.isCat) {
+          this.energyCurrent += Math.floor(this.energyMax * 0.15);
+          if (this.energyCurrent > this.energyMax) {
+            this.energyCurrent = this.energyMax;
+          }
           content += 'Tie';
         } else {
           content += 'Level done';
