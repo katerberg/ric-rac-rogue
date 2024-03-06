@@ -31,7 +31,9 @@ export class Game {
 
   startTime: number;
 
-  constructor() {
+  gameEndCallback: () => void;
+
+  constructor(gameEndCallback: () => void) {
     this.startTime = Date.now();
     const sketch = (p: P5): void => {
       p.setup = (): void => {
@@ -56,6 +58,7 @@ export class Game {
     this.energyMax = 100;
     this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
     this.level = new Level(isDebug('level') ? Number.parseInt(getUrlParams().get('level') || '1', 10) : 1);
+    this.gameEndCallback = gameEndCallback;
   }
 
   private resizeP(): void {
@@ -326,6 +329,7 @@ export class Game {
     if (canvasContainer && startScreen && topBar && sidebar) {
       this.p5.remove();
       canvasContainer.innerHTML = '';
+      this.gameEndCallback();
       startScreen.classList.add('visible');
       sidebar.classList.remove('visible');
       topBar.classList.remove('visible');

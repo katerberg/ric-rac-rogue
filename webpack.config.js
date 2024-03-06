@@ -22,7 +22,7 @@ const config = {
       template: 'src/index.html',
     }),
     new CopyPlugin({
-      patterns: [{from: 'src/images', to: 'images'}],
+      patterns: [{from: 'src/assets', to: 'assets'}],
     }),
 
     // Add your plugins here

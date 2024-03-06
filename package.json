@@ -4,7 +4,7 @@
   "description": "7 Day Roguelike based on Tic Tac Toe",
   "main": "index.js",
   "scripts": {
-    "prebuild": "mkdir -p dist/images && cp -r src/images/ dist/images/",
+    "prebuild": "mkdir -p dist/assets && cp -r src/assets/ dist/assets/",
     "build": "webpack --config ./webpack.config.js --mode production",
     "start:stable-ui": "NODE_ENV=production webpack-dev-server --config ./webpack.config.js --mode development",
     "start": "webpack-dev-server --config ./webpack.config.js --mode development",
@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/katerberg/ric-rac-rogue#readme",
   "devDependencies": {
+    "@types/howler": "^2.2.11",
     "@types/jest": "^29.5.11",
     "@types/p5": "^1.7.6",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
@@ -58,6 +59,7 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "howler": "^2.2.4",
     "p5": "^1.9.1"
   }
 }
