@@ -281,7 +281,6 @@ export class Game {
       actionsContainer.innerHTML = '';
       this.powerUps.forEach((powerUp) => {
         const button = document.createElement('button');
-        button.innerText = powerUp.displayName;
         if (powerUp.cooldownRemaining > 0) {
           button.setAttribute('disabled', 'disabled');
         }
@@ -294,6 +293,22 @@ export class Game {
             this.activatePowerUp(powerUp);
           }
         });
+        const title = document.createElement('div');
+        title.classList.add('title');
+        title.innerHTML = powerUp.displayName;
+        const disabledStatus = document.createElement('div');
+        disabledStatus.classList.add('disabled-status');
+        disabledStatus.innerHTML = `<span class="icon">⏱</span>${powerUp.cooldownRemaining} left`;
+        const cooldown = document.createElement('div');
+        cooldown.classList.add('cooldown');
+        cooldown.innerHTML = `<span class="icon">⏱</span>${powerUp.cooldown}`;
+        const cost = document.createElement('div');
+        cost.classList.add('cost');
+        cost.innerHTML = `<span class="icon">⚡︎</span>${powerUp.cost}`;
+        button.appendChild(title);
+        button.appendChild(disabledStatus);
+        button.appendChild(cooldown);
+        button.appendChild(cost);
         actionsContainer.appendChild(button);
       });
     }
