@@ -26,6 +26,7 @@ export enum PowerUpType {
   RESET_COOLDOWN,
   COPY_COLUMN,
   COPY_ROW,
+  INCREASE_ENERGY,
 }
 
 export enum StatusEffectType {

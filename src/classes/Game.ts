@@ -72,6 +72,7 @@ export class Game {
       new PowerUp({type: PowerUpType.RESET_COOLDOWN}),
       new PowerUp({type: PowerUpType.COPY_COLUMN}),
       new PowerUp({type: PowerUpType.COPY_ROW}),
+      new PowerUp({type: PowerUpType.INCREASE_ENERGY}),
     ];
     this.activeStatusEffects = [];
     this.currentAction = null;
