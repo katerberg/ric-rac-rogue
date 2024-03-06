@@ -22,6 +22,8 @@ function getDefaultCost(type: PowerUpType): number {
       return 20;
     case PowerUpType.INCREASE_ENERGY:
       return -30;
+    case PowerUpType.INCREASE_MAX_ENERGY:
+      return 30;
     default:
       return 10;
   }
@@ -39,6 +41,8 @@ function getDefaultCooldown(type: PowerUpType): number {
     case PowerUpType.COPY_ROW:
       return 3;
     case PowerUpType.INCREASE_ENERGY:
+      return 8;
+    case PowerUpType.INCREASE_MAX_ENERGY:
       return 8;
     default:
       return 3;
@@ -75,6 +79,8 @@ export class PowerUp {
         return 'Copy Row';
       case PowerUpType.INCREASE_ENERGY:
         return 'Gain Energy';
+      case PowerUpType.INCREASE_MAX_ENERGY:
+        return 'Max Energy';
       default:
         return 'Power Up';
     }

@@ -27,6 +27,7 @@ export enum PowerUpType {
   COPY_COLUMN,
   COPY_ROW,
   INCREASE_ENERGY,
+  INCREASE_MAX_ENERGY,
 }
 
 export enum StatusEffectType {

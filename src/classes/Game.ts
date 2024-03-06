@@ -73,6 +73,7 @@ export class Game {
       new PowerUp({type: PowerUpType.COPY_COLUMN}),
       new PowerUp({type: PowerUpType.COPY_ROW}),
       new PowerUp({type: PowerUpType.INCREASE_ENERGY}),
+      new PowerUp({type: PowerUpType.INCREASE_MAX_ENERGY}),
     ];
     this.activeStatusEffects = [];
     this.currentAction = null;
@@ -366,6 +367,9 @@ export class Game {
     switch (powerUp.type) {
       case PowerUpType.EXTRA_TURN:
         this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.EXTRA_TURN}));
+        break;
+      case PowerUpType.INCREASE_MAX_ENERGY:
+        this.energyMax += 10;
         break;
       case PowerUpType.FLIP_TILE:
       case PowerUpType.RESET_COOLDOWN:
