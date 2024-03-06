@@ -219,32 +219,16 @@ export class Game {
     const yEnd = yStart + cellHeight * 0.8 - gameAxisWidth * 4;
     // Long diagonal
     this.p5.line(xStart, yStart, xEnd, yEnd);
-    // const angle = Math.tan((((yStart - yEnd) / (xEnd - xStart)) * Math.PI) / 180);
-    // const distance = Math.sqrt(Math.pow(yStart - yEnd, 2) + Math.pow(xEnd - xStart, 2));
-    // const distanceToMiddle = distance / 2;
-    // console.log((angle * 180) / Math.PI, Math.sin(angle));
-    // console.log(Math.cos(angle), Math.sin(angle), distance);
-    // this.p5.line(xStart, yEnd, xStart + Math.cos(angle) * distance, yEnd - Math.sin(angle) * distance);
+    // Two short diagonals
+    this.p5.line(xEnd, yStart, xStart + (xEnd - xStart) * 0.6, yStart + (yEnd - yStart) * 0.4);
+    this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
 
-    // // Working Lower diagonal
-    // this.p5.line(
-    //   xEnd,
-    //   yStart,
-    //   // Math.cos(angle)
-    //   xStart + gameAxisWidth * 2 + (xEnd - xStart) / 2,
-    //   yEnd - gameAxisWidth * 2 - (yEnd - yStart) / 2,
-    // );
-    // // Working Top diagonal
-    // this.p5.line(
-    //   xStart - gameAxisWidth * 2 + (xEnd - xStart) / 2,
-    //   yEnd + gameAxisWidth * 2 - (yEnd - yStart) / 2,
-    //   xStart,
-    //   yEnd,
-    // );
-    this.p5.line(xEnd, yStart, xStart, yEnd);
     // repeat here as needed
     this.p5.line(xStart, yStart, xEnd, yEnd);
-    this.p5.line(xEnd, yStart, xStart, yEnd);
+    this.p5.line(xEnd, yStart, xStart + (xEnd - xStart) * 0.6, yStart + (yEnd - yStart) * 0.4);
+    this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
+    this.p5.line(xEnd, yStart, xStart + (xEnd - xStart) * 0.6, yStart + (yEnd - yStart) * 0.4);
+    this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
   }
 
   private redrawSelections(): void {
