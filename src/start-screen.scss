@@ -1,4 +1,5 @@
 @import 'colors';
+@import 'button';
 
 $button-transition-duration: 100ms;
 
@@ -63,43 +64,10 @@ $button-transition-duration: 100ms;
     }
 
     button {
-        border: 2px solid $color-start-screen-button;
-        color: $color-start-screen-button;
-        background-color: $color-background;
-        cursor: pointer;
-        font-weight: 100;
-        padding: 20px;
-        font-family: 'Orbitron', 'Roboto', sans-serif;
-        font-size: 20px;
-        text-transform: uppercase;
-        letter-spacing: 5px;
-        border-radius: 500px;
-        transition: text-shadow $button-transition-duration, box-shadow $button-transition-duration, font-size $button-transition-duration, padding $button-transition-duration, letter-spacing $button-transition-duration, box-shadow 100ms;
-        position: relative;
-
+        @include button($color: $color-start-screen-button, $duration: $button-transition-duration);
 
         &::before {
-            transition: 1s;
-            content: '';
-            position: absolute;
-            background: $color-start-screen-button;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform: perspective(1.5em) rotateX(30deg) scale(0.75, 0.25);
-            filter: blur(2em);
             opacity: 0.4;
-            transition: 100ms;
-        }
-
-        &:hover {
-            box-shadow: 0 3px 20px 0 $color-start-screen-button inset, 0 3px 20px 0 $color-start-screen-button, 0 3px 20px 0 $color-start-screen-button inset, 0 3px 20px 0 $color-start-screen-button;
-            text-shadow: 0 0 3px $color-start-screen-button, 0 0 3px $color-start-screen-button;
-
-            &::before {
-                opacity: 1;
-            }
         }
     }
 }

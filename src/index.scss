@@ -79,6 +79,12 @@ button {
 
         button {
             @include button($color: $color-action-button, $duration: $action-button-transition-duration);
+
+            &:hover {
+                &::before {
+                    opacity: 0.6;
+                }
+            }
         }
     }
 }

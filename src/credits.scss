@@ -64,5 +64,9 @@ $spacing-from-panel: 5em;
         position: absolute;
         bottom: 5em;
         margin-top: 5em;
+
+        &::before {
+            opacity: 0.4;
+        }
     }
 }
