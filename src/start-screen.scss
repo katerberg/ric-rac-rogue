@@ -3,6 +3,8 @@
 $button-transition-duration: 100ms;
 
 #start-screen {
+    position: relative;
+    background-color: $color-background;
     display: none;
     height: 100%;
 

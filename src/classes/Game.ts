@@ -94,6 +94,7 @@ export class Game {
       this.level.board.isAvailableMove({x, y}) &&
       this.startTime + 100 < Date.now()
     ) {
+      this.energyCurrent -= 10;
       if (this.makePlay(`${x},${y}`, 'x')) {
         return;
       }
@@ -274,6 +275,10 @@ export class Game {
         if (term.winner) {
           if (term.winner === 'x') {
             content += 'You win!';
+            this.energyCurrent += Math.floor(this.energyMax * 0.3);
+            if (this.energyCurrent > this.energyMax) {
+              this.energyCurrent = this.energyMax;
+            }
           } else {
             content += 'You lose.';
           }
@@ -290,6 +295,7 @@ export class Game {
 
         button.addEventListener('click', () => {
           resolve();
+          this.checkLossCondition();
         });
 
         nextLevelScreen.classList.add('visible');
@@ -307,6 +313,26 @@ export class Game {
     }
   }
 
+  endGame(): void {
+    const canvasContainer = document.getElementById('canvas-container');
+    const startScreen = document.getElementById('start-screen');
+    const topBar = document.getElementById('top-bar');
+    const sidebar = document.getElementById('sidebar');
+    if (canvasContainer && startScreen && topBar && sidebar) {
+      this.p5.remove();
+      canvasContainer.innerHTML = '';
+      startScreen.classList.add('visible');
+      sidebar.classList.remove('visible');
+      topBar.classList.remove('visible');
+    }
+  }
+
+  checkLossCondition(): void {
+    if (this.energyCurrent <= 0) {
+      this.endGame();
+    }
+  }
+
   makePlay(move: Coordinate, player: Choice): boolean {
     this.level.board.selections.set(move, player);
     const term = checkTerminal(this.level.board, this.level.requiredWin, player);
@@ -314,6 +340,8 @@ export class Game {
       this.endLevel(term);
       return true;
     }
+    this.checkLossCondition();
+
     return false;
   }
 
