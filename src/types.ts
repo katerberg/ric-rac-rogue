@@ -33,6 +33,10 @@ export type TerminalStatus = {
   isWinner: boolean;
   winner: Choice | null;
 };
+export enum MenuOption {
+  CANCEL,
+  END_RUN,
+}
 
 export enum PowerUpType {
   EXTRA_TURN,

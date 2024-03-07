@@ -8,11 +8,6 @@
     z-index: 100;
     background-color: $color-background;
     display: none;
-    flex-direction: column;
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: flex-start;
-    align-items: center;
 
 
     &.visible {
@@ -21,11 +16,18 @@
     }
 
     .button-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
         margin-top: 30vh;
+        margin-left: auto;
+        margin-right: auto;
 
         button {
-            @include button($color: $color-energy);
+            @include button($color: lighten($color-menu, 20));
             margin-bottom: 80px;
+            width: 100%;
 
             &::before {
                 opacity: 0.4;

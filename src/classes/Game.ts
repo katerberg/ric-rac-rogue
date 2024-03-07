@@ -4,7 +4,15 @@ import {coordsToNumberCoords, numberCoordsToCoords} from '../coordinatesHelper';
 import {getUrlParams, isDebug} from '../environment';
 import {getBestMove} from '../minimax';
 import {getRuleName} from '../rules';
-import {Choice, Coordinate, NumberCoordinates, PowerUpType, StatusEffectType, TerminalStatus} from '../types';
+import {
+  Choice,
+  Coordinate,
+  MenuOption,
+  NumberCoordinates,
+  PowerUpType,
+  StatusEffectType,
+  TerminalStatus,
+} from '../types';
 import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
 import '../top-bar.scss';
@@ -119,20 +127,29 @@ export class Game {
         if (menu) {
           this.loading = true;
           menu.classList.add('visible');
-          const menuPromise = new Promise<'cancel'>((resolve) => {
+          const menuPromise = new Promise<MenuOption>((resolve) => {
             const previousMenuCancelButton = document.getElementById('menu-cancel-button');
-            if (previousMenuCancelButton) {
+            const previousEndRunButton = document.getElementById('menu-end-run-button');
+            if (previousMenuCancelButton && previousEndRunButton) {
               const menuCancelButton = recreateNode(previousMenuCancelButton);
               menuCancelButton.addEventListener('click', () => {
-                resolve('cancel');
+                resolve(MenuOption.CANCEL);
+              });
+              const endRunButton = recreateNode(previousEndRunButton);
+              endRunButton.addEventListener('click', () => {
+                resolve(MenuOption.END_RUN);
               });
             }
           });
-          menuPromise.then((resolveState: 'cancel') => {
-            if (resolveState === 'cancel') {
+          menuPromise.then((resolveState: MenuOption) => {
+            if (resolveState === MenuOption.CANCEL) {
               this.loading = false;
               this.startTime = Date.now();
               menu.classList.remove('visible');
+            }
+            if (resolveState === MenuOption.END_RUN) {
+              menu.classList.remove('visible');
+              this.endGame();
             }
           });
         }

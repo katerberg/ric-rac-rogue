@@ -83,7 +83,7 @@
     }
 
     .menu-selector {
-        @include button($color: $color-start-screen-button);
+        @include button($color: darken($color-menu, 5));
         margin: 20px;
         font-size: 14px;
         padding: 10px;
