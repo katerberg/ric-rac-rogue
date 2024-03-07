@@ -627,38 +627,45 @@ export class Game {
     this.checkWinCondition();
   }
 
+  private getEndLevelMessage(term: TerminalStatus): Node {
+    const message = document.createElement('div');
+    message.classList.add('next-level-message');
+    const header = document.createElement('h1');
+    if (term.winner) {
+      if (term.winner === 'x') {
+        header.innerText = 'You win';
+      } else {
+        header.innerText = 'You lose';
+      }
+    } else if (term.isCat) {
+      header.innerText = 'Tie';
+    } else {
+      header.innerText = 'Done';
+    }
+    message.appendChild(header);
+    return message;
+  }
+
   private endLevel(term: TerminalStatus): void {
     const nextLevelScreen = document.getElementById('next-level-screen');
     const nextLevelContent = document.getElementById('next-level-content');
     if (nextLevelScreen && nextLevelContent) {
       this.loading = true;
       const nextScreenPromise = new Promise<void>((resolve) => {
-        nextLevelContent.innerHTML = '';
-        const message = document.createElement('div');
-        message.classList.add('next-level-message');
-        let content = '<h1>';
         if (term.winner) {
           if (term.winner === 'x') {
-            content += 'You win!';
             this.energyMax += 20;
             this.energyCurrent += Math.floor(this.energyMax * 0.3);
             if (this.energyCurrent > this.energyMax) {
               this.energyCurrent = this.energyMax;
             }
-          } else {
-            content += 'You lose.';
           }
         } else if (term.isCat) {
           this.energyCurrent += Math.floor(this.energyMax * 0.15);
           if (this.energyCurrent > this.energyMax) {
             this.energyCurrent = this.energyMax;
           }
-          content += 'Tie';
-        } else {
-          content += 'Level done';
         }
-        content += '</h1>';
-        message.innerHTML = content;
         const button = document.createElement('button');
         button.classList.add('next-level-button');
         button.innerHTML = 'Next Level';
@@ -669,7 +676,7 @@ export class Game {
         });
 
         nextLevelScreen.classList.add('visible');
-        nextLevelContent.appendChild(message);
+        nextLevelContent.replaceChildren(this.getEndLevelMessage(term));
         nextLevelContent.appendChild(button);
       });
 
