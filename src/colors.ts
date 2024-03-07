@@ -3,6 +3,7 @@ export const COLORS = {
   text: '#fff',
   gameAxes: '#60DEA4',
   energy: '#4666FF',
+  statusEffect: '#21ebff',
   x: '#E6F603',
   o: '#C422D7',
 };

@@ -1,6 +1,6 @@
 import * as P5 from 'p5';
 import {COLORS} from '../colors';
-import {coordsToNumberCoords} from '../coordinatesHelper';
+import {coordsToNumberCoords, numberCoordsToCoords} from '../coordinatesHelper';
 import {getUrlParams, isDebug} from '../environment';
 import {getBestMove} from '../minimax';
 import {getRuleName} from '../rules';
@@ -75,9 +75,10 @@ export class Game {
       this.powerUps = [
         new PowerUp({type: PowerUpType.TELEPORT_RANDOM}),
         new PowerUp({type: PowerUpType.FORCE_RANDOM}),
+        new PowerUp({type: PowerUpType.BLOCKED_SPACE}),
         new PowerUp({type: PowerUpType.DECREASE_REQUIRED_WIN}),
         // new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
-        new PowerUp({type: PowerUpType.EXTRA_TURN}),
+        // new PowerUp({type: PowerUpType.EXTRA_TURN}),
         new PowerUp({type: PowerUpType.FLIP_TILE}),
         new PowerUp({type: PowerUpType.RESET_COOLDOWN}),
         new PowerUp({type: PowerUpType.COPY_COLUMN}),
@@ -140,6 +141,12 @@ export class Game {
     this.redrawRules();
   }
 
+  private blockSpace(target: NumberCoordinates): void {
+    this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.BLOCKED_SPACE, target}));
+    this.level.board.selections.set(numberCoordsToCoords(target), 'blocked');
+    this.redrawRules();
+  }
+
   private isTimeForClick(): boolean {
     return !this.loading && this.startTime + 100 < Date.now();
   }
@@ -150,6 +157,11 @@ export class Game {
     }
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
     if (!this.level.board.isMoveOnBoard({x, y})) {
+      return;
+    }
+    if (this.currentAction?.type === PowerUpType.BLOCKED_SPACE && this.level.board.isAvailableMove({x, y})) {
+      this.blockSpace({x, y});
+      this.currentAction = null;
       return;
     }
     if (this.currentAction?.type === PowerUpType.FLIP_TILE && this.level.board.flipTile({x, y})) {
@@ -192,6 +204,7 @@ export class Game {
       [
         PowerUpType.RESET_COOLDOWN,
         PowerUpType.FLIP_TILE,
+        PowerUpType.BLOCKED_SPACE,
         PowerUpType.REMOVE_COLUMN,
         PowerUpType.REMOVE_ROW,
         PowerUpType.COPY_COLUMN,
@@ -246,6 +259,13 @@ export class Game {
         this.activeStatusEffects = this.activeStatusEffects
           .map((activeStatusEffect) => {
             activeStatusEffect.turnsRemaining -= 1;
+            if (
+              activeStatusEffect.target &&
+              activeStatusEffect.turnsRemaining === 0 &&
+              activeStatusEffect.type === StatusEffectType.BLOCKED_SPACE
+            ) {
+              this.level.board.selections.delete(numberCoordsToCoords(activeStatusEffect.target));
+            }
             return activeStatusEffect;
           })
           .filter((activeStatusEffect) => activeStatusEffect.turnsRemaining > 0);
@@ -291,6 +311,38 @@ export class Game {
         cellHeight * row - gameInnerPadding / 2,
       );
     }
+    this.activeStatusEffects.forEach((activeStatusEffect) => {
+      if (activeStatusEffect.target) {
+        const {x, y} = activeStatusEffect.target;
+
+        this.p5.stroke(COLORS.energy);
+        this.p5.strokeWeight(gameAxisWidth * 1.5);
+        this.p5.drawingContext.shadowBlur = 80;
+        this.p5.drawingContext.shadowColor = COLORS.statusEffect;
+
+        const radius = Math.max(Math.min(cellWidth, cellHeight) * 0.8 - gameAxisWidth * 4, 10);
+        const xStart = x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
+        const yStart = y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
+
+        const wobble = 100;
+        const smoothing = 100;
+        const r = radius / 8; // Circle radius
+        const vertices = 200; // Number of vertices for drawing the circle
+        this.p5.beginShape();
+        const t = this.p5.millis() / 1000;
+        for (let i = 0; i < vertices; i++) {
+          const f = this.p5.noise(
+            (50 * this.p5.cos((i / vertices) * 2 * this.p5.PI)) / smoothing + t,
+            (50 * this.p5.sin((i / vertices) * 2 * this.p5.PI)) / smoothing + t,
+          );
+          this.p5.vertex(
+            xStart + (r + wobble * f) * this.p5.cos((i / vertices) * 2 * this.p5.PI),
+            yStart + (r + wobble * f) * this.p5.sin((i / vertices) * 2 * this.p5.PI),
+          );
+        }
+        this.p5.endShape(this.p5.CLOSE);
+      }
+    });
   }
 
   private drawO(x: number, y: number): void {
@@ -342,7 +394,7 @@ export class Game {
       const {x, y} = coordsToNumberCoords(value);
       if (key === 'x') {
         this.drawX(x, y);
-      } else {
+      } else if (key === 'o') {
         this.drawO(x, y);
       }
     });
@@ -468,6 +520,7 @@ export class Game {
       case PowerUpType.REMOVE_COLUMN:
       case PowerUpType.REMOVE_ROW:
       case PowerUpType.TELEPORT_RANDOM:
+      case PowerUpType.BLOCKED_SPACE:
         this.currentAction = powerUp;
         break;
 

@@ -1,8 +1,9 @@
-import {StatusEffectType} from '../types';
+import {NumberCoordinates, StatusEffectType} from '../types';
 
 type StatusEffectProps = {
   type: StatusEffectType;
   turnsRemaining?: number;
+  target?: NumberCoordinates;
 };
 
 export class StatusEffect {
@@ -10,9 +11,12 @@ export class StatusEffect {
 
   turnsRemaining: number;
 
-  constructor({type, turnsRemaining = 1}: StatusEffectProps) {
+  target: NumberCoordinates | undefined;
+
+  constructor({type, turnsRemaining = 1, target}: StatusEffectProps) {
     this.type = type;
     this.turnsRemaining = turnsRemaining;
+    this.target = target;
   }
 
   get name(): string {
@@ -21,6 +25,8 @@ export class StatusEffect {
         return 'Extra Turn';
       case StatusEffectType.FORCE_RANDOM:
         return 'Random Move';
+      case StatusEffectType.BLOCKED_SPACE:
+        return 'Blocked Space';
       default:
         return 'Status Effect';
     }
