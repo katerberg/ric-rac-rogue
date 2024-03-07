@@ -642,7 +642,23 @@ export class Game {
     } else {
       header.innerText = 'Done';
     }
+    const subheader = document.createElement('h2');
+    subheader.innerText = `Moving on to level ${this.level.level + 1}`;
+    const energyChange = document.createElement('div');
+    const energyChangeBar = document.createElement('div');
+    energyChangeBar.classList.add('bar');
+    energyChange.setAttribute('id', 'energy-change');
+    energyChange.style.setProperty('--progress', `${(this.energyCurrent / this.energyMax) * 100}%`);
+    energyChange.appendChild(energyChangeBar);
+    setTimeout(() => {
+      const newEnergyChange = document.getElementById('energy-change');
+      if (newEnergyChange) {
+        newEnergyChange.style.setProperty('--progress', `${(this.energyCurrent / this.energyMax) * 100}%`);
+      }
+    }, 1);
     message.appendChild(header);
+    message.appendChild(subheader);
+    message.appendChild(energyChange);
     return message;
   }
 
@@ -652,6 +668,18 @@ export class Game {
     if (nextLevelScreen && nextLevelContent) {
       this.loading = true;
       const nextScreenPromise = new Promise<void>((resolve) => {
+        const button = document.createElement('button');
+        button.classList.add('next-level-button');
+        button.innerHTML = 'Next Level';
+
+        button.addEventListener('click', () => {
+          resolve();
+          this.checkLossCondition();
+        });
+
+        nextLevelScreen.classList.add('visible');
+        nextLevelContent.replaceChildren(this.getEndLevelMessage(term));
+        nextLevelContent.appendChild(button);
         if (term.winner) {
           if (term.winner === 'x') {
             this.energyMax += 20;
@@ -666,18 +694,6 @@ export class Game {
             this.energyCurrent = this.energyMax;
           }
         }
-        const button = document.createElement('button');
-        button.classList.add('next-level-button');
-        button.innerHTML = 'Next Level';
-
-        button.addEventListener('click', () => {
-          resolve();
-          this.checkLossCondition();
-        });
-
-        nextLevelScreen.classList.add('visible');
-        nextLevelContent.replaceChildren(this.getEndLevelMessage(term));
-        nextLevelContent.appendChild(button);
       });
 
       nextScreenPromise.then(() => {
