@@ -138,11 +138,12 @@ export class Board {
     }
   }
 
-  setRandomMove(player: Choice): void {
+  getRandomMove(): NumberCoordinates {
     const availableMoves = this.getAvailableMoves();
-    this.selections.set(
-      numberCoordsToCoords(availableMoves[Math.floor(Math.random() * availableMoves.length)]),
-      player,
-    );
+    return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+  }
+
+  setRandomMove(player: Choice): void {
+    this.selections.set(numberCoordsToCoords(this.getRandomMove()), player);
   }
 }

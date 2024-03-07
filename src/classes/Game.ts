@@ -18,6 +18,8 @@ const gameInnerPadding = 24;
 const verticalPadding = 80;
 const horizontalPadding = 0;
 
+const ENERGY_COST_MOVE = 10;
+
 export class Game {
   level: Level;
 
@@ -71,6 +73,7 @@ export class Game {
     if (isDebug('powerups')) {
       this.powerUps = [
         new PowerUp({type: PowerUpType.TELEPORT_RANDOM}),
+        new PowerUp({type: PowerUpType.FORCE_RANDOM}),
         new PowerUp({type: PowerUpType.DECREASE_REQUIRED_WIN}),
         // new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
         new PowerUp({type: PowerUpType.EXTRA_TURN}),
@@ -140,75 +143,86 @@ export class Game {
       return;
     }
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
-    if (this.level.board.isMoveOnBoard({x, y})) {
-      if (this.currentAction?.type === PowerUpType.FLIP_TILE && this.level.board.flipTile({x, y})) {
-        this.checkWinCondition();
-        this.currentAction = null;
+    if (!this.level.board.isMoveOnBoard({x, y})) {
+      return;
+    }
+    if (this.currentAction?.type === PowerUpType.FLIP_TILE && this.level.board.flipTile({x, y})) {
+      this.checkWinCondition();
+      this.currentAction = null;
+      return;
+    }
+    if (this.currentAction?.type === PowerUpType.REMOVE_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
+      this.level.board.removeColumn(x);
+      this.checkWinCondition();
+      this.currentAction = null;
+      return;
+    }
+    if (this.currentAction?.type === PowerUpType.REMOVE_ROW && this.level.board.isMoveOnBoard({x, y})) {
+      this.level.board.removeRow(y);
+      this.checkWinCondition();
+      this.currentAction = null;
+      return;
+    }
+    if (this.currentAction?.type === PowerUpType.COPY_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
+      this.level.board.copyColumn(x);
+      this.checkWinCondition();
+      this.currentAction = null;
+      return;
+    }
+    if (this.currentAction?.type === PowerUpType.COPY_ROW && this.level.board.isMoveOnBoard({x, y})) {
+      this.level.board.copyRow(y);
+      this.checkWinCondition();
+      this.currentAction = null;
+      return;
+    }
+    if (this.currentAction?.type === PowerUpType.TELEPORT_RANDOM && this.level.board.isMoveOnBoard({x, y})) {
+      this.level.board.teleportRandom({x, y});
+      this.checkWinCondition();
+      this.currentAction = null;
+      return;
+    }
+    if (
+      this.currentAction &&
+      [
+        PowerUpType.RESET_COOLDOWN,
+        PowerUpType.FLIP_TILE,
+        PowerUpType.REMOVE_COLUMN,
+        PowerUpType.REMOVE_ROW,
+        PowerUpType.COPY_COLUMN,
+        PowerUpType.COPY_ROW,
+        PowerUpType.TELEPORT_RANDOM,
+      ].includes(this.currentAction.type)
+    ) {
+      this.resetCurrentAction();
+      return;
+    }
+    if (this.level.board.isAvailableMove({x, y})) {
+      // Do our move
+      this.energyCurrent -= ENERGY_COST_MOVE;
+      this.powerUps.forEach((powerUp) => {
+        powerUp.cooldownRemaining -= 1;
+      });
+      this.redrawActions();
+      // Bail if we won
+      if (this.makePlay(`${x},${y}`, 'x')) {
         return;
       }
-      if (this.currentAction?.type === PowerUpType.REMOVE_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
-        this.level.board.removeColumn(x);
-        this.checkWinCondition();
-        this.currentAction = null;
+      // Handle extra turn
+      const extraTurnPosition = this.getStatusEffectPosition(StatusEffectType.EXTRA_TURN);
+      if (extraTurnPosition !== -1) {
+        this.activeStatusEffects.splice(extraTurnPosition, 1);
         return;
       }
-      if (this.currentAction?.type === PowerUpType.REMOVE_ROW && this.level.board.isMoveOnBoard({x, y})) {
-        this.level.board.removeRow(y);
-        this.checkWinCondition();
-        this.currentAction = null;
-        return;
-      }
-      if (this.currentAction?.type === PowerUpType.COPY_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
-        this.level.board.copyColumn(x);
-        this.checkWinCondition();
-        this.currentAction = null;
-        return;
-      }
-      if (this.currentAction?.type === PowerUpType.COPY_ROW && this.level.board.isMoveOnBoard({x, y})) {
-        this.level.board.copyRow(y);
-        this.checkWinCondition();
-        this.currentAction = null;
-        return;
-      }
-      if (this.currentAction?.type === PowerUpType.TELEPORT_RANDOM && this.level.board.isMoveOnBoard({x, y})) {
-        this.level.board.teleportRandom({x, y});
-        this.checkWinCondition();
-        this.currentAction = null;
-        return;
-      }
-      if (
-        this.currentAction &&
-        [
-          PowerUpType.RESET_COOLDOWN,
-          PowerUpType.FLIP_TILE,
-          PowerUpType.REMOVE_COLUMN,
-          PowerUpType.REMOVE_ROW,
-          PowerUpType.COPY_COLUMN,
-          PowerUpType.COPY_ROW,
-          PowerUpType.TELEPORT_RANDOM,
-        ].includes(this.currentAction.type)
-      ) {
-        this.resetCurrentAction();
-        return;
-      }
-      if (this.level.board.isAvailableMove({x, y})) {
-        this.energyCurrent -= 10;
-        this.powerUps.forEach((powerUp) => {
-          powerUp.cooldownRemaining -= 1;
-        });
-        this.redrawActions();
-        if (this.makePlay(`${x},${y}`, 'x')) {
-          return;
-        }
-        const extraTurnPosition = this.getStatusEffectPosition(StatusEffectType.EXTRA_TURN);
-        if (extraTurnPosition !== -1) {
-          this.activeStatusEffects.splice(extraTurnPosition, 1);
-          return;
-        }
-        this.loading = true;
-        document.getElementById('loading')?.classList.add('loading');
-        setTimeout(() => {
-          const response = getBestMove(
+      // Do their move
+      this.loading = true;
+      document.getElementById('loading')?.classList.add('loading');
+      setTimeout(() => {
+        const forceRandomPosition = this.getStatusEffectPosition(StatusEffectType.FORCE_RANDOM);
+        let move;
+        if (forceRandomPosition !== -1) {
+          move = this.level.board.getRandomMove();
+        } else {
+          move = getBestMove(
             {
               board: this.level.board,
               maxDepth: this.level.maxDepth,
@@ -216,20 +230,20 @@ export class Game {
               currentPlayer: 'x',
             },
             false,
-          );
-          document.getElementById('loading')?.classList.remove('loading');
-          this.loading = false;
-          if (response.bestMove) {
-            this.makePlay(`${response.bestMove.x},${response.bestMove.y}`, 'o');
-          }
-          this.activeStatusEffects = this.activeStatusEffects
-            .map((activeStatusEffect) => {
-              activeStatusEffect.turnsRemaining -= 1;
-              return activeStatusEffect;
-            })
-            .filter((activeStatusEffect) => activeStatusEffect.turnsRemaining > 0);
-        }, 10);
-      }
+          ).bestMove;
+        }
+        document.getElementById('loading')?.classList.remove('loading');
+        this.loading = false;
+        if (move) {
+          this.makePlay(`${move.x},${move.y}`, 'o');
+        }
+        this.activeStatusEffects = this.activeStatusEffects
+          .map((activeStatusEffect) => {
+            activeStatusEffect.turnsRemaining -= 1;
+            return activeStatusEffect;
+          })
+          .filter((activeStatusEffect) => activeStatusEffect.turnsRemaining > 0);
+      }, 10);
     }
   }
 
@@ -411,6 +425,9 @@ export class Game {
     switch (powerUp.type) {
       case PowerUpType.EXTRA_TURN:
         this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.EXTRA_TURN}));
+        break;
+      case PowerUpType.FORCE_RANDOM:
+        this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.FORCE_RANDOM}));
         break;
       case PowerUpType.INCREASE_MAX_ENERGY:
         this.energyMax += 10;

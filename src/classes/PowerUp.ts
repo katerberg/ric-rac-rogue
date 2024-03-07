@@ -26,6 +26,8 @@ function getDefaultCost(type: PowerUpType): number {
       return -30;
     case PowerUpType.INCREASE_MAX_ENERGY:
       return 30;
+    case PowerUpType.FORCE_RANDOM:
+      return 30;
     case PowerUpType.INCREASE_REQUIRED_WIN:
     case PowerUpType.DECREASE_REQUIRED_WIN:
       return 30;
@@ -57,6 +59,8 @@ function getDefaultCooldown(type: PowerUpType): number {
       return 8;
     case PowerUpType.INCREASE_MAX_ENERGY:
       return 8;
+    case PowerUpType.FORCE_RANDOM:
+      return 2;
     case PowerUpType.TELEPORT_RANDOM:
       return 1;
     default:
@@ -96,6 +100,8 @@ export class PowerUp {
         return 'Gain Energy';
       case PowerUpType.INCREASE_MAX_ENERGY:
         return 'Max Energy';
+      case PowerUpType.FORCE_RANDOM:
+        return 'Force Random';
       case PowerUpType.REMOVE_COLUMN:
         return 'Remove Column';
       case PowerUpType.REMOVE_ROW:
@@ -119,6 +125,7 @@ export function getStartingPowerUp(): PowerUp {
     new PowerUp({type: PowerUpType.COPY_ROW}),
     new PowerUp({type: PowerUpType.EXTRA_TURN}),
     new PowerUp({type: PowerUpType.TELEPORT_RANDOM}),
+    new PowerUp({type: PowerUpType.FORCE_RANDOM}),
   ];
 
   return startingPowerUpOptions[Math.floor(Math.random() * startingPowerUpOptions.length)];

@@ -46,8 +46,10 @@ export enum PowerUpType {
   INCREASE_REQUIRED_WIN,
   DECREASE_REQUIRED_WIN,
   TELEPORT_RANDOM,
+  FORCE_RANDOM,
 }
 
 export enum StatusEffectType {
   EXTRA_TURN,
+  FORCE_RANDOM,
 }
