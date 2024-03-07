@@ -48,7 +48,7 @@ $button-transition-duration: 100ms;
         position: absolute;
         background-color: yellow;
         left: calc(50%);
-        top: 20%;
+        bottom: 40%;
         transform: translateX(-50%);
         background-image: linear-gradient(red, yellow), linear-gradient(black, white);
         clip-path: polygon(-50% 0px, 150% -50%, 150% 55%, -50% 55%,
@@ -313,6 +313,40 @@ $button-transition-duration: 100ms;
         background-position-y: 0px;
         background-image: repeating-linear-gradient(0deg, #a684cb 0%, #a684cb 10%, transparent 10%, transparent 20%);
         animation: moving-grid 0.5s infinite linear;
+    }
+
+    .end-game-summary,
+    .end-game-info {
+        display: inline-block;
+        position: absolute;
+        border-radius: 20px;
+        background-color: #0c1142;
+        padding: 20px;
+        min-width: 20vw;
+        bottom: calc(5em + 80px);
+        height: 100%;
+        max-height: calc(100vh - 300px);
+        overflow-y: auto;
+
+        h1 {
+            margin-top: 0;
+        }
+
+        h2 {
+            margin-top: 30px;
+        }
+    }
+
+    .end-game-summary {
+        left: 5vw;
+
+        .power-up {
+            margin-left: 10px;
+        }
+    }
+
+    .end-game-info {
+        right: 5vw;
     }
 
     button {

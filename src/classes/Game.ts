@@ -10,6 +10,7 @@ import {
   MenuOption,
   NumberCoordinates,
   PowerUpType,
+  Stats,
   StatusEffectType,
   TerminalStatus,
   randomEnum,
@@ -77,6 +78,8 @@ export class Game {
 
   p5: P5;
 
+  stats: Stats;
+
   energyMax: number;
 
   energyCurrent: number;
@@ -122,6 +125,13 @@ export class Game {
     this.energyMax = 100;
     this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
     this.powerUps = [getStartingPowerUp()];
+    this.stats = {
+      totalMoves: 0,
+      totalLosses: 0,
+      totalTies: 0,
+      totalWins: 0,
+      powerUpsActivated: 0,
+    };
     if (isDebug('powerups')) {
       this.powerUps = [
         new PowerUp({type: PowerUpType.TELEPORT_RANDOM}),
@@ -324,6 +334,7 @@ export class Game {
         PowerUpType.TELEPORT_RANDOM,
       ].includes(this.currentAction.type)
     ) {
+      this.stats.powerUpsActivated--;
       this.resetCurrentAction();
       return;
     }
@@ -335,6 +346,7 @@ export class Game {
       });
       this.redrawActions();
       // Bail if we won
+      this.stats.totalMoves++;
       if (this.makePlay(`${x},${y}`, 'x')) {
         return;
       }
@@ -638,6 +650,7 @@ export class Game {
 
       default:
     }
+    this.stats.powerUpsActivated++;
     this.checkWinCondition();
   }
 
@@ -758,13 +771,17 @@ export class Game {
         nextLevelContent.replaceChildren(this.getEndLevelMessage(term, resolve));
         if (term.winner) {
           if (term.winner === 'x') {
+            this.stats.totalWins++;
             this.energyMax += 20;
             this.energyCurrent += Math.floor(this.energyMax * 0.3);
             if (this.energyCurrent > this.energyMax) {
               this.energyCurrent = this.energyMax;
             }
+          } else {
+            this.stats.totalLosses++;
           }
         } else if (term.isCat) {
+          this.stats.totalTies++;
           this.energyCurrent += Math.floor(this.energyMax * 0.15);
           if (this.energyCurrent > this.energyMax) {
             this.energyCurrent = this.energyMax;
@@ -783,14 +800,57 @@ export class Game {
     }
   }
 
+  private displayStats(): void {
+    const endGameResult = document.getElementById('end-game-result');
+    const endGameStats = document.getElementById('end-game-stats');
+    if (endGameStats && endGameResult) {
+      const stats = document.createElement('div');
+      stats.classList.add('stats-wrapper');
+      const wins = document.createElement('p');
+      wins.innerText = `Game Wins: ${this.stats.totalWins}`;
+      stats.appendChild(wins);
+      const losses = document.createElement('p');
+      losses.innerText = `Game Losses: ${this.stats.totalLosses}`;
+      stats.appendChild(losses);
+      const ties = document.createElement('p');
+      ties.innerText = `Game Ties: ${this.stats.totalTies}`;
+      stats.appendChild(ties);
+      const moves = document.createElement('p');
+      moves.innerText = `Moves: ${this.stats.totalMoves}`;
+      stats.appendChild(moves);
+      const powerUps = document.createElement('p');
+      powerUps.innerText = `Power-Ups Used: ${this.stats.powerUpsActivated}`;
+      stats.appendChild(powerUps);
+      endGameStats.replaceChildren(stats);
+
+      const result = document.createElement('div');
+      const level = document.createElement('p');
+      level.innerText = `Lost on level ${this.level.level}`;
+      result.appendChild(level);
+      const powerUpHeader = document.createElement('h2');
+      powerUpHeader.innerText = 'Power-Ups';
+      result.appendChild(powerUpHeader);
+      this.powerUps.forEach((powerUp) => {
+        const powerUpElement = document.createElement('p');
+        powerUpElement.classList.add('power-up');
+        powerUpElement.innerText = powerUp.displayName;
+        result.appendChild(powerUpElement);
+      });
+
+      endGameResult.replaceChildren(result);
+    }
+  }
+
   endGame(): void {
     const canvasContainer = document.getElementById('canvas-container');
     const endScreen = document.getElementById('end-screen');
     const topBar = document.getElementById('top-bar');
     const sidebar = document.getElementById('sidebar');
     if (canvasContainer && endScreen && topBar && sidebar) {
+      this.stats.totalLosses++;
       this.p5.remove();
       canvasContainer.innerHTML = '';
+      this.displayStats();
       this.gameEndCallback();
       endScreen.classList.add('visible');
       sidebar.classList.remove('visible');
@@ -798,10 +858,12 @@ export class Game {
     }
   }
 
-  checkLossCondition(): void {
+  checkLossCondition(): boolean {
     if (this.energyCurrent <= 0) {
       this.endGame();
+      return true;
     }
+    return false;
   }
 
   checkWinCondition(): boolean {
@@ -819,7 +881,9 @@ export class Game {
     if (isWin) {
       return true;
     }
-    this.checkLossCondition();
+    if (this.checkLossCondition()) {
+      return true;
+    }
 
     return false;
   }

@@ -27,6 +27,15 @@ export type State = {
   currentPlayer: Choice;
   maxDepth: number;
 };
+
+export type Stats = {
+  totalMoves: number;
+  totalTies: number;
+  totalWins: number;
+  totalLosses: number;
+  powerUpsActivated: number;
+};
+
 export type TerminalStatus = {
   isTerminal: boolean;
   isCat: boolean;
