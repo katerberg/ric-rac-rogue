@@ -11,7 +11,7 @@ type PowerUpProps = {
 function getDefaultCost(type: PowerUpType): number {
   switch (type) {
     case PowerUpType.EXTRA_TURN:
-      return 20;
+      return 30;
     case PowerUpType.FLIP_TILE:
       return 20;
     case PowerUpType.RESET_COOLDOWN:
