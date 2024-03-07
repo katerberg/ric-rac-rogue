@@ -4,8 +4,21 @@ export type Coordinate = `${number},${number}`;
 export type NumberCoordinates = {x: number; y: number};
 export type Choice = 'x' | 'o';
 export type Moves = Map<Coordinate, Choice | undefined>;
+
+export enum RuleType {
+  WIN_CON,
+  FIRST_MOVE,
+  TURN_ORDER,
+}
+export enum RuleWinType {
+  X_IN_A_ROW,
+}
+
 export type Rule = {
-  name: string;
+  type: RuleType;
+  winType?: RuleWinType;
+  firstPlayer?: Choice;
+  xInARow?: number;
 };
 export type State = {
   board: Board;
@@ -30,6 +43,8 @@ export enum PowerUpType {
   REMOVE_ROW,
   INCREASE_ENERGY,
   INCREASE_MAX_ENERGY,
+  INCREASE_REQUIRED_WIN,
+  DECREASE_REQUIRED_WIN,
 }
 
 export enum StatusEffectType {

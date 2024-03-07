@@ -3,6 +3,7 @@ import {COLORS} from '../colors';
 import {coordsToNumberCoords} from '../coordinatesHelper';
 import {getUrlParams, isDebug} from '../environment';
 import {getBestMove} from '../minimax';
+import {getRuleName} from '../rules';
 import {Choice, Coordinate, NumberCoordinates, PowerUpType, StatusEffectType, TerminalStatus} from '../types';
 import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
@@ -67,12 +68,14 @@ export class Game {
     this.energyMax = 100;
     this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
     this.powerUps = [
+      new PowerUp({type: PowerUpType.DECREASE_REQUIRED_WIN}),
+      // new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
       new PowerUp({type: PowerUpType.EXTRA_TURN}),
       new PowerUp({type: PowerUpType.FLIP_TILE}),
       new PowerUp({type: PowerUpType.RESET_COOLDOWN}),
       new PowerUp({type: PowerUpType.COPY_COLUMN}),
-      new PowerUp({type: PowerUpType.COPY_ROW}),
-      new PowerUp({type: PowerUpType.REMOVE_COLUMN}),
+      // new PowerUp({type: PowerUpType.COPY_ROW}),
+      // new PowerUp({type: PowerUpType.REMOVE_COLUMN}),
       new PowerUp({type: PowerUpType.REMOVE_ROW}),
       new PowerUp({type: PowerUpType.INCREASE_ENERGY}),
       new PowerUp({type: PowerUpType.INCREASE_MAX_ENERGY}),
@@ -158,7 +161,17 @@ export class Game {
         this.currentAction = null;
         return;
       }
-      if (this.currentAction && [PowerUpType.RESET_COOLDOWN, PowerUpType.FLIP_TILE].includes(this.currentAction.type)) {
+      if (
+        this.currentAction &&
+        [
+          PowerUpType.RESET_COOLDOWN,
+          PowerUpType.FLIP_TILE,
+          PowerUpType.REMOVE_COLUMN,
+          PowerUpType.REMOVE_ROW,
+          PowerUpType.COPY_COLUMN,
+          PowerUpType.COPY_ROW,
+        ].includes(this.currentAction.type)
+      ) {
         this.resetCurrentAction();
         return;
       }
@@ -184,7 +197,7 @@ export class Game {
               board: this.level.board,
               maxDepth: this.level.maxDepth,
               requiredWin: this.level.requiredWin,
-              currentPlayer: this.level.currentPlayer,
+              currentPlayer: 'x',
             },
             false,
           );
@@ -322,11 +335,14 @@ export class Game {
     const container = document.getElementById('rules-container');
     const level = document.getElementById('level-container');
     if (container && level) {
-      let innerHtml = '';
+      container.innerHTML = '';
       this.level.rules.forEach((rule) => {
-        innerHtml += `<div class="rule">${rule.name}</div>`;
+        const ruleDiv = document.createElement('div');
+        ruleDiv.classList.add('rule');
+        ruleDiv.innerText = getRuleName(rule);
+        container.appendChild(ruleDiv);
       });
-      container.innerHTML = innerHtml;
+
       level.innerHTML = `${this.level.level}`;
     }
   }
@@ -382,6 +398,20 @@ export class Game {
         break;
       case PowerUpType.INCREASE_MAX_ENERGY:
         this.energyMax += 10;
+        break;
+      case PowerUpType.INCREASE_ENERGY:
+        if (this.energyCurrent > this.energyMax) {
+          this.energyCurrent = this.energyMax;
+        }
+        break;
+      case PowerUpType.INCREASE_REQUIRED_WIN:
+        this.level.changeWinRequirement(this.level.requiredWin + 1);
+        this.redrawRules();
+        break;
+      case PowerUpType.DECREASE_REQUIRED_WIN:
+        this.level.changeWinRequirement(this.level.requiredWin - 1);
+        this.redrawRules();
+        this.checkWinCondition('x');
         break;
       case PowerUpType.FLIP_TILE:
       case PowerUpType.RESET_COOLDOWN:
@@ -474,11 +504,19 @@ export class Game {
     }
   }
 
-  makePlay(move: Coordinate, player: Choice): boolean {
-    this.level.board.selections.set(move, player);
+  checkWinCondition(player: Choice): boolean {
     const term = checkTerminal(this.level.board, this.level.requiredWin, player);
     if (term.isTerminal) {
       this.endLevel(term);
+      return true;
+    }
+    return false;
+  }
+
+  makePlay(move: Coordinate, player: Choice): boolean {
+    this.level.board.selections.set(move, player);
+    const isWin = this.checkWinCondition(player);
+    if (isWin) {
       return true;
     }
     this.checkLossCondition();

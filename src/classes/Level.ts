@@ -1,6 +1,6 @@
 import {getUrlParams, isDebug} from '../environment';
 import {generateRules} from '../rules';
-import {Choice, Coordinate, Rule} from '../types';
+import {Choice, Coordinate, Rule, RuleType} from '../types';
 import {Board} from './Board';
 
 export class Level {
@@ -9,8 +9,6 @@ export class Level {
   level: number;
 
   requiredWin: number;
-
-  currentPlayer: Choice;
 
   maxDepth: number;
 
@@ -60,21 +58,20 @@ export class Level {
       selections: new Map<Coordinate, Choice>(),
     });
     this.requiredWin = 3;
-    this.currentPlayer = 'x';
     this.maxDepth = 3;
 
     this.rules = generateRules(level);
-    if (this.rules.some((rule) => rule.name === 'Win: 3 in a row')) {
-      this.requiredWin = 3;
-    }
-    if (this.rules.some((rule) => rule.name === 'Win: 2 in a row')) {
-      this.requiredWin = 2;
-    }
-    if (this.rules.some((rule) => rule.name === 'X goes first')) {
-      this.currentPlayer = 'x';
-    }
-    if (this.rules.some((rule) => rule.name === 'O goes first')) {
+    this.requiredWin = this.rules.find((rule) => rule.type === RuleType.WIN_CON)?.xInARow ?? 3;
+    if (this.rules.find((rule) => rule.type === RuleType.FIRST_MOVE)?.firstPlayer === 'o') {
       this.board.setRandomMove('o');
+    }
+  }
+
+  changeWinRequirement(requiredWin: number): void {
+    this.requiredWin = requiredWin;
+    const winCon = this.rules.find((rule) => rule.type === RuleType.WIN_CON);
+    if (winCon?.xInARow) {
+      winCon.xInARow = requiredWin;
     }
   }
 }

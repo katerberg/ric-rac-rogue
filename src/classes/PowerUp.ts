@@ -26,6 +26,9 @@ function getDefaultCost(type: PowerUpType): number {
       return -30;
     case PowerUpType.INCREASE_MAX_ENERGY:
       return 30;
+    case PowerUpType.INCREASE_REQUIRED_WIN:
+    case PowerUpType.DECREASE_REQUIRED_WIN:
+      return 30;
     default:
       return 10;
   }
@@ -45,6 +48,9 @@ function getDefaultCooldown(type: PowerUpType): number {
     case PowerUpType.REMOVE_COLUMN:
     case PowerUpType.REMOVE_ROW:
       return 3;
+    case PowerUpType.INCREASE_REQUIRED_WIN:
+    case PowerUpType.DECREASE_REQUIRED_WIN:
+      return 5;
     case PowerUpType.INCREASE_ENERGY:
       return 8;
     case PowerUpType.INCREASE_MAX_ENERGY:
@@ -90,6 +96,10 @@ export class PowerUp {
         return 'Remove Column';
       case PowerUpType.REMOVE_ROW:
         return 'Remove Row';
+      case PowerUpType.INCREASE_REQUIRED_WIN:
+        return 'Boost Win Req';
+      case PowerUpType.DECREASE_REQUIRED_WIN:
+        return 'Trim Win Req';
       default:
         return 'Power Up';
     }
