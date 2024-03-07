@@ -1,5 +1,4 @@
 @import 'colors';
-@import 'button';
 $action-button-transition-duration: 100ms;
 
 #sidebar {
@@ -14,6 +13,10 @@ $action-button-transition-duration: 100ms;
     align-items: center;
 
     #actions-container {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+
         button {
             margin-bottom: 20px;
             $duration: 100ms;

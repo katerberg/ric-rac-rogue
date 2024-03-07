@@ -1,4 +1,5 @@
 @import 'colors';
+@import 'button';
 
 #top-bar {
     display: none;
@@ -79,5 +80,13 @@
                 }
             }
         }
+    }
+
+    .menu-selector {
+        @include button($color: $color-start-screen-button);
+        margin: 20px;
+        font-size: 14px;
+        padding: 10px;
+        letter-spacing: 2px;
     }
 }
