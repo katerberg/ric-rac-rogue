@@ -166,12 +166,20 @@ export class Game {
     if (!this.level.board.isMoveOnBoard({x, y})) {
       return;
     }
-    if (this.currentAction?.type === PowerUpType.BLOCKED_SPACE && this.level.board.isAvailableMove({x, y})) {
+    if (
+      this.currentAction?.type === PowerUpType.BLOCKED_SPACE &&
+      this.level.board.isAvailableMove({x, y}) &&
+      this.level.board.getAvailableMoves().length > 1
+    ) {
       this.blockSpace({x, y});
       this.currentAction = null;
       return;
     }
-    if (this.currentAction?.type === PowerUpType.FORCE_SPACE && this.level.board.isAvailableMove({x, y})) {
+    if (
+      this.currentAction?.type === PowerUpType.FORCE_SPACE &&
+      this.level.board.isAvailableMove({x, y}) &&
+      this.level.board.getAvailableMoves().length > 1
+    ) {
       this.forceSpace({x, y});
       this.currentAction = null;
       return;
