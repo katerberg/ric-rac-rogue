@@ -126,6 +126,8 @@ window.addEventListener('load', () => {
     startNewGame();
   } else if (isDebug('credits')) {
     openCredits();
+  } else if (isDebug('howtoplay')) {
+    openHowToPlay();
   } else {
     openStartMenu();
   }
