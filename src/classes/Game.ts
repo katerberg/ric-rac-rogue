@@ -10,6 +10,7 @@ import {Level} from './Level';
 import '../top-bar.scss';
 import '../next-level.scss';
 import '../sidebar.scss';
+import '../menu.scss';
 import {PowerUp, getStartingPowerUp} from './PowerUp';
 import {StatusEffect} from './StatusEffect';
 
@@ -20,6 +21,22 @@ const verticalPadding = 80;
 const horizontalPadding = 0;
 
 const ENERGY_COST_MOVE = 10;
+function recreateNode(el: HTMLElement, withChildren?: boolean): Node {
+  let newNode: Node;
+  if (withChildren) {
+    newNode = el.cloneNode(true);
+    el.parentNode?.replaceChild(newNode, el);
+  } else {
+    newNode = el.cloneNode(false);
+    while (el.hasChildNodes()) {
+      if (el.firstChild) {
+        newNode.appendChild(el.firstChild);
+      }
+    }
+    el.parentNode?.replaceChild(newNode, el);
+  }
+  return newNode;
+}
 
 export class Game {
   level: Level;
@@ -94,6 +111,37 @@ export class Game {
     this.currentAction = null;
     this.level = new Level(isDebug('level') ? Number.parseInt(getUrlParams().get('level') || '1', 10) : 1);
     this.gameEndCallback = gameEndCallback;
+    const previousMenuButton = document.getElementById('menu-button');
+    if (previousMenuButton) {
+      const menuButton = recreateNode(previousMenuButton);
+      menuButton.addEventListener('click', () => {
+        const menu = document.getElementById('menu');
+        if (menu) {
+          this.loading = true;
+          menu.classList.add('visible');
+          const menuPromise = new Promise<'cancel'>((resolve) => {
+            const previousMenuCancelButton = document.getElementById('menu-cancel-button');
+            if (previousMenuCancelButton) {
+              const menuCancelButton = recreateNode(previousMenuCancelButton);
+              menuCancelButton.addEventListener('click', () => {
+                resolve('cancel');
+              });
+            }
+          });
+          menuPromise.then((resolveState: 'cancel') => {
+            if (resolveState === 'cancel') {
+              this.loading = false;
+              this.startTime = Date.now();
+              menu.classList.remove('visible');
+            }
+          });
+        }
+      });
+
+      if (isDebug('gamemenu')) {
+        (menuButton as HTMLElement).click();
+      }
+    }
   }
 
   private resizeP(): void {

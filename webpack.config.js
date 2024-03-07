@@ -20,6 +20,7 @@ const config = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/index.html',
+      favicon: 'src/assets/favicon-32x32.png',
     }),
     new CopyPlugin({
       patterns: [{from: 'src/assets', to: 'assets'}],
