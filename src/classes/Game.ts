@@ -20,6 +20,7 @@ import '../top-bar.scss';
 import '../next-level.scss';
 import '../sidebar.scss';
 import '../menu.scss';
+import '../end-game.scss';
 import {PowerUp, getStartingPowerUp} from './PowerUp';
 import {StatusEffect} from './StatusEffect';
 
@@ -784,14 +785,14 @@ export class Game {
 
   endGame(): void {
     const canvasContainer = document.getElementById('canvas-container');
-    const startScreen = document.getElementById('start-screen');
+    const endScreen = document.getElementById('end-screen');
     const topBar = document.getElementById('top-bar');
     const sidebar = document.getElementById('sidebar');
-    if (canvasContainer && startScreen && topBar && sidebar) {
+    if (canvasContainer && endScreen && topBar && sidebar) {
       this.p5.remove();
       canvasContainer.innerHTML = '';
       this.gameEndCallback();
-      startScreen.classList.add('visible');
+      endScreen.classList.add('visible');
       sidebar.classList.remove('visible');
       topBar.classList.remove('visible');
     }

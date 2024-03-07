@@ -58,7 +58,7 @@ describe('snapshot', () => {
     });
   });
   describe('limited depth', () => {
-    it('4x4 with 3 in a row', () => {
+    it('4x4 with 3 in a row depth 10', () => {
       const input = {...getEmptyBoardState(4, 4), maxDepth: 10};
 
       const time = new Date().getTime();
@@ -67,7 +67,34 @@ describe('snapshot', () => {
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
 
-    it('4x4 with 4 in a row', () => {
+    it('5x5 with 3 in a row depth 6', () => {
+      const input = {...getEmptyBoardState(5, 5), maxDepth: 6};
+
+      const time = new Date().getTime();
+      getBestMove(input);
+
+      expect(new Date().getTime() - time).toMatchSnapshot();
+    });
+
+    it('5x5 with 4 in a row depth 6', () => {
+      const input = {...getEmptyBoardState(5, 5), requiredWin: 4, maxDepth: 6};
+
+      const time = new Date().getTime();
+      getBestMove(input);
+
+      expect(new Date().getTime() - time).toMatchSnapshot();
+    });
+
+    it('6x6 with 3 in a row depth 6', () => {
+      const input = {...getEmptyBoardState(6, 6), maxDepth: 6};
+
+      const time = new Date().getTime();
+      getBestMove(input);
+
+      expect(new Date().getTime() - time).toMatchSnapshot();
+    });
+
+    it('4x4 with 4 in a row depth 10', () => {
       const input = {...getEmptyBoardState(4, 4), requiredWin: 4, maxDepth: 10};
 
       const time = new Date().getTime();

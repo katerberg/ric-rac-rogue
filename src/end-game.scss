@@ -1,0 +1,27 @@
+@import 'colors';
+@import 'button';
+
+$button-transition-duration: 100ms;
+
+#end-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+
+    &.visible {
+        display: flex;
+        flex-direction: column;
+    }
+
+    button {
+        @include button($color: $color-end-game);
+        position: absolute;
+        bottom: 5em;
+        margin-top: 5em;
+
+        &::before {
+            opacity: 0.4;
+        }
+    }
+}

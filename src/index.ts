@@ -1,5 +1,6 @@
 import './index.scss';
 import './start-screen.scss';
+import './how-to-play.scss';
 import './credits.scss';
 import {Howl} from 'howler';
 import {Game} from './classes/Game';
@@ -14,6 +15,31 @@ function openCredits(): void {
   if (startScreen && creditsScreen) {
     startScreen.classList.remove('visible');
     creditsScreen.classList.add('visible');
+  }
+}
+function openHowToPlay(): void {
+  const startScreen = document.getElementById('start-screen');
+  const howToPlayScreen = document.getElementById('how-to-play-screen');
+  if (startScreen && howToPlayScreen) {
+    startScreen.classList.remove('visible');
+    howToPlayScreen.classList.add('visible');
+  }
+}
+
+function closeEndScreen(): void {
+  const startScreen = document.getElementById('start-screen');
+  const endScreen = document.getElementById('end-screen');
+  if (startScreen && endScreen) {
+    startScreen.classList.add('visible');
+    endScreen.classList.remove('visible');
+  }
+}
+function closeHowToPlay(): void {
+  const startScreen = document.getElementById('start-screen');
+  const howToPlayScreen = document.getElementById('how-to-play-screen');
+  if (startScreen && howToPlayScreen) {
+    startScreen.classList.add('visible');
+    howToPlayScreen.classList.remove('visible');
   }
 }
 
@@ -65,10 +91,23 @@ function bindClickListeners(): void {
   const startGameButton = document.getElementById('start-game-button');
   const creditsButton = document.getElementById('credits-button');
   const creditsCloseButton = document.getElementById('credits-close-button');
-  if (startGameButton && creditsButton && creditsCloseButton) {
+  const endScreenCloseButton = document.getElementById('end-screen-close-button');
+  const howToPlayButton = document.getElementById('how-to-play-button');
+  const howToPlayCloseButton = document.getElementById('how-to-play-close-button');
+  if (
+    startGameButton &&
+    creditsButton &&
+    creditsCloseButton &&
+    howToPlayCloseButton &&
+    endScreenCloseButton &&
+    howToPlayButton
+  ) {
     startGameButton.addEventListener('click', startNewGame);
     creditsButton.addEventListener('click', openCredits);
+    howToPlayButton.addEventListener('click', openHowToPlay);
     creditsCloseButton.addEventListener('click', closeCredits);
+    endScreenCloseButton.addEventListener('click', closeEndScreen);
+    howToPlayCloseButton.addEventListener('click', closeHowToPlay);
   }
 }
 
