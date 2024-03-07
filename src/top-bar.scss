@@ -1,0 +1,83 @@
+@import 'colors';
+
+#top-bar {
+    display: none;
+
+    &.visible {
+        display: flex;
+    }
+
+    h2 {
+        display: inline-block;
+        margin: 20px;
+    }
+
+    .effects {
+        display: flex;
+        flex-grow: 1;
+
+        .rule,
+        .status {
+            padding: 10px;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        #rules-container {
+            display: flex;
+            align-items: center;
+            overflow-x: scroll;
+
+            .rule {
+                border: 1px solid $color-game-rule;
+            }
+        }
+
+        #statuses-container {
+            display: flex;
+            align-items: center;
+            overflow-x: scroll;
+
+
+            .status {
+                transition: all 0.3s ease;
+                position: relative;
+
+                line-height: 42px;
+                padding: 0 10px;
+                color: $color-game-status;
+                border-left: $color-game-status 2px solid;
+                border-right: $color-game-status 2px solid;
+
+
+                &::before,
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    height: 2px;
+                    background: #21ebff;
+                    box-shadow: 0 0 5px #21ebff, 0 0 5px #21ebff inset;
+                    width: 100%;
+                    transition: 800ms ease all;
+                }
+
+                &::after {
+                    right: inherit;
+                    top: inherit;
+                    left: 0;
+                    bottom: 0;
+                }
+
+                &:hover {
+
+                    &::before,
+                    &::after {
+                        width: 20%;
+                    }
+                }
+            }
+        }
+    }
+}

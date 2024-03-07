@@ -7,6 +7,7 @@ import {getRuleName} from '../rules';
 import {Choice, Coordinate, NumberCoordinates, PowerUpType, StatusEffectType, TerminalStatus} from '../types';
 import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
+import '../top-bar.scss';
 import '../next-level.scss';
 import '../sidebar.scss';
 import {PowerUp, getStartingPowerUp} from './PowerUp';
@@ -134,6 +135,11 @@ export class Game {
     }
   }
 
+  private removeStatusEffect(position: number): void {
+    this.activeStatusEffects.splice(position, 1);
+    this.redrawRules();
+  }
+
   private isTimeForClick(): boolean {
     return !this.loading && this.startTime + 100 < Date.now();
   }
@@ -210,15 +216,15 @@ export class Game {
       // Handle extra turn
       const extraTurnPosition = this.getStatusEffectPosition(StatusEffectType.EXTRA_TURN);
       if (extraTurnPosition !== -1) {
-        this.activeStatusEffects.splice(extraTurnPosition, 1);
+        this.removeStatusEffect(extraTurnPosition);
         return;
       }
       // Do their move
       this.loading = true;
       document.getElementById('loading')?.classList.add('loading');
       setTimeout(() => {
-        const forceRandomPosition = this.getStatusEffectPosition(StatusEffectType.FORCE_RANDOM);
         let move;
+        const forceRandomPosition = this.getStatusEffectPosition(StatusEffectType.FORCE_RANDOM);
         if (forceRandomPosition !== -1) {
           move = this.level.board.getRandomMove();
         } else {
@@ -243,6 +249,7 @@ export class Game {
             return activeStatusEffect;
           })
           .filter((activeStatusEffect) => activeStatusEffect.turnsRemaining > 0);
+        this.redrawRules();
       }, 10);
     }
   }
@@ -362,18 +369,25 @@ export class Game {
   }
 
   private redrawRules(): void {
-    const container = document.getElementById('rules-container');
     const level = document.getElementById('level-container');
-    if (container && level) {
-      container.innerHTML = '';
+    const rulesContainer = document.getElementById('rules-container');
+    const statusesContainer = document.getElementById('statuses-container');
+    if (rulesContainer && level && statusesContainer) {
+      level.innerHTML = `${this.level.level}`;
+      rulesContainer.innerHTML = '';
       this.level.rules.forEach((rule) => {
         const ruleDiv = document.createElement('div');
         ruleDiv.classList.add('rule');
         ruleDiv.innerText = getRuleName(rule);
-        container.appendChild(ruleDiv);
+        rulesContainer.appendChild(ruleDiv);
       });
-
-      level.innerHTML = `${this.level.level}`;
+      statusesContainer.innerHTML = '';
+      this.activeStatusEffects.forEach((statusEffect) => {
+        const statusDiv = document.createElement('div');
+        statusDiv.classList.add('status');
+        statusDiv.innerText = statusEffect.name;
+        statusesContainer.appendChild(statusDiv);
+      });
     }
   }
 
@@ -425,9 +439,11 @@ export class Game {
     switch (powerUp.type) {
       case PowerUpType.EXTRA_TURN:
         this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.EXTRA_TURN}));
+        this.redrawRules();
         break;
       case PowerUpType.FORCE_RANDOM:
         this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.FORCE_RANDOM}));
+        this.redrawRules();
         break;
       case PowerUpType.INCREASE_MAX_ENERGY:
         this.energyMax += 10;

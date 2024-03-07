@@ -85,7 +85,7 @@ $action-button-transition-duration: 100ms;
     animation: fly $speed linear infinite;
     transform-style: preserve-3d;
 
-    &:before,
+    &::before,
     &:after {
         content: "";
         position: absolute;
@@ -94,7 +94,7 @@ $action-button-transition-duration: 100ms;
         box-shadow: inherit;
     }
 
-    &:before {
+    &::before {
         transform: translateZ(-$depth + px);
         animation: fade1 $speed linear infinite;
     }

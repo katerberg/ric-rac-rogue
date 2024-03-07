@@ -27,33 +27,6 @@ button {
     height: 100%;
 }
 
-#top-bar {
-    display: none;
-
-    &.visible {
-        display: flex;
-    }
-
-    h2 {
-        display: inline-block;
-        margin: 20px;
-    }
-
-    #rules-container {
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-        overflow-x: scroll;
-
-        .rule {
-            border: 1px solid $color-game-axes;
-            padding: 10px;
-            display: inline-block;
-            margin-right: 10px;
-        }
-    }
-}
-
 .gameplay-area {
     display: flex;
 
