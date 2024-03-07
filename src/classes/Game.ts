@@ -9,7 +9,7 @@ import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
 import '../next-level.scss';
 import '../sidebar.scss';
-import {PowerUp} from './PowerUp';
+import {PowerUp, getStartingPowerUp} from './PowerUp';
 import {StatusEffect} from './StatusEffect';
 
 const gameAxisWidth = 10;
@@ -67,19 +67,22 @@ export class Game {
     this.loading = false;
     this.energyMax = 100;
     this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
-    this.powerUps = [
-      new PowerUp({type: PowerUpType.DECREASE_REQUIRED_WIN}),
-      // new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
-      new PowerUp({type: PowerUpType.EXTRA_TURN}),
-      new PowerUp({type: PowerUpType.FLIP_TILE}),
-      new PowerUp({type: PowerUpType.RESET_COOLDOWN}),
-      new PowerUp({type: PowerUpType.COPY_COLUMN}),
-      // new PowerUp({type: PowerUpType.COPY_ROW}),
-      // new PowerUp({type: PowerUpType.REMOVE_COLUMN}),
-      new PowerUp({type: PowerUpType.REMOVE_ROW}),
-      new PowerUp({type: PowerUpType.INCREASE_ENERGY}),
-      new PowerUp({type: PowerUpType.INCREASE_MAX_ENERGY}),
-    ];
+    this.powerUps = [getStartingPowerUp()];
+    if (isDebug('powerups')) {
+      this.powerUps = [
+        new PowerUp({type: PowerUpType.DECREASE_REQUIRED_WIN}),
+        // new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
+        new PowerUp({type: PowerUpType.EXTRA_TURN}),
+        new PowerUp({type: PowerUpType.FLIP_TILE}),
+        new PowerUp({type: PowerUpType.RESET_COOLDOWN}),
+        new PowerUp({type: PowerUpType.COPY_COLUMN}),
+        // new PowerUp({type: PowerUpType.COPY_ROW}),
+        // new PowerUp({type: PowerUpType.REMOVE_COLUMN}),
+        new PowerUp({type: PowerUpType.REMOVE_ROW}),
+        new PowerUp({type: PowerUpType.INCREASE_ENERGY}),
+        new PowerUp({type: PowerUpType.INCREASE_MAX_ENERGY}),
+      ];
+    }
     this.activeStatusEffects = [];
     this.currentAction = null;
     this.level = new Level(isDebug('level') ? Number.parseInt(getUrlParams().get('level') || '1', 10) : 1);

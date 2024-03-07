@@ -105,3 +105,16 @@ export class PowerUp {
     }
   }
 }
+
+export function getStartingPowerUp(): PowerUp {
+  const startingPowerUpOptions = [
+    new PowerUp({type: PowerUpType.FLIP_TILE}),
+    new PowerUp({type: PowerUpType.COPY_COLUMN}),
+    new PowerUp({type: PowerUpType.COPY_ROW}),
+    new PowerUp({type: PowerUpType.REMOVE_ROW}),
+    new PowerUp({type: PowerUpType.REMOVE_COLUMN}),
+    new PowerUp({type: PowerUpType.EXTRA_TURN}),
+  ];
+
+  return startingPowerUpOptions[Math.floor(Math.random() * startingPowerUpOptions.length)];
+}
