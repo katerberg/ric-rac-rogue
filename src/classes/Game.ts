@@ -294,7 +294,7 @@ export class Game {
           })
           .filter((activeStatusEffect) => activeStatusEffect.turnsRemaining > 0);
         this.redrawRules();
-      }, 10);
+      }, 50);
     }
   }
 
