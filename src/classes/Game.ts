@@ -822,7 +822,7 @@ export class Game {
     this.redrawRules();
     this.redrawActions();
     if (isDebug('endlevel')) {
-      this.endLevel({isTerminal: true, winner: 'x', isCat: false, isWinner: true});
+      this.endLevel({isTerminal: true, winner: null, isCat: true, isWinner: false});
     }
   }
 }
