@@ -11,7 +11,7 @@ function getWinCondition(level: number): Rule {
   return {
     type: RuleType.WIN_CON,
     winType: RuleWinType.X_IN_A_ROW,
-    xInARow: 2,
+    xInARow: Math.ceil(Math.random() * 3) + 1,
   };
 }
 

@@ -254,11 +254,13 @@ export class Game {
         const forceSpacePosition = this.getStatusEffectPosition(StatusEffectType.FORCE_SPACE);
         if (forceSpacePosition !== -1) {
           const {target} = this.activeStatusEffects[forceSpacePosition];
-          console.log('forced space chosen', target);
-          move = this.level.board.isAvailableMove(target!) ? target : this.level.board.getRandomMove();
+
+          const isStillValidMove =
+            this.level.board.isMoveOnBoard(target!) &&
+            this.level.board.selections.get(numberCoordsToCoords(target!)) === 'forced';
+          move = isStillValidMove ? target : this.level.board.getRandomMove();
         } else if (forceRandomPosition !== -1) {
           move = this.level.board.getRandomMove();
-          console.log('random space chosen', move);
         } else {
           move = getBestMove(
             {
@@ -269,7 +271,6 @@ export class Game {
             },
             false,
           ).bestMove;
-          console.log('best space chosen', move);
         }
         document.getElementById('loading')?.classList.remove('loading');
         this.loading = false;
@@ -285,7 +286,9 @@ export class Game {
               activeStatusEffect.turnsRemaining === 0 &&
               [StatusEffectType.FORCE_SPACE, StatusEffectType.BLOCKED_SPACE].includes(activeStatusEffect.type)
             ) {
-              this.level.board.selections.delete(numberCoordsToCoords(activeStatusEffect.target));
+              if (!this.level.board.isPlayerMove(activeStatusEffect.target)) {
+                this.level.board.selections.delete(numberCoordsToCoords(activeStatusEffect.target));
+              }
             }
             return activeStatusEffect;
           })

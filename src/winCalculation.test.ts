@@ -1,4 +1,4 @@
-import {Choice, Coordinate} from './types';
+import {Choice, Coordinate, Moves, SpaceStatusEffect} from './types';
 import {
   isWin,
   getTotalColumnScore,
@@ -11,8 +11,10 @@ import {
   isCat,
 } from './winCalculation';
 
-function objectToMap(obj: {[key: Coordinate]: Choice}): Map<Coordinate, Choice> {
-  return new Map<Coordinate, Choice>(Object.entries(obj).map(([key, value]) => [key as Coordinate, value]));
+function objectToMap(obj: {[key: Coordinate]: Choice | SpaceStatusEffect}): Moves {
+  return new Map<Coordinate, Choice | SpaceStatusEffect>(
+    Object.entries(obj).map(([key, value]) => [key as Coordinate, value]),
+  );
 }
 
 describe('winCalculation', () => {
@@ -49,6 +51,12 @@ describe('winCalculation', () => {
     });
     it('detects two long row wins', () => {
       expect(isWin(objectToMap({'0,0': 'x', '1,0': 'x', '0,1': 'o'}), 2, 2, 2)).toBe('x');
+    });
+
+    it('is false when blocked is one of the pieces', () => {
+      expect(isWin(objectToMap({'0,0': 'o', '1,0': 'o', '1,1': 'x', '2,0': 'blocked', '0,2': 'x'}), 3, 3, 3)).toBe(
+        undefined,
+      );
     });
   });
 

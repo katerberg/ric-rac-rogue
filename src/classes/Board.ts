@@ -44,6 +44,10 @@ export class Board {
     return this.selections.get(`${x},${y}`) !== undefined && this.isMoveOnBoard({x, y});
   }
 
+  isPlayerMove({x, y}: NumberCoordinates): boolean {
+    return ['x', 'o'].includes(`${this.selections.get(`${x},${y}`)}`) && this.isMoveOnBoard({x, y});
+  }
+
   flipTile({x, y}: NumberCoordinates): boolean {
     if (this.isTakenMove({x, y})) {
       const currentValue = this.selections.get(`${x},${y}`);

@@ -4,8 +4,8 @@ import {Choice, Moves, NumberCoordinates, TerminalStatus} from './types';
 function isColumnWin(selections: Moves, columns: number, rows: number, winNumber: number): Choice | undefined {
   for (let x = 0; x < columns; x++) {
     for (let y = 0; y < rows - winNumber + 1; y++) {
-      let isWinningColumn = selections.get(`${x},${y}`) as Choice | undefined;
-      if (isWinningColumn === 'o' || isWinningColumn === 'x') {
+      let isWinningColumn = selections.get(`${x},${y}`);
+      if (isWinningColumn) {
         for (let winCheck = 1; winCheck < winNumber; winCheck++) {
           if (selections.get(`${x},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
             isWinningColumn = undefined;
@@ -13,7 +13,7 @@ function isColumnWin(selections: Moves, columns: number, rows: number, winNumber
           }
         }
       }
-      if (isWinningColumn) {
+      if (isWinningColumn === 'x' || isWinningColumn === 'o') {
         return isWinningColumn;
       }
     }
@@ -24,8 +24,8 @@ function isColumnWin(selections: Moves, columns: number, rows: number, winNumber
 function isRowWin(selections: Moves, columns: number, rows: number, winNumber: number): Choice | undefined {
   for (let x = 0; x < columns - winNumber + 1; x++) {
     for (let y = 0; y < rows; y++) {
-      let isWinningRow = selections.get(`${x},${y}`) as Choice | undefined;
-      if (isWinningRow === 'o' || isWinningRow === 'x') {
+      let isWinningRow = selections.get(`${x},${y}`);
+      if (isWinningRow) {
         for (let winCheck = 1; winCheck < winNumber; winCheck++) {
           if (selections.get(`${x + winCheck},${y}`) !== selections.get(`${x},${y}`)) {
             isWinningRow = undefined;
@@ -33,7 +33,7 @@ function isRowWin(selections: Moves, columns: number, rows: number, winNumber: n
           }
         }
       }
-      if (isWinningRow) {
+      if (isWinningRow === 'o' || isWinningRow === 'x') {
         return isWinningRow;
       }
     }
@@ -44,8 +44,8 @@ function isRowWin(selections: Moves, columns: number, rows: number, winNumber: n
 function isDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): Choice | undefined {
   for (let x = 0; x < columns - winNumber + 1; x++) {
     for (let y = 0; y < rows - winNumber + 1; y++) {
-      let isWinningDiagonal = selections.get(`${x},${y}`) as Choice | undefined;
-      if (isWinningDiagonal === 'o' || isWinningDiagonal === 'x') {
+      let isWinningDiagonal = selections.get(`${x},${y}`);
+      if (isWinningDiagonal) {
         for (let winCheck = 1; winCheck < winNumber; winCheck++) {
           if (selections.get(`${x + winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
             isWinningDiagonal = undefined;
@@ -53,7 +53,7 @@ function isDiagonalWin(selections: Moves, columns: number, rows: number, winNumb
           }
         }
       }
-      if (isWinningDiagonal) {
+      if (isWinningDiagonal === 'o' || isWinningDiagonal === 'x') {
         return isWinningDiagonal;
       }
     }
@@ -64,8 +64,8 @@ function isDiagonalWin(selections: Moves, columns: number, rows: number, winNumb
 function isReverseDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): Choice | undefined {
   for (let x = winNumber - 1; x < columns; x++) {
     for (let y = 0; y < rows - winNumber + 1; y++) {
-      let isWinningDiagonal = selections.get(`${x},${y}`) as Choice | undefined;
-      if (isWinningDiagonal === 'o' || isWinningDiagonal === 'x') {
+      let isWinningDiagonal = selections.get(`${x},${y}`);
+      if (isWinningDiagonal) {
         for (let winCheck = 1; winCheck < winNumber; winCheck++) {
           if (selections.get(`${x - winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
             isWinningDiagonal = undefined;
@@ -73,7 +73,7 @@ function isReverseDiagonalWin(selections: Moves, columns: number, rows: number, 
           }
         }
       }
-      if (isWinningDiagonal) {
+      if (isWinningDiagonal === 'o' || isWinningDiagonal === 'x') {
         return isWinningDiagonal;
       }
     }
