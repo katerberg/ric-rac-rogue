@@ -111,8 +111,6 @@ export function getStartingPowerUp(): PowerUp {
     new PowerUp({type: PowerUpType.FLIP_TILE}),
     new PowerUp({type: PowerUpType.COPY_COLUMN}),
     new PowerUp({type: PowerUpType.COPY_ROW}),
-    new PowerUp({type: PowerUpType.REMOVE_ROW}),
-    new PowerUp({type: PowerUpType.REMOVE_COLUMN}),
     new PowerUp({type: PowerUpType.EXTRA_TURN}),
   ];
 

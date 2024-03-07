@@ -141,26 +141,31 @@ export class Game {
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
     if (this.level.board.isMoveOnBoard({x, y})) {
       if (this.currentAction?.type === PowerUpType.FLIP_TILE && this.level.board.flipTile({x, y})) {
+        this.checkWinCondition('x');
         this.currentAction = null;
         return;
       }
       if (this.currentAction?.type === PowerUpType.REMOVE_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
         this.level.board.removeColumn(x);
+        this.checkWinCondition('x');
         this.currentAction = null;
         return;
       }
       if (this.currentAction?.type === PowerUpType.REMOVE_ROW && this.level.board.isMoveOnBoard({x, y})) {
         this.level.board.removeRow(y);
+        this.checkWinCondition('x');
         this.currentAction = null;
         return;
       }
       if (this.currentAction?.type === PowerUpType.COPY_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
         this.level.board.copyColumn(x);
+        this.checkWinCondition('x');
         this.currentAction = null;
         return;
       }
       if (this.currentAction?.type === PowerUpType.COPY_ROW && this.level.board.isMoveOnBoard({x, y})) {
         this.level.board.copyRow(y);
+        this.checkWinCondition('x');
         this.currentAction = null;
         return;
       }
@@ -414,7 +419,6 @@ export class Game {
       case PowerUpType.DECREASE_REQUIRED_WIN:
         this.level.changeWinRequirement(this.level.requiredWin - 1);
         this.redrawRules();
-        this.checkWinCondition('x');
         break;
       case PowerUpType.FLIP_TILE:
       case PowerUpType.RESET_COOLDOWN:
@@ -427,6 +431,7 @@ export class Game {
 
       default:
     }
+    this.checkWinCondition('x');
   }
 
   private endLevel(term: TerminalStatus): void {
