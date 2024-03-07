@@ -1,6 +1,6 @@
 import {Rule, RuleType, RuleWinType} from './types';
 
-function getWinCondition(level: number): Rule {
+function getWinCondition(level: number, columns: number, rows: number): Rule {
   if (level === 1) {
     return {
       type: RuleType.WIN_CON,
@@ -11,7 +11,7 @@ function getWinCondition(level: number): Rule {
   return {
     type: RuleType.WIN_CON,
     winType: RuleWinType.X_IN_A_ROW,
-    xInARow: Math.ceil(Math.random() * 3) + 1,
+    xInARow: Math.min(Math.ceil(Math.random() * Math.max(columns, rows)) + 1, Math.max(columns, rows)),
   };
 }
 
@@ -28,9 +28,19 @@ function getFirstMoveRule(level: number): Rule {
   };
 }
 
-export function generateRules(level: number): Rule[] {
+export function generateNumberOfAxes(level: number): number {
+  if (level === 1) {
+    return 3;
+  }
+  if (level < 6) {
+    return Math.ceil(Math.random() * 3) + 1;
+  }
+  return Math.ceil(Math.random() * 3) + 2;
+}
+
+export function generateRules(level: number, columns: number, rows: number): Rule[] {
   return [
-    getWinCondition(level),
+    getWinCondition(level, columns, rows),
     {
       type: RuleType.TURN_ORDER,
     },

@@ -1,5 +1,5 @@
 import {getUrlParams, isDebug} from '../environment';
-import {generateRules} from '../rules';
+import {generateNumberOfAxes, generateRules} from '../rules';
 import {Choice, Coordinate, Rule, RuleType} from '../types';
 import {Board} from './Board';
 
@@ -43,13 +43,13 @@ export class Level {
   // 9:
   // Boss: one of the fancy situations (quantum, ultimate, ????)
   constructor(level: number) {
-    let columns = 3;
-    let rows = 3;
+    let columns = generateNumberOfAxes(level);
+    let rows = generateNumberOfAxes(level);
 
     if (isDebug()) {
       const urlParams = getUrlParams();
-      columns = Number.parseInt(urlParams.get('columns') || '3', 10);
-      rows = Number.parseInt(urlParams.get('rows') || '3', 10);
+      columns = Number.parseInt(urlParams.get('columns') || `${generateNumberOfAxes(level)}`, 10);
+      rows = Number.parseInt(urlParams.get('rows') || `${generateNumberOfAxes(level)}`, 10);
     }
     this.level = level;
     this.board = new Board({
@@ -60,7 +60,7 @@ export class Level {
     this.requiredWin = 3;
     this.maxDepth = 6;
 
-    this.rules = generateRules(level);
+    this.rules = generateRules(level, columns, rows);
     this.requiredWin = this.rules.find((rule) => rule.type === RuleType.WIN_CON)?.xInARow ?? 3;
     if (this.rules.find((rule) => rule.type === RuleType.FIRST_MOVE)?.firstPlayer === 'o') {
       this.board.setRandomMove('o');
