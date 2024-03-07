@@ -123,7 +123,7 @@ export class PowerUp {
       case PowerUpType.DECREASE_REQUIRED_WIN:
         return 'Trim Win Req';
       case PowerUpType.TELEPORT_RANDOM:
-        return 'Teleport';
+        return 'Random Warp';
       default:
         return 'Power Up';
     }

@@ -16,6 +16,8 @@ $action-button-transition-duration: 100ms;
         width: 100%;
         padding-left: 20px;
         padding-right: 20px;
+        overflow-y: auto;
+        margin-bottom: 80px;
 
         button {
             margin-bottom: 20px;
