@@ -12,6 +12,7 @@ import {
   PowerUpType,
   StatusEffectType,
   TerminalStatus,
+  randomEnum,
 } from '../types';
 import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
@@ -44,6 +45,30 @@ function recreateNode(el: HTMLElement, withChildren?: boolean): Node {
     el.parentNode?.replaceChild(newNode, el);
   }
   return newNode;
+}
+
+function getActionButton(powerUp: PowerUp): HTMLElement {
+  const button = document.createElement('button');
+  if (powerUp.cooldownRemaining > 0) {
+    button.classList.add('disabled');
+  }
+  const title = document.createElement('div');
+  title.classList.add('title');
+  title.innerHTML = powerUp.displayName;
+  const disabledStatus = document.createElement('div');
+  disabledStatus.classList.add('disabled-status');
+  disabledStatus.innerHTML = `<span class="icon">⏱</span>${powerUp.cooldownRemaining} left`;
+  const cooldown = document.createElement('div');
+  cooldown.classList.add('cooldown');
+  cooldown.innerHTML = `<span class="icon">⏱</span>${powerUp.cooldown}`;
+  const cost = document.createElement('div');
+  cost.classList.add('cost');
+  cost.innerHTML = `<span class="icon">⚡︎</span>${powerUp.cost}`;
+  button.appendChild(title);
+  button.appendChild(disabledStatus);
+  button.appendChild(cooldown);
+  button.appendChild(cost);
+  return button;
 }
 
 export class Game {
@@ -545,10 +570,7 @@ export class Game {
     if (actionsContainer) {
       actionsContainer.innerHTML = '';
       this.powerUps.forEach((powerUp) => {
-        const button = document.createElement('button');
-        if (powerUp.cooldownRemaining > 0) {
-          button.classList.add('disabled');
-        }
+        const button = getActionButton(powerUp);
         button.addEventListener('click', () => {
           if (powerUp.cooldownRemaining < 1) {
             this.energyCurrent -= powerUp.cost;
@@ -562,22 +584,6 @@ export class Game {
             this.redrawActions();
           }
         });
-        const title = document.createElement('div');
-        title.classList.add('title');
-        title.innerHTML = powerUp.displayName;
-        const disabledStatus = document.createElement('div');
-        disabledStatus.classList.add('disabled-status');
-        disabledStatus.innerHTML = `<span class="icon">⏱</span>${powerUp.cooldownRemaining} left`;
-        const cooldown = document.createElement('div');
-        cooldown.classList.add('cooldown');
-        cooldown.innerHTML = `<span class="icon">⏱</span>${powerUp.cooldown}`;
-        const cost = document.createElement('div');
-        cost.classList.add('cost');
-        cost.innerHTML = `<span class="icon">⚡︎</span>${powerUp.cost}`;
-        button.appendChild(title);
-        button.appendChild(disabledStatus);
-        button.appendChild(cooldown);
-        button.appendChild(cost);
         actionsContainer.appendChild(button);
       });
     }
@@ -627,7 +633,71 @@ export class Game {
     this.checkWinCondition();
   }
 
-  private getEndLevelMessage(term: TerminalStatus): Node {
+  private getPowerUpOptions(): PowerUp[] {
+    const powerUpOptions: PowerUp[] = [];
+    let counter = 0;
+    while (powerUpOptions.length < 3 && counter++ < 100) {
+      const powerUp = randomEnum(PowerUpType);
+      if (
+        !this.powerUps.some((powerUpOption) => powerUpOption.type === powerUp) &&
+        !powerUpOptions.some((powerUpOption) => powerUpOption.type === powerUp)
+      ) {
+        powerUpOptions.push(new PowerUp({type: powerUp}));
+      }
+    }
+    while (powerUpOptions.length < 3) {
+      powerUpOptions.push(new PowerUp({type: randomEnum(PowerUpType)}));
+    }
+
+    return powerUpOptions;
+  }
+
+  private getEnergyCounter(): Node {
+    const energyCounter = document.createElement('div');
+    energyCounter.classList.add('energy-counter');
+    energyCounter.innerText = `Energy: ${this.energyCurrent}/${this.energyMax}`;
+    const previousEnergy = this.energyCurrent;
+    const previousEnergyMax = this.energyMax;
+    setTimeout(() => {
+      const newEnergyChange = document.getElementById('energy-change');
+      if (newEnergyChange) {
+        newEnergyChange.style.setProperty('--progress', `${(this.energyCurrent / this.energyMax) * 100}%`);
+        if (previousEnergy !== this.energyCurrent) {
+          energyCounter.innerHTML = `︎︎⚡︎ ${previousEnergy}/${previousEnergyMax} -> <span class="new-energy">${this.energyCurrent}/${this.energyMax}</span>`;
+        }
+      }
+    }, 1);
+    return energyCounter;
+  }
+
+  private getEnergyChange(): Node {
+    const energyChange = document.createElement('div');
+    const energyChangeBar = document.createElement('div');
+    energyChangeBar.classList.add('bar');
+    energyChange.setAttribute('id', 'energy-change');
+    energyChange.style.setProperty('--progress', `${(this.energyCurrent / this.energyMax) * 100}%`);
+    energyChange.appendChild(energyChangeBar);
+    return energyChange;
+  }
+
+  private getPowerUpOptionsDisplay(resolve: () => void): Node {
+    const powerUpOptions = this.getPowerUpOptions();
+    const powerUpOptionsDisplay = document.createElement('div');
+    powerUpOptionsDisplay.classList.add('power-up-options');
+    powerUpOptions.forEach((powerUpOption) => {
+      const button = getActionButton(powerUpOption);
+      button.classList.add('power-up-option');
+      button.addEventListener('click', () => {
+        this.powerUps.push(powerUpOption);
+        this.redrawActions();
+        resolve();
+      });
+      powerUpOptionsDisplay.appendChild(button);
+    });
+    return powerUpOptionsDisplay;
+  }
+
+  private getEndLevelMessage(term: TerminalStatus, resolve: () => void): HTMLElement {
     const message = document.createElement('div');
     message.classList.add('next-level-message');
     const header = document.createElement('h1');
@@ -643,31 +713,30 @@ export class Game {
       header.innerText = 'Done';
     }
     const subheader = document.createElement('h2');
-    subheader.innerText = `Moving on to level ${this.level.level + 1}`;
-    const energyChange = document.createElement('div');
-    const energyChangeBar = document.createElement('div');
-    energyChangeBar.classList.add('bar');
-    energyChange.setAttribute('id', 'energy-change');
-    energyChange.style.setProperty('--progress', `${(this.energyCurrent / this.energyMax) * 100}%`);
-    energyChange.appendChild(energyChangeBar);
-    const energyCounter = document.createElement('div');
-    energyCounter.classList.add('energy-counter');
-    energyCounter.innerText = `Energy: ${this.energyCurrent}/${this.energyMax}`;
-    const previousEnergy = this.energyCurrent;
-    const previousEnergyMax = this.energyMax;
-    setTimeout(() => {
-      const newEnergyChange = document.getElementById('energy-change');
-      if (newEnergyChange) {
-        newEnergyChange.style.setProperty('--progress', `${(this.energyCurrent / this.energyMax) * 100}%`);
-        if (previousEnergy !== this.energyCurrent) {
-          energyCounter.innerHTML = `︎︎⚡︎ ${previousEnergy}/${previousEnergyMax} -> <span class="new-energy">${this.energyCurrent}/${this.energyMax}</span>`;
-        }
-      }
-    }, 1);
+    let subheaderPrefix = 'Moving on to';
+    if (term.winner === 'x') {
+      subheaderPrefix = 'Upgrade before';
+    } else if (term.isCat) {
+      subheaderPrefix = 'Regen energy before';
+    }
+    subheader.innerText = `${subheaderPrefix} level ${this.level.level + 1}`;
     message.appendChild(header);
     message.appendChild(subheader);
-    message.appendChild(energyCounter);
-    message.appendChild(energyChange);
+    message.appendChild(this.getEnergyCounter());
+    message.appendChild(this.getEnergyChange());
+    if (term.winner === 'x') {
+      message.appendChild(this.getPowerUpOptionsDisplay(resolve));
+    } else {
+      const nextLevelButton = document.createElement('button');
+      nextLevelButton.classList.add('next-level-button');
+      nextLevelButton.innerHTML = 'Next Level';
+
+      nextLevelButton.addEventListener('click', () => {
+        resolve();
+        this.checkLossCondition();
+      });
+      message.appendChild(nextLevelButton);
+    }
     return message;
   }
 
@@ -677,18 +746,8 @@ export class Game {
     if (nextLevelScreen && nextLevelContent) {
       this.loading = true;
       const nextScreenPromise = new Promise<void>((resolve) => {
-        const button = document.createElement('button');
-        button.classList.add('next-level-button');
-        button.innerHTML = 'Next Level';
-
-        button.addEventListener('click', () => {
-          resolve();
-          this.checkLossCondition();
-        });
-
         nextLevelScreen.classList.add('visible');
-        nextLevelContent.replaceChildren(this.getEndLevelMessage(term));
-        nextLevelContent.appendChild(button);
+        nextLevelContent.replaceChildren(this.getEndLevelMessage(term, resolve));
         if (term.winner) {
           if (term.winner === 'x') {
             this.energyMax += 20;

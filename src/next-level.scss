@@ -1,6 +1,7 @@
 @use 'sass:math';
 @import 'colors';
 @import 'button';
+@import 'action_button';
 $stars: 900; // Number of start per layer
 $depth: 300; // Depth between star layers
 $speed: 60s; // Number of seconds to transition between layers
@@ -99,9 +100,24 @@ $action-button-transition-duration: 100ms;
                     text-shadow: 1px 1px 10px $color-energy, 1px 1px 10px $color-energy;
                 }
             }
+
+            .power-up-options {
+                margin-top: 20px;
+                display: flex;
+
+                .power-up-option {
+                    @include action_button();
+                    margin-left: 8px;
+                    margin-right: 8px;
+                }
+            }
         }
 
         .next-level-button {
+            margin-top: 60px;
+            margin-left: auto;
+            margin-right: auto;
+
             @include button($color: $color-action-button, $duration: $action-button-transition-duration);
         }
     }

@@ -62,3 +62,11 @@ export enum StatusEffectType {
   FORCE_SPACE,
   BLOCKED_SPACE,
 }
+
+/* eslint-disable-next-line @typescript-eslint/ban-types */
+export function randomEnum<T extends Object>(anEnum: T): T[keyof T] {
+  const enumValues = Object.keys(anEnum) as Array<keyof T>;
+  const randomIndex = Math.floor(Math.floor(enumValues.length / 2) + Math.random() * Math.floor(enumValues.length / 2));
+  const randomEnumKey = enumValues[randomIndex];
+  return anEnum[randomEnumKey];
+}

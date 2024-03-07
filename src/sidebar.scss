@@ -1,4 +1,5 @@
 @import 'colors';
+@import 'action_button';
 $action-button-transition-duration: 100ms;
 
 #sidebar {
@@ -20,98 +21,7 @@ $action-button-transition-duration: 100ms;
         margin-bottom: 80px;
 
         button {
-            margin-bottom: 20px;
-            $duration: 100ms;
-            $color: $color-game-axes;
-            border: 2px solid $color-game-axes;
-            color: $color-game-axes;
-            background-color: $color-background;
-            cursor: pointer;
-            font-weight: 100;
-            padding: 20px;
-            font-family: 'Orbitron', 'Roboto', sans-serif;
-            border-radius: 500px;
-            transition: text-shadow $duration, box-shadow $duration, font-size $duration, padding $duration, letter-spacing $duration, box-shadow 100ms;
-            position: relative;
-            width: 100%;
-
-            &:hover {
-                box-shadow: 0 3px 20px 0 $color inset, 0 3px 20px 0 $color, 0 3px 20px 0 $color inset, 0 3px 20px 0 $color;
-
-                .title {
-                    text-shadow: 0 0 3px $color, 0 0 3px $color;
-                }
-            }
-
-            .title {
-                letter-spacing: 5px;
-                text-transform: uppercase;
-                font-size: 14px;
-                margin-bottom: 8px;
-            }
-
-            .icon {
-                font-size: 20px;
-            }
-
-            .cooldown,
-            .cost {
-                position: absolute;
-                font-size: 10px;
-                bottom: 0;
-            }
-
-            .cooldown {
-                left: 26px;
-            }
-
-            .cost {
-                right: 26px;
-            }
-
-            .disabled-status {
-                display: none;
-                position: absolute;
-                bottom: 6px;
-                left: 50%;
-                transform: translate(-50%);
-
-                .icon {
-                    font-size: 16px;
-                    transform: translate(-50%);
-                    margin-right: 2px;
-                }
-            }
-
-            &.disabled {
-
-                border-color: darken($color: $color, $amount: 50);
-                color: darken($color: $color, $amount: 50);
-
-                .title {
-                    text-shadow: 0 0 3px $color, 0 0 3px $color;
-                }
-
-                .cost,
-                .cooldown {
-                    display: none;
-                }
-
-                .disabled-status {
-                    display: inline-block;
-                    color: $color;
-                }
-
-                &:hover {
-                    box-shadow: none;
-                    cursor: not-allowed;
-
-                    .title {
-                        text-shadow: none;
-                        color: $color;
-                    }
-                }
-            }
+            @include action_button();
         }
     }
 }
