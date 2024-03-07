@@ -34,6 +34,10 @@ export function generateRules(level: number): Rule[] {
     {
       type: RuleType.TURN_ORDER,
     },
+    {
+      type: RuleType.TIE_BREAK,
+      tieBreak: 'x',
+    },
     getFirstMoveRule(level),
   ];
 }
@@ -44,6 +48,8 @@ export function getRuleName(rule: Rule): string {
       return `Win: ${rule.xInARow} in a row`;
     case RuleType.TURN_ORDER:
       return 'Take turns';
+    case RuleType.TIE_BREAK:
+      return `${rule.tieBreak?.toUpperCase()} wins ties`;
     case RuleType.FIRST_MOVE:
       return `${rule.firstPlayer?.toUpperCase()} goes first`;
     default:
