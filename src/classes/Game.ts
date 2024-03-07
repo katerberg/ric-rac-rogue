@@ -405,6 +405,7 @@ export class Game {
     this.p5.drawingContext.shadowBlur = 40;
     this.p5.drawingContext.shadowColor = COLORS.gameAxes;
 
+    // Draw the vertical lines
     for (let col = 1; col < this.level.board.columns; col++) {
       this.p5.line(
         cellWidth * col - gameInnerPadding / 2,
@@ -412,6 +413,7 @@ export class Game {
         cellWidth * col - gameInnerPadding / 2,
         this.gameHeight - gameInnerPadding * 2,
       );
+      // Repeat as needed
       this.p5.line(
         cellWidth * col - gameInnerPadding / 2,
         gameInnerPadding,
@@ -419,19 +421,24 @@ export class Game {
         this.gameHeight - gameInnerPadding * 2,
       );
     }
+    // Draw the horizontal lines
     for (let row = 1; row < this.level.board.rows; row++) {
-      this.p5.line(
-        gameInnerPadding,
-        cellHeight * row - gameInnerPadding / 2,
-        this.gameWidth - gameInnerPadding * 2,
-        cellHeight * row - gameInnerPadding / 2,
-      );
-      this.p5.line(
-        gameInnerPadding,
-        cellHeight * row - gameInnerPadding / 2,
-        this.gameWidth - gameInnerPadding * 2,
-        cellHeight * row - gameInnerPadding / 2,
-      );
+      for (let col = 0; col < this.level.board.columns; col++) {
+        const xOffset = gameInnerPadding + cellWidth * col + gameAxisWidth;
+        this.p5.line(
+          xOffset,
+          cellHeight * row - gameInnerPadding / 2,
+          xOffset + cellWidth - gameAxisWidth * 4 - gameInnerPadding * 2,
+          cellHeight * row - gameInnerPadding / 2,
+        );
+        // Repeat as needed
+        this.p5.line(
+          xOffset,
+          cellHeight * row - gameInnerPadding / 2,
+          xOffset + cellWidth - gameAxisWidth * 4 - gameInnerPadding * 2,
+          cellHeight * row - gameInnerPadding / 2,
+        );
+      }
     }
     this.activeStatusEffects.forEach((activeStatusEffect) => {
       if (activeStatusEffect.target) {
@@ -822,7 +829,7 @@ export class Game {
     this.redrawRules();
     this.redrawActions();
     if (isDebug('endlevel')) {
-      this.endLevel({isTerminal: true, winner: null, isCat: true, isWinner: false});
+      this.endLevel({isTerminal: true, winner: 'x', isCat: false, isWinner: true});
     }
   }
 }
