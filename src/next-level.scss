@@ -1,11 +1,11 @@
 @use 'sass:math';
 @import 'colors';
 @import 'button';
-$stars: 450; // Number of start per layer
+$stars: 900; // Number of start per layer
 $depth: 300; // Depth between star layers
-$speed: 10s; // Number of seconds to transition between layers
-$width: 3000; // Width of the starfield
-$height: 960; // Height of the starfield
+$speed: 60s; // Number of seconds to transition between layers
+$width: 6000; // Width of the starfield
+$height: 1920; // Height of the starfield
 $action-button-transition-duration: 100ms;
 
 
@@ -102,6 +102,40 @@ $action-button-transition-duration: 100ms;
     &:after {
         transform: translateZ(-$depth * 2 + px);
         animation: fade2 $speed linear infinite;
+    }
+}
+
+@keyframes fly {
+    0% {
+        transform: translateX(0px) translateY($depth + px);
+    }
+
+    50% {
+        transform: translateX($depth + px) translateY(0px);
+    }
+
+    100% {
+        transform: translateX(0px) translateY($depth + px);
+    }
+}
+
+@keyframes fade1 {
+    from {
+        opacity: .5;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fade2 {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: .5;
     }
 }
 
