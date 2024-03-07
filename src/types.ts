@@ -8,7 +8,6 @@ export type Moves = Map<Coordinate, Choice | undefined>;
 export enum RuleType {
   WIN_CON,
   FIRST_MOVE,
-  TIE_BREAK,
   TURN_ORDER,
 }
 export enum RuleWinType {
@@ -18,7 +17,6 @@ export enum RuleWinType {
 export type Rule = {
   type: RuleType;
   winType?: RuleWinType;
-  tieBreak?: Choice;
   firstPlayer?: Choice;
   xInARow?: number;
 };
