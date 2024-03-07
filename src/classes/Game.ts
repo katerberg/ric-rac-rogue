@@ -70,6 +70,7 @@ export class Game {
     this.powerUps = [getStartingPowerUp()];
     if (isDebug('powerups')) {
       this.powerUps = [
+        new PowerUp({type: PowerUpType.TELEPORT_RANDOM}),
         new PowerUp({type: PowerUpType.DECREASE_REQUIRED_WIN}),
         // new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
         new PowerUp({type: PowerUpType.EXTRA_TURN}),
@@ -79,8 +80,8 @@ export class Game {
         // new PowerUp({type: PowerUpType.COPY_ROW}),
         // new PowerUp({type: PowerUpType.REMOVE_COLUMN}),
         new PowerUp({type: PowerUpType.REMOVE_ROW}),
-        new PowerUp({type: PowerUpType.INCREASE_ENERGY}),
-        new PowerUp({type: PowerUpType.INCREASE_MAX_ENERGY}),
+        // new PowerUp({type: PowerUpType.INCREASE_ENERGY}),
+        // new PowerUp({type: PowerUpType.INCREASE_MAX_ENERGY}),
       ];
     }
     this.activeStatusEffects = [];
@@ -169,6 +170,12 @@ export class Game {
         this.currentAction = null;
         return;
       }
+      if (this.currentAction?.type === PowerUpType.TELEPORT_RANDOM && this.level.board.isMoveOnBoard({x, y})) {
+        this.level.board.teleportRandom({x, y});
+        this.checkWinCondition();
+        this.currentAction = null;
+        return;
+      }
       if (
         this.currentAction &&
         [
@@ -178,6 +185,7 @@ export class Game {
           PowerUpType.REMOVE_ROW,
           PowerUpType.COPY_COLUMN,
           PowerUpType.COPY_ROW,
+          PowerUpType.TELEPORT_RANDOM,
         ].includes(this.currentAction.type)
       ) {
         this.resetCurrentAction();
@@ -426,6 +434,7 @@ export class Game {
       case PowerUpType.COPY_ROW:
       case PowerUpType.REMOVE_COLUMN:
       case PowerUpType.REMOVE_ROW:
+      case PowerUpType.TELEPORT_RANDOM:
         this.currentAction = powerUp;
         break;
 

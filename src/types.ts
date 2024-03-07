@@ -45,6 +45,7 @@ export enum PowerUpType {
   INCREASE_MAX_ENERGY,
   INCREASE_REQUIRED_WIN,
   DECREASE_REQUIRED_WIN,
+  TELEPORT_RANDOM,
 }
 
 export enum StatusEffectType {

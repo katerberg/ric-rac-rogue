@@ -29,6 +29,8 @@ function getDefaultCost(type: PowerUpType): number {
     case PowerUpType.INCREASE_REQUIRED_WIN:
     case PowerUpType.DECREASE_REQUIRED_WIN:
       return 30;
+    case PowerUpType.TELEPORT_RANDOM:
+      return 10;
     default:
       return 10;
   }
@@ -55,6 +57,8 @@ function getDefaultCooldown(type: PowerUpType): number {
       return 8;
     case PowerUpType.INCREASE_MAX_ENERGY:
       return 8;
+    case PowerUpType.TELEPORT_RANDOM:
+      return 1;
     default:
       return 3;
   }
@@ -100,6 +104,8 @@ export class PowerUp {
         return 'Boost Win Req';
       case PowerUpType.DECREASE_REQUIRED_WIN:
         return 'Trim Win Req';
+      case PowerUpType.TELEPORT_RANDOM:
+        return 'Teleport';
       default:
         return 'Power Up';
     }
@@ -112,6 +118,7 @@ export function getStartingPowerUp(): PowerUp {
     new PowerUp({type: PowerUpType.COPY_COLUMN}),
     new PowerUp({type: PowerUpType.COPY_ROW}),
     new PowerUp({type: PowerUpType.EXTRA_TURN}),
+    new PowerUp({type: PowerUpType.TELEPORT_RANDOM}),
   ];
 
   return startingPowerUpOptions[Math.floor(Math.random() * startingPowerUpOptions.length)];

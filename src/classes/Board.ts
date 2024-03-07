@@ -53,6 +53,15 @@ export class Board {
     return false;
   }
 
+  teleportRandom({x, y}: NumberCoordinates): void {
+    const availableMoves = this.getAvailableMoves();
+    if (availableMoves.length > 0) {
+      const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+      this.selections.set(`${randomMove.x},${randomMove.y}`, this.selections.get(`${x},${y}`));
+      this.selections.delete(`${x},${y}`);
+    }
+  }
+
   copyRow(rowNumberToCopy: number): void {
     if (rowNumberToCopy > -1 && rowNumberToCopy < this.rows) {
       for (let y = this.rows - 1; y >= rowNumberToCopy; y--) {
