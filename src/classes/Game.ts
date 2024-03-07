@@ -246,7 +246,7 @@ export class Game {
               board: this.level.board,
               maxDepth: this.level.maxDepth,
               requiredWin: this.level.requiredWin,
-              currentPlayer: 'x',
+              currentPlayer: 'o',
             },
             false,
           ).bestMove;

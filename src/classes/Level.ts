@@ -58,7 +58,7 @@ export class Level {
       selections: new Map<Coordinate, Choice>(),
     });
     this.requiredWin = 3;
-    this.maxDepth = 3;
+    this.maxDepth = 1200;
 
     this.rules = generateRules(level);
     this.requiredWin = this.rules.find((rule) => rule.type === RuleType.WIN_CON)?.xInARow ?? 3;

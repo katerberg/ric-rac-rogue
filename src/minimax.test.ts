@@ -5,8 +5,8 @@ import {Choice, Coordinate, State} from './types';
 function getFullBoardState(): State {
   const state = {
     requiredWin: 3,
-    maxDepth: 1200,
     currentPlayer: 'x' as Choice,
+    maxDepth: 1200,
     room: {rules: []},
     board: new Board({
       columns: 3,
@@ -41,10 +41,10 @@ describe('minimax', () => {
 
     it('finds a winning terminal move for o', () => {
       const input = getFullBoardState();
-      input.board.selections.delete('2,2');
       input.currentPlayer = 'o';
+      input.board.selections.delete('2,2');
 
-      const result = getBestMove(input);
+      const result = getBestMove(input, false);
 
       expect(result.bestMove).toEqual({x: 2, y: 2});
       expect(result.bestScore).toEqual(-1_000_000);
@@ -83,15 +83,15 @@ describe('minimax', () => {
 
     it('finds blocking move in 4x4 to end in cat game', () => {
       const input = getFullBoardState();
-      input.currentPlayer = 'o';
       input.board.columns = 4;
       input.board.rows = 4;
+      input.currentPlayer = 'o';
       input.board.selections = new Map();
       input.board.selections.set('0,0', 'o');
       input.board.selections.set('2,0', 'x');
       input.board.selections.set('2,1', 'x');
 
-      const result = getBestMove(input);
+      const result = getBestMove(input, false);
 
       expect(result.bestMove).toEqual({x: 2, y: 2});
       expect(result.bestScore).toEqual(1_000_000 - 0.3);
@@ -99,13 +99,13 @@ describe('minimax', () => {
 
     it('finds cat game from middle', () => {
       const input = getFullBoardState();
-      input.currentPlayer = 'o';
       input.board.selections = new Map();
+      input.currentPlayer = 'o';
       input.board.selections.set('0,0', 'x');
       input.board.selections.set('1,1', 'o');
       input.board.selections.set('2,2', 'x');
 
-      const result = getBestMove(input);
+      const result = getBestMove(input, false);
 
       expect(result.bestMove).toEqual({x: 0, y: 1});
       expect(result.bestScore).toEqual(0);
