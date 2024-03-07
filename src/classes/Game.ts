@@ -141,31 +141,31 @@ export class Game {
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
     if (this.level.board.isMoveOnBoard({x, y})) {
       if (this.currentAction?.type === PowerUpType.FLIP_TILE && this.level.board.flipTile({x, y})) {
-        this.checkWinCondition('x');
+        this.checkWinCondition();
         this.currentAction = null;
         return;
       }
       if (this.currentAction?.type === PowerUpType.REMOVE_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
         this.level.board.removeColumn(x);
-        this.checkWinCondition('x');
+        this.checkWinCondition();
         this.currentAction = null;
         return;
       }
       if (this.currentAction?.type === PowerUpType.REMOVE_ROW && this.level.board.isMoveOnBoard({x, y})) {
         this.level.board.removeRow(y);
-        this.checkWinCondition('x');
+        this.checkWinCondition();
         this.currentAction = null;
         return;
       }
       if (this.currentAction?.type === PowerUpType.COPY_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
         this.level.board.copyColumn(x);
-        this.checkWinCondition('x');
+        this.checkWinCondition();
         this.currentAction = null;
         return;
       }
       if (this.currentAction?.type === PowerUpType.COPY_ROW && this.level.board.isMoveOnBoard({x, y})) {
         this.level.board.copyRow(y);
-        this.checkWinCondition('x');
+        this.checkWinCondition();
         this.currentAction = null;
         return;
       }
@@ -431,7 +431,7 @@ export class Game {
 
       default:
     }
-    this.checkWinCondition('x');
+    this.checkWinCondition();
   }
 
   private endLevel(term: TerminalStatus): void {
@@ -512,8 +512,8 @@ export class Game {
     }
   }
 
-  checkWinCondition(player: Choice): boolean {
-    const term = checkTerminal(this.level.board, this.level.requiredWin, player);
+  checkWinCondition(): boolean {
+    const term = checkTerminal(this.level.board, this.level.requiredWin);
     if (term.isTerminal) {
       this.endLevel(term);
       return true;
@@ -523,7 +523,7 @@ export class Game {
 
   makePlay(move: Coordinate, player: Choice): boolean {
     this.level.board.selections.set(move, player);
-    const isWin = this.checkWinCondition(player);
+    const isWin = this.checkWinCondition();
     if (isWin) {
       return true;
     }

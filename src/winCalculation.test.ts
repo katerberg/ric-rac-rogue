@@ -18,37 +18,37 @@ function objectToMap(obj: {[key: Coordinate]: Choice}): Map<Coordinate, Choice> 
 describe('winCalculation', () => {
   describe('isWin', () => {
     it('should return false when there are not enough selections', () => {
-      expect(isWin(new Map(), 3, 3, 3)).toBe(false);
+      expect(isWin(new Map(), 3, 3, 3)).toBe(undefined);
     });
 
     it('should return true when there are 3 in a row vertically', () => {
-      expect(isWin(objectToMap({'0,0': 'x', '0,1': 'x', '0,2': 'x'}), 3, 3, 3)).toBe(true);
+      expect(isWin(objectToMap({'0,0': 'x', '0,1': 'x', '0,2': 'x'}), 3, 3, 3)).toBe('x');
     });
 
     it('should return true when there are 3 in a row horizontally', () => {
-      expect(isWin(objectToMap({'0,0': 'x', '1,0': 'x', '2,0': 'x'}), 3, 6, 3)).toBe(true);
+      expect(isWin(objectToMap({'0,0': 'x', '1,0': 'x', '2,0': 'x'}), 3, 6, 3)).toBe('x');
     });
 
     it('should return true when there are 3 in a row diagonally', () => {
-      expect(isWin(objectToMap({'1,1': 'x', '2,2': 'x', '3,3': 'x'}), 7, 8, 3)).toBe(true);
+      expect(isWin(objectToMap({'1,1': 'x', '2,2': 'x', '3,3': 'x'}), 7, 8, 3)).toBe('x');
     });
 
     it('should return true when there are 3 in a row reverse-diagonally', () => {
-      expect(isWin(objectToMap({'2,1': 'x', '1,2': 'x', '0,3': 'x'}), 5, 5, 3)).toBe(true);
+      expect(isWin(objectToMap({'2,1': 'o', '1,2': 'o', '0,3': 'o'}), 5, 5, 3)).toBe('o');
     });
 
     it('detects two long reverse wins', () => {
-      expect(isWin(objectToMap({'0,2': 'x', '1,1': 'x', '0,3': 'o'}), 5, 5, 2)).toBe(true);
+      expect(isWin(objectToMap({'0,2': 'x', '1,1': 'x', '0,3': 'o'}), 5, 5, 2)).toBe('x');
     });
 
     it('detects two long diagonal wins', () => {
-      expect(isWin(objectToMap({'0,0': 'x', '1,1': 'x', '0,1': 'o'}), 2, 2, 2)).toBe(true);
+      expect(isWin(objectToMap({'0,0': 'x', '1,1': 'x', '0,1': 'o'}), 2, 2, 2)).toBe('x');
     });
     it('detects two long column wins', () => {
-      expect(isWin(objectToMap({'0,0': 'x', '0,1': 'x', '1,0': 'o'}), 2, 2, 2)).toBe(true);
+      expect(isWin(objectToMap({'0,0': 'o', '0,1': 'o', '1,0': 'x'}), 2, 2, 2)).toBe('o');
     });
     it('detects two long row wins', () => {
-      expect(isWin(objectToMap({'0,0': 'x', '1,0': 'x', '0,1': 'o'}), 2, 2, 2)).toBe(true);
+      expect(isWin(objectToMap({'0,0': 'x', '1,0': 'x', '0,1': 'o'}), 2, 2, 2)).toBe('x');
     });
   });
 

@@ -1,91 +1,91 @@
 import {Board} from './classes/Board';
 import {Choice, Moves, NumberCoordinates, TerminalStatus} from './types';
 
-function isColumnWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
+function isColumnWin(selections: Moves, columns: number, rows: number, winNumber: number): Choice | undefined {
   for (let x = 0; x < columns; x++) {
     for (let y = 0; y < rows - winNumber + 1; y++) {
-      let isWinningColumn = selections.get(`${x},${y}`) !== undefined;
+      let isWinningColumn = selections.get(`${x},${y}`);
       if (isWinningColumn) {
         for (let winCheck = 1; winCheck < winNumber; winCheck++) {
           if (selections.get(`${x},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
-            isWinningColumn = false;
+            isWinningColumn = undefined;
             break;
           }
         }
       }
       if (isWinningColumn) {
-        return true;
+        return isWinningColumn;
       }
     }
   }
-  return false;
+  return undefined;
 }
 
-function isRowWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
+function isRowWin(selections: Moves, columns: number, rows: number, winNumber: number): Choice | undefined {
   for (let x = 0; x < columns - winNumber + 1; x++) {
     for (let y = 0; y < rows; y++) {
-      let isWinningRow = selections.get(`${x},${y}`) !== undefined;
+      let isWinningRow = selections.get(`${x},${y}`);
       if (isWinningRow) {
         for (let winCheck = 1; winCheck < winNumber; winCheck++) {
           if (selections.get(`${x + winCheck},${y}`) !== selections.get(`${x},${y}`)) {
-            isWinningRow = false;
+            isWinningRow = undefined;
             break;
           }
         }
       }
       if (isWinningRow) {
-        return true;
+        return isWinningRow;
       }
     }
   }
-  return false;
+  return undefined;
 }
 
-function isDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
+function isDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): Choice | undefined {
   for (let x = 0; x < columns - winNumber + 1; x++) {
     for (let y = 0; y < rows - winNumber + 1; y++) {
-      let isWinningDiagonal = selections.get(`${x},${y}`) !== undefined;
+      let isWinningDiagonal = selections.get(`${x},${y}`);
       if (isWinningDiagonal) {
         for (let winCheck = 1; winCheck < winNumber; winCheck++) {
           if (selections.get(`${x + winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
-            isWinningDiagonal = false;
+            isWinningDiagonal = undefined;
             break;
           }
         }
       }
       if (isWinningDiagonal) {
-        return true;
+        return isWinningDiagonal;
       }
     }
   }
-  return false;
+  return undefined;
 }
 
-function isReverseDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
+function isReverseDiagonalWin(selections: Moves, columns: number, rows: number, winNumber: number): Choice | undefined {
   for (let x = winNumber - 1; x < columns; x++) {
     for (let y = 0; y < rows - winNumber + 1; y++) {
-      let isWinningDiagonal = selections.get(`${x},${y}`) !== undefined;
+      let isWinningDiagonal = selections.get(`${x},${y}`);
       if (isWinningDiagonal) {
         for (let winCheck = 1; winCheck < winNumber; winCheck++) {
           if (selections.get(`${x - winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
-            isWinningDiagonal = false;
+            isWinningDiagonal = undefined;
             break;
           }
         }
       }
       if (isWinningDiagonal) {
-        return true;
+        return isWinningDiagonal;
       }
     }
   }
-  return false;
+  return undefined;
 }
 
-export function isWin(selections: Moves, columns: number, rows: number, winNumber: number): boolean {
+export function isWin(selections: Moves, columns: number, rows: number, winNumber: number): Choice | undefined {
   return (
-    isColumnWin(selections, columns, rows, winNumber) ||
-    isRowWin(selections, columns, rows, winNumber) ||
-    isDiagonalWin(selections, columns, rows, winNumber) ||
+    isColumnWin(selections, columns, rows, winNumber) ??
+    isRowWin(selections, columns, rows, winNumber) ??
+    isDiagonalWin(selections, columns, rows, winNumber) ??
     isReverseDiagonalWin(selections, columns, rows, winNumber)
   );
 }
@@ -94,14 +94,14 @@ export function isCat(selections: Moves, columns: number, rows: number): boolean
   return selections.size === columns * rows;
 }
 
-export function checkTerminal(board: Board, requiredWin: number, currentPlayer: Choice): TerminalStatus {
+export function checkTerminal(board: Board, requiredWin: number): TerminalStatus {
   const isCatGame = isCat(board.selections, board.columns, board.rows);
   const isWinner = isWin(board.selections, board.columns, board.rows, requiredWin);
   return {
-    isTerminal: isWinner || isCatGame,
-    isWinner,
+    isTerminal: !!isWinner || isCatGame,
+    isWinner: !!isWinner,
     isCat: isCatGame,
-    winner: isWinner ? currentPlayer : null,
+    winner: isWinner ?? null,
   };
 }
 
