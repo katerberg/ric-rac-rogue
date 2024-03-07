@@ -650,14 +650,23 @@ export class Game {
     energyChange.setAttribute('id', 'energy-change');
     energyChange.style.setProperty('--progress', `${(this.energyCurrent / this.energyMax) * 100}%`);
     energyChange.appendChild(energyChangeBar);
+    const energyCounter = document.createElement('div');
+    energyCounter.classList.add('energy-counter');
+    energyCounter.innerText = `Energy: ${this.energyCurrent}/${this.energyMax}`;
+    const previousEnergy = this.energyCurrent;
+    const previousEnergyMax = this.energyMax;
     setTimeout(() => {
       const newEnergyChange = document.getElementById('energy-change');
       if (newEnergyChange) {
         newEnergyChange.style.setProperty('--progress', `${(this.energyCurrent / this.energyMax) * 100}%`);
+        if (previousEnergy !== this.energyCurrent) {
+          energyCounter.innerHTML = `︎︎⚡︎ ${previousEnergy}/${previousEnergyMax} -> <span class="new-energy">${this.energyCurrent}/${this.energyMax}</span>`;
+        }
       }
     }, 1);
     message.appendChild(header);
     message.appendChild(subheader);
+    message.appendChild(energyCounter);
     message.appendChild(energyChange);
     return message;
   }

@@ -85,6 +85,20 @@ $action-button-transition-duration: 100ms;
                     inherits: true;
                 }
             }
+
+            .energy-counter {
+                color: #fff;
+                margin-left: 20px;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                vertical-align: middle;
+
+                .new-energy {
+                    color: $color-energy;
+                    font-size: 24px;
+                    text-shadow: 1px 1px 10px $color-energy, 1px 1px 10px $color-energy;
+                }
+            }
         }
 
         .next-level-button {
