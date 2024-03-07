@@ -30,6 +30,8 @@ function getDefaultCost(type: PowerUpType): number {
       return 30;
     case PowerUpType.BLOCKED_SPACE:
       return 20;
+    case PowerUpType.FORCE_SPACE:
+      return 30;
     case PowerUpType.INCREASE_REQUIRED_WIN:
     case PowerUpType.DECREASE_REQUIRED_WIN:
       return 30;
@@ -65,6 +67,8 @@ function getDefaultCooldown(type: PowerUpType): number {
       return 2;
     case PowerUpType.BLOCKED_SPACE:
       return 4;
+    case PowerUpType.FORCE_SPACE:
+      return 5;
     case PowerUpType.TELEPORT_RANDOM:
       return 1;
     default:
@@ -106,6 +110,8 @@ export class PowerUp {
         return 'Max Energy';
       case PowerUpType.FORCE_RANDOM:
         return 'Force Random';
+      case PowerUpType.FORCE_SPACE:
+        return 'Force Play';
       case PowerUpType.BLOCKED_SPACE:
         return 'Block Space';
       case PowerUpType.REMOVE_COLUMN:

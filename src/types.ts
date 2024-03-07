@@ -2,8 +2,9 @@ import {Board} from './classes/Board';
 
 export type Coordinate = `${number},${number}`;
 export type NumberCoordinates = {x: number; y: number};
-export type Choice = 'x' | 'o' | 'blocked';
-export type Moves = Map<Coordinate, Choice | undefined>;
+export type Choice = 'x' | 'o';
+export type SpaceStatusEffect = 'blocked' | 'forced';
+export type Moves = Map<Coordinate, Choice | SpaceStatusEffect | undefined>;
 
 export enum RuleType {
   WIN_CON,
@@ -47,11 +48,13 @@ export enum PowerUpType {
   DECREASE_REQUIRED_WIN,
   TELEPORT_RANDOM,
   FORCE_RANDOM,
+  FORCE_SPACE,
   BLOCKED_SPACE,
 }
 
 export enum StatusEffectType {
   EXTRA_TURN,
   FORCE_RANDOM,
+  FORCE_SPACE,
   BLOCKED_SPACE,
 }

@@ -27,6 +27,8 @@ export class StatusEffect {
         return 'Random Move';
       case StatusEffectType.BLOCKED_SPACE:
         return 'Blocked Space';
+      case StatusEffectType.FORCE_SPACE:
+        return 'Forced Play';
       default:
         return 'Status Effect';
     }

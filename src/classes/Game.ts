@@ -75,8 +75,9 @@ export class Game {
       this.powerUps = [
         new PowerUp({type: PowerUpType.TELEPORT_RANDOM}),
         new PowerUp({type: PowerUpType.FORCE_RANDOM}),
+        new PowerUp({type: PowerUpType.FORCE_SPACE}),
         new PowerUp({type: PowerUpType.BLOCKED_SPACE}),
-        new PowerUp({type: PowerUpType.DECREASE_REQUIRED_WIN}),
+        // new PowerUp({type: PowerUpType.DECREASE_REQUIRED_WIN}),
         // new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
         // new PowerUp({type: PowerUpType.EXTRA_TURN}),
         new PowerUp({type: PowerUpType.FLIP_TILE}),
@@ -141,6 +142,12 @@ export class Game {
     this.redrawRules();
   }
 
+  private forceSpace(target: NumberCoordinates): void {
+    this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.FORCE_SPACE, target}));
+    this.level.board.selections.set(numberCoordsToCoords(target), 'forced');
+    this.redrawRules();
+  }
+
   private blockSpace(target: NumberCoordinates): void {
     this.activeStatusEffects.push(new StatusEffect({type: StatusEffectType.BLOCKED_SPACE, target}));
     this.level.board.selections.set(numberCoordsToCoords(target), 'blocked');
@@ -161,6 +168,11 @@ export class Game {
     }
     if (this.currentAction?.type === PowerUpType.BLOCKED_SPACE && this.level.board.isAvailableMove({x, y})) {
       this.blockSpace({x, y});
+      this.currentAction = null;
+      return;
+    }
+    if (this.currentAction?.type === PowerUpType.FORCE_SPACE && this.level.board.isAvailableMove({x, y})) {
+      this.forceSpace({x, y});
       this.currentAction = null;
       return;
     }
@@ -205,6 +217,7 @@ export class Game {
         PowerUpType.RESET_COOLDOWN,
         PowerUpType.FLIP_TILE,
         PowerUpType.BLOCKED_SPACE,
+        PowerUpType.FORCE_SPACE,
         PowerUpType.REMOVE_COLUMN,
         PowerUpType.REMOVE_ROW,
         PowerUpType.COPY_COLUMN,
@@ -238,8 +251,14 @@ export class Game {
       setTimeout(() => {
         let move;
         const forceRandomPosition = this.getStatusEffectPosition(StatusEffectType.FORCE_RANDOM);
-        if (forceRandomPosition !== -1) {
+        const forceSpacePosition = this.getStatusEffectPosition(StatusEffectType.FORCE_SPACE);
+        if (forceSpacePosition !== -1) {
+          const {target} = this.activeStatusEffects[forceSpacePosition];
+          console.log('forced space chosen', target);
+          move = this.level.board.isAvailableMove(target!) ? target : this.level.board.getRandomMove();
+        } else if (forceRandomPosition !== -1) {
           move = this.level.board.getRandomMove();
+          console.log('random space chosen', move);
         } else {
           move = getBestMove(
             {
@@ -250,6 +269,7 @@ export class Game {
             },
             false,
           ).bestMove;
+          console.log('best space chosen', move);
         }
         document.getElementById('loading')?.classList.remove('loading');
         this.loading = false;
@@ -259,10 +279,11 @@ export class Game {
         this.activeStatusEffects = this.activeStatusEffects
           .map((activeStatusEffect) => {
             activeStatusEffect.turnsRemaining -= 1;
+            // Clean up the finished active status effects on the board
             if (
               activeStatusEffect.target &&
               activeStatusEffect.turnsRemaining === 0 &&
-              activeStatusEffect.type === StatusEffectType.BLOCKED_SPACE
+              [StatusEffectType.FORCE_SPACE, StatusEffectType.BLOCKED_SPACE].includes(activeStatusEffect.type)
             ) {
               this.level.board.selections.delete(numberCoordsToCoords(activeStatusEffect.target));
             }
@@ -521,6 +542,7 @@ export class Game {
       case PowerUpType.REMOVE_ROW:
       case PowerUpType.TELEPORT_RANDOM:
       case PowerUpType.BLOCKED_SPACE:
+      case PowerUpType.FORCE_SPACE:
         this.currentAction = powerUp;
         break;
 
