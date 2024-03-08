@@ -132,7 +132,7 @@ describe('snapshot', () => {
       }
     }
     for (let x = 2; x < 5; x++) {
-      for (let y = 2; y < 4; y++) {
+      for (let y = 2; y < 5; y++) {
         for (let requiredWin = 4; requiredWin < 5; requiredWin++) {
           for (let maxDepth = 6; maxDepth < 7; maxDepth += 2) {
             // eslint-disable-next-line @typescript-eslint/no-loop-func

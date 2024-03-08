@@ -25,7 +25,7 @@ describe('Level', () => {
       expect(level.getWinningSpaces('x')).toEqual([]);
     });
 
-    it.only('gives winning spaces', () => {
+    it('gives winning spaces', () => {
       const selections = new Map();
       selections.set('0,0', 'x');
       selections.set('1,3', 'o');
