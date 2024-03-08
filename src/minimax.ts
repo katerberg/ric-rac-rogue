@@ -50,7 +50,6 @@ export function getBestMove(
   const availableMoves = state.board.getAvailableMoves();
   let [bestMove] = availableMoves;
   if (depth > state.maxDepth) {
-    console.log('bailing over max depth', state.maxDepth);
     return {
       bestScore:
         getTotalScore(state.board.selections, state.board.columns, state.board.rows, state.requiredWin) +

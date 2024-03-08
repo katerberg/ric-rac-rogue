@@ -396,7 +396,6 @@ export class Game {
     } else if (forceRandomPosition !== -1) {
       move = this.level.board.getRandomMove();
     } else {
-      console.log('making best move');
       move = getBestMove(
         {
           board: this.level.board,

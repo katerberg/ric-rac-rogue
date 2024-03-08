@@ -22,7 +22,7 @@ describe('Level', () => {
         },
       ];
 
-      expect(level.getWinningSpaces()).toEqual([]);
+      expect(level.getWinningSpaces('x')).toEqual([]);
     });
 
     it.only('gives winning spaces', () => {
@@ -46,7 +46,7 @@ describe('Level', () => {
         },
       ];
 
-      expect(level.getWinningSpaces()).toEqual([
+      expect(level.getWinningSpaces('x')).toEqual([
         {x: 0, y: 0},
         {x: 1, y: 1},
         {x: 2, y: 2},
@@ -76,7 +76,7 @@ describe('Level', () => {
         },
       ];
 
-      const result = level.getWinningSpaces();
+      const result = level.getWinningSpaces('x');
       expect(result).toEqual([
         {x: 0, y: 0},
         {x: 0, y: 1},
