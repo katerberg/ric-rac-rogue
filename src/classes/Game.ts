@@ -50,12 +50,12 @@ function recreateNode(el: HTMLElement, withChildren?: boolean): Node {
   }
   return newNode;
 }
-function getPowerUpDescription(powerUp: PowerUp): HTMLElement | null {
-  if (powerUp.description !== '') {
+function getPowerUpDescription(powerUpDescription: string): HTMLElement | null {
+  if (powerUpDescription !== '') {
     const description = document.createElement('div');
     description.classList.add('description');
     const descriptionContent = document.createElement('div');
-    descriptionContent.innerText = powerUp.description;
+    descriptionContent.innerText = powerUpDescription;
     descriptionContent.classList.add('description-content');
     description.appendChild(descriptionContent);
     return description;
@@ -68,7 +68,7 @@ function getActionButton(powerUp: PowerUp): HTMLElement {
   if (powerUp.cooldownRemaining > 0) {
     button.classList.add('disabled');
   }
-  const description = getPowerUpDescription(powerUp);
+  const description = getPowerUpDescription(powerUp.description);
   if (description) {
     button.appendChild(description);
   }
@@ -88,6 +88,20 @@ function getActionButton(powerUp: PowerUp): HTMLElement {
   button.appendChild(disabledStatus);
   button.appendChild(cooldown);
   button.appendChild(cost);
+  return button;
+}
+
+function getRechargeButton(): HTMLElement {
+  const button = document.createElement('button');
+  button.classList.add('recharge-button');
+  const description = getPowerUpDescription('Refill energy level to 100% of maximum');
+  if (description) {
+    button.appendChild(description);
+  }
+  const title = document.createElement('div');
+  title.classList.add('title');
+  title.innerText = '⚡︎ Recharge ⚡︎';
+  button.appendChild(title);
   return button;
 }
 
@@ -754,13 +768,23 @@ export class Game {
         this.redrawActions();
         resolve();
       });
-      const description = getPowerUpDescription(powerUpOption);
+      const description = getPowerUpDescription(powerUpOption.description);
       if (description) {
         button.appendChild(description);
       }
       powerUpOptionsDisplay.appendChild(button);
     });
     return powerUpOptionsDisplay;
+  }
+
+  private getRechargeOption(resolve: () => void): Node {
+    const button = getRechargeButton();
+    button.addEventListener('click', () => {
+      this.energyCurrent = this.energyMax;
+      this.redrawEnergy();
+      resolve();
+    });
+    return button;
   }
 
   private getEndLevelMessage(term: TerminalStatus, resolve: () => void): HTMLElement {
@@ -786,9 +810,13 @@ export class Game {
     message.appendChild(this.getEnergyChange());
     if (term.winner === 'x') {
       const explanation = document.createElement('h2');
-      explanation.innerText = 'Gain a new ability!';
+      explanation.innerText = 'Gain a new ability';
       message.appendChild(explanation);
       message.appendChild(this.getPowerUpOptionsDisplay(resolve));
+      const or = document.createElement('h2');
+      or.innerText = 'OR';
+      message.appendChild(or);
+      message.appendChild(this.getRechargeOption(resolve));
     } else {
       const nextLevelButton = document.createElement('button');
       nextLevelButton.classList.add('next-level-button');

@@ -107,6 +107,7 @@ $action-button-transition-duration: 100ms;
             .power-up-options {
                 margin: 20px;
                 display: flex;
+                margin-bottom: 70px;
 
                 .power-up-option {
                     @include action_button();
@@ -117,6 +118,10 @@ $action-button-transition-duration: 100ms;
                         opacity: 0.4;
                     }
                 }
+            }
+
+            .recharge-button {
+                @include action_button();
             }
         }
 
