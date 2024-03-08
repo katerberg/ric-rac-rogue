@@ -8,6 +8,13 @@ function getWinCondition(level: number, columns: number, rows: number): Rule {
       xInARow: 3,
     };
   }
+  if (level === 10) {
+    return {
+      type: RuleType.WIN_CON,
+      winType: RuleWinType.X_IN_A_ROW,
+      xInARow: 4,
+    };
+  }
   return {
     type: RuleType.WIN_CON,
     winType: RuleWinType.X_IN_A_ROW,
@@ -22,6 +29,12 @@ function getFirstMoveRule(level: number): Rule {
       firstPlayer: 'x',
     };
   }
+  if (level === 10) {
+    return {
+      type: RuleType.FIRST_MOVE,
+      firstPlayer: 'o',
+    };
+  }
   return {
     type: RuleType.FIRST_MOVE,
     firstPlayer: Math.random() > 0.5 ? 'x' : 'o',
@@ -31,6 +44,9 @@ function getFirstMoveRule(level: number): Rule {
 export function generateNumberOfAxes(level: number): number {
   if (level === 1) {
     return 3;
+  }
+  if (level === 10) {
+    return Math.ceil(Math.random() * 4) + 6;
   }
   if (level < 6) {
     return Math.ceil(Math.random() * 3) + 1;

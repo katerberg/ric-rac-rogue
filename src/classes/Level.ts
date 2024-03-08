@@ -43,8 +43,8 @@ export class Level {
   // 9:
   // Boss: one of the fancy situations (quantum, ultimate, ????)
   constructor(level: number) {
-    let columns = generateNumberOfAxes(level);
-    let rows = generateNumberOfAxes(level);
+    let columns = 4;
+    let rows = level === 10 ? 4 : generateNumberOfAxes(level);
 
     if (isDebug()) {
       const urlParams = getUrlParams();
@@ -58,7 +58,7 @@ export class Level {
       selections: new Map<Coordinate, Choice>(),
     });
     this.requiredWin = 3;
-    this.maxDepth = 6;
+    this.maxDepth = 8;
 
     this.rules = generateRules(level, columns, rows);
     this.requiredWin = this.rules.find((rule) => rule.type === RuleType.WIN_CON)?.xInARow ?? 3;

@@ -61,10 +61,10 @@ function getActionButton(powerUp: PowerUp): HTMLElement {
   title.innerHTML = powerUp.displayName;
   const disabledStatus = document.createElement('div');
   disabledStatus.classList.add('disabled-status');
-  disabledStatus.innerHTML = `<span class="icon">⏱</span>${powerUp.cooldownRemaining} left`;
+  disabledStatus.innerHTML = `<span class="icon">⏱ </span>${powerUp.cooldownRemaining} left`;
   const cooldown = document.createElement('div');
   cooldown.classList.add('cooldown');
-  cooldown.innerHTML = `<span class="icon">⏱</span>${powerUp.cooldown}`;
+  cooldown.innerHTML = `<span class="icon">⏱ </span>${powerUp.cooldown}`;
   const cost = document.createElement('div');
   cost.classList.add('cost');
   cost.innerHTML = `<span class="icon">⚡︎</span>${powerUp.cost}`;
