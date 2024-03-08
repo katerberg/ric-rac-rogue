@@ -31,7 +31,9 @@ const gameInnerPadding = 24;
 const verticalPadding = 80;
 const horizontalPadding = 0;
 
-const ENERGY_COST_MOVE = 10;
+const ENERGY_COST_MOVE = 0;
+const ENERGY_COST_LOSS = 50;
+const ENERGY_COST_CAT = 20;
 function recreateNode(el: HTMLElement, withChildren?: boolean): Node {
   let newNode: Node;
   if (withChildren) {
@@ -110,6 +112,11 @@ export class Game {
       };
       p.windowResized = (): void => this.resizeP();
       p.mouseClicked = (): void => this.handleClick();
+      p.touchStarted = (): boolean => false;
+      p.touchEnded = (): boolean => {
+        this.handleClick();
+        return false;
+      };
 
       p.draw = (): void => {
         p.background(0, 0, 0);
@@ -687,7 +694,7 @@ export class Game {
           energyCounter.innerHTML = `︎︎⚡︎ ${previousEnergy}/${previousEnergyMax} -> <span class="new-energy">${this.energyCurrent}/${this.energyMax}</span>`;
         }
       }
-    }, 1);
+    }, 50);
     return energyCounter;
   }
 
@@ -772,21 +779,20 @@ export class Game {
         if (term.winner) {
           if (term.winner === 'x') {
             this.stats.totalWins++;
-            this.energyMax += 20;
-            this.energyCurrent += Math.floor(this.energyMax * 0.3);
+            this.energyMax += 10;
+            this.energyCurrent += Math.floor(this.energyMax * 0.25);
             if (this.energyCurrent > this.energyMax) {
               this.energyCurrent = this.energyMax;
             }
           } else {
+            this.energyCurrent -= ENERGY_COST_LOSS;
             this.stats.totalLosses++;
           }
         } else if (term.isCat) {
           this.stats.totalTies++;
-          this.energyCurrent += Math.floor(this.energyMax * 0.15);
-          if (this.energyCurrent > this.energyMax) {
-            this.energyCurrent = this.energyMax;
-          }
+          this.energyCurrent -= ENERGY_COST_CAT;
         }
+        this.checkLossCondition();
       });
 
       nextScreenPromise.then(() => {
