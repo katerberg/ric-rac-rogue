@@ -27,12 +27,13 @@ $action-button-transition-duration: 100ms;
         display: flex;
         flex-direction: column;
         align-items: center;
+        height: 100%;
 
         .next-level-message {
             margin-left: auto;
             margin-right: auto;
-            margin-bottom: 80px;
             text-align: center;
+            overflow: auto;
 
             h1 {
                 display: inline-block;
@@ -110,6 +111,10 @@ $action-button-transition-duration: 100ms;
                     @include action_button();
                     margin-left: 8px;
                     margin-right: 8px;
+
+                    &::before {
+                        opacity: 0.4;
+                    }
                 }
             }
         }
@@ -120,6 +125,10 @@ $action-button-transition-duration: 100ms;
             margin-right: auto;
 
             @include button($color: $color-action-button, $duration: $action-button-transition-duration);
+
+            &::before {
+                opacity: 0.4;
+            }
         }
     }
 

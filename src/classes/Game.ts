@@ -723,6 +723,7 @@ export class Game {
   private getPowerUpOptionsDisplay(resolve: () => void): Node {
     const powerUpOptions = this.getPowerUpOptions();
     const powerUpOptionsDisplay = document.createElement('div');
+
     powerUpOptionsDisplay.classList.add('power-up-options');
     powerUpOptions.forEach((powerUpOption) => {
       const button = getActionButton(powerUpOption);
@@ -753,18 +754,15 @@ export class Game {
       header.innerText = 'Done';
     }
     const subheader = document.createElement('h2');
-    let subheaderPrefix = 'Moving on to';
-    if (term.winner === 'x') {
-      subheaderPrefix = 'Upgrade before';
-    } else if (term.isCat) {
-      subheaderPrefix = 'Regen energy before';
-    }
-    subheader.innerText = `${subheaderPrefix} level ${this.level.level + 1}`;
+    subheader.innerText = `Moving on to level ${this.level.level + 1}`;
     message.appendChild(header);
     message.appendChild(subheader);
     message.appendChild(this.getEnergyCounter());
     message.appendChild(this.getEnergyChange());
     if (term.winner === 'x') {
+      const explanation = document.createElement('h2');
+      explanation.innerText = 'Gain a new ability!';
+      message.appendChild(explanation);
       message.appendChild(this.getPowerUpOptionsDisplay(resolve));
     } else {
       const nextLevelButton = document.createElement('button');
