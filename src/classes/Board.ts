@@ -14,10 +14,13 @@ export class Board {
 
   selections: Moves;
 
+  winLines: NumberCoordinates[][];
+
   constructor({columns, rows, selections}: BoardProps) {
     this.columns = columns;
     this.rows = rows;
     this.selections = selections;
+    this.winLines = [];
   }
 
   getAvailableMoves(): NumberCoordinates[] {

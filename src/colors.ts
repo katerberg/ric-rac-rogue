@@ -6,4 +6,5 @@ export const COLORS = {
   statusEffect: '#21ebff',
   x: '#E6F603',
   o: '#C422D7',
+  winLines: '#f51311',
 };

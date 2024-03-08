@@ -112,11 +112,6 @@ export class Game {
       };
       p.windowResized = (): void => this.resizeP();
       p.mouseClicked = (): void => this.handleClick();
-      p.touchStarted = (): boolean => false;
-      p.touchEnded = (): boolean => {
-        this.handleClick();
-        return false;
-      };
 
       p.draw = (): void => {
         p.background(0, 0, 0);
@@ -568,6 +563,7 @@ export class Game {
         this.drawO(x, y);
       }
     });
+    this.level.board.winLines.forEach((winLine) => this.drawWinLines(winLine));
   }
 
   private redrawEnergy(): void {
@@ -825,12 +821,37 @@ export class Game {
     }
   }
 
+  private drawWinLines(spaces: NumberCoordinates[]): void {
+    this.p5.stroke(COLORS.winLines);
+    this.p5.strokeCap(this.p5.ROUND);
+    this.p5.strokeWeight(gameAxisWidth * 2);
+    this.p5.drawingContext.shadowBlur = 20;
+    this.p5.drawingContext.shadowColor = COLORS.winLines;
+
+    const cellWidth = this.getCellWidth();
+    const cellHeight = this.getCellHeight();
+
+    for (let iteration = 0; iteration < 2; iteration++) {
+      for (let i = 0; i < spaces.length - 1; i++) {
+        const xStart = spaces[i].x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
+        const yStart = spaces[i].y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
+        const xEnd = spaces[i + 1].x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
+        const yEnd = spaces[i + 1].y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
+        this.p5.line(xStart, yStart, xEnd, yEnd);
+      }
+    }
+  }
+
   private endLevel(term: TerminalStatus): void {
     if (term.isWinner && term.winner) {
       const spaces = this.level.getWinningSpaces(term.winner);
-      console.log(spaces, 'win');
+      this.level.board.winLines.push(spaces);
+      setTimeout(() => {
+        this.goToNextLevelScreen(term);
+      }, 2000);
+    } else {
+      this.goToNextLevelScreen(term);
     }
-    this.goToNextLevelScreen(term);
   }
 
   private displayStats(): void {
