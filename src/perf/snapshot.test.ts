@@ -85,6 +85,15 @@ describe('snapshot', () => {
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
 
+    it('4x10 with 4 in a row depth 8', () => {
+      const input = {...getEmptyBoardState(5, 5), requiredWin: 4, maxDepth: 6};
+
+      const time = new Date().getTime();
+      getBestMove(input);
+
+      expect(new Date().getTime() - time).toMatchSnapshot();
+    });
+
     it('6x6 with 3 in a row depth 6', () => {
       const input = {...getEmptyBoardState(6, 6), maxDepth: 6};
 
