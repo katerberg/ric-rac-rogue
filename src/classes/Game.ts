@@ -403,7 +403,7 @@ export class Game {
           requiredWin: this.level.requiredWin,
           currentPlayer: 'o',
         },
-        false,
+        this.level.board.getAvailableMoves().length < 12,
       ).bestMove;
     }
     if (!takeExtraTurn) {

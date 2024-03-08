@@ -35,6 +35,7 @@ export function boardToTranspositionTableKeys(selections: Moves, columns: number
 
 export function getBestMove(
   state: State,
+  pruning: boolean,
   isMaximizing?: boolean,
   depth = 0,
   alpha = -1_000_000,
@@ -103,7 +104,7 @@ export function getBestMove(
       if (transpositionTable[transpositionTableKey]) {
         nodeValue = transpositionTable[transpositionTableKey];
       } else {
-        nodeValue = getBestMove(child, !maximizing, depth + 1, newAlpha, newBeta);
+        nodeValue = getBestMove(child, pruning, !maximizing, depth + 1, newAlpha, newBeta);
         boardToTranspositionTableKeys(child.board.selections, child.board.columns, child.board.rows).forEach((key) => {
           if (!transpositionTable[key]) {
             transpositionTable[key] = nodeValue;
@@ -116,10 +117,12 @@ export function getBestMove(
         bestMove = move;
         newAlpha = null || newAlpha;
         newBeta = null || newBeta;
-        if (maximizing) {
-          newAlpha = Math.max(bestScore, newAlpha);
-        } else if (!maximizing) {
-          newBeta = Math.min(bestScore, newBeta);
+        if (pruning) {
+          if (maximizing) {
+            newAlpha = Math.max(bestScore, newAlpha);
+          } else if (!maximizing) {
+            newBeta = Math.min(bestScore, newBeta);
+          }
         }
       }
     }

@@ -33,7 +33,7 @@ describe('minimax', () => {
       const input = getFullBoardState();
       input.board.selections.delete('2,2');
 
-      const result = getBestMove(input);
+      const result = getBestMove(input, false);
 
       expect(result.bestMove).toEqual({x: 2, y: 2});
       expect(result.bestScore).toEqual(1_000_000);
@@ -58,7 +58,7 @@ describe('minimax', () => {
       input.board.selections.set('2,0', 'o');
       input.board.selections.set('2,2', 'x');
 
-      const result = getBestMove(input);
+      const result = getBestMove(input, false);
 
       expect(result.bestMove).toEqual({x: 0, y: 2});
       expect(result.bestScore).toEqual(1_000_000 - 0.2);
@@ -75,7 +75,7 @@ describe('minimax', () => {
       input.board.selections.set('1,2', 'o');
       input.board.selections.set('2,2', 'x');
 
-      const result = getBestMove(input);
+      const result = getBestMove(input, false);
 
       expect(result.bestMove).toEqual({x: 1, y: 1});
       expect(result.bestScore).toEqual(0);
