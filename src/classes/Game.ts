@@ -352,6 +352,15 @@ export class Game {
         powerUp.cooldownRemaining -= 1;
       });
       this.redrawActions();
+      if (this.level.level === 10 && this.level.board.getAvailableMoves().length < 20) {
+        this.level.maxDepth = 6;
+        if (this.level.board.getAvailableMoves().length < 15) {
+          this.level.maxDepth = 8;
+        }
+        if (this.level.board.getAvailableMoves().length < 12) {
+          this.level.maxDepth = 3000;
+        }
+      }
       // Bail if we won
       this.stats.totalMoves++;
       if (this.makePlay(`${x},${y}`, 'x')) {
