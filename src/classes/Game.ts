@@ -863,6 +863,9 @@ export class Game {
   }
 
   private endLevel(term: TerminalStatus): void {
+    if (this.level.level === 10) {
+      this.endGame(term.isWinner && term.winner === 'x');
+    }
     if (term.isWinner && term.winner) {
       const spaces = this.level.getWinningSpaces(term.winner);
       this.level.board.winLines.push(spaces);
@@ -874,7 +877,7 @@ export class Game {
     }
   }
 
-  private displayStats(): void {
+  private displayStats(win: boolean): void {
     const endGameResult = document.getElementById('end-game-result');
     const endGameStats = document.getElementById('end-game-stats');
     if (endGameStats && endGameResult) {
@@ -899,7 +902,7 @@ export class Game {
 
       const result = document.createElement('div');
       const level = document.createElement('p');
-      level.innerText = `Lost on level ${this.level.level}`;
+      level.innerText = `${win ? 'Victory' : 'Defeat'} on level ${this.level.level}`;
       result.appendChild(level);
       const powerUpHeader = document.createElement('h2');
       powerUpHeader.innerText = 'Power-Ups';
@@ -915,7 +918,7 @@ export class Game {
     }
   }
 
-  endGame(): void {
+  endGame(win = false): void {
     const canvasContainer = document.getElementById('canvas-container');
     const endScreen = document.getElementById('end-screen');
     const topBar = document.getElementById('top-bar');
@@ -924,7 +927,7 @@ export class Game {
       this.stats.totalLosses++;
       this.p5.remove();
       canvasContainer.innerHTML = '';
-      this.displayStats();
+      this.displayStats(win);
       this.gameEndCallback();
       endScreen.classList.add('visible');
       sidebar.classList.remove('visible');

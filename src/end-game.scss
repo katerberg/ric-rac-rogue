@@ -48,7 +48,7 @@ $button-transition-duration: 100ms;
         position: absolute;
         background-color: yellow;
         left: calc(50%);
-        bottom: 40%;
+        bottom: 37vh;
         transform: translateX(-50%);
         background-image: linear-gradient(red, yellow), linear-gradient(black, white);
         clip-path: polygon(-50% 0px, 150% -50%, 150% 55%, -50% 55%,
