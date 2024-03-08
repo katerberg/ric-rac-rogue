@@ -1,4 +1,4 @@
-import {Rule, RuleType, RuleWinType} from './types';
+import {Rule, RuleType, RuleWinType, TurnOrderType} from './types';
 
 function getWinCondition(level: number, columns: number, rows: number): Rule {
   if (level === 1) {
@@ -66,6 +66,7 @@ export function generateRules(level: number, columns: number, rows: number): Rul
     getWinCondition(level, columns, rows),
     {
       type: RuleType.TURN_ORDER,
+      turnOrderType: level === 10 ? TurnOrderType.TWO_TO_ONE : TurnOrderType.TAKE_TURNS,
     },
     getFirstMoveRule(level),
   ];
@@ -76,6 +77,9 @@ export function getRuleName(rule: Rule): string {
     case RuleType.WIN_CON:
       return `Win: ${rule.xInARow} in a row`;
     case RuleType.TURN_ORDER:
+      if (rule.turnOrderType === TurnOrderType.TWO_TO_ONE) {
+        return 'Two turns to one';
+      }
       return 'Take turns';
     case RuleType.FIRST_MOVE:
       return `${rule.firstPlayer?.toUpperCase()} goes first`;

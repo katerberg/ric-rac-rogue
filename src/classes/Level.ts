@@ -1,6 +1,6 @@
 import {getUrlParams, isDebug} from '../environment';
 import {generateNumberOfAxes, generateRules} from '../rules';
-import {Choice, Coordinate, Rule, RuleType} from '../types';
+import {Choice, Coordinate, Rule, RuleType, TurnOrderType} from '../types';
 import {Board} from './Board';
 
 export class Level {
@@ -44,12 +44,12 @@ export class Level {
   // Boss: one of the fancy situations (quantum, ultimate, ????)
   constructor(level: number) {
     let columns = generateNumberOfAxes(level);
-    let rows = level === 10 ? 4 : generateNumberOfAxes(level);
+    let rows = level === 10 ? 5 : generateNumberOfAxes(level);
 
     if (isDebug()) {
       const urlParams = getUrlParams();
       columns = Number.parseInt(urlParams.get('columns') || `${generateNumberOfAxes(level)}`, 10);
-      rows = Number.parseInt(urlParams.get('rows') || `${generateNumberOfAxes(level)}`, 10);
+      rows = level === 10 ? 5 : Number.parseInt(urlParams.get('rows') || `${generateNumberOfAxes(level)}`, 10);
     }
     this.level = level;
     this.board = new Board({
@@ -61,8 +61,17 @@ export class Level {
     this.requiredWin = this.rules.find((rule) => rule.type === RuleType.WIN_CON)?.xInARow ?? 3;
     if (this.rules.find((rule) => rule.type === RuleType.FIRST_MOVE)?.firstPlayer === 'o') {
       this.board.setRandomMove('o');
+      if (this.rules.find((rule) => rule.type === RuleType.TURN_ORDER)?.turnOrderType === TurnOrderType.TWO_TO_ONE) {
+        this.board.setRandomMove('o');
+      }
     }
     this.maxDepth = level === 10 ? 4 : 6;
+  }
+
+  isTwoToOne(): boolean {
+    return !!this.rules.find(
+      (rule) => rule.type === RuleType.TURN_ORDER && rule.turnOrderType === TurnOrderType.TWO_TO_ONE,
+    );
   }
 
   changeWinRequirement(requiredWin: number): void {

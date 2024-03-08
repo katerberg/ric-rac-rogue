@@ -11,12 +11,19 @@ export enum RuleType {
   FIRST_MOVE,
   TURN_ORDER,
 }
+
 export enum RuleWinType {
   X_IN_A_ROW,
 }
 
+export enum TurnOrderType {
+  TAKE_TURNS,
+  TWO_TO_ONE,
+}
+
 export type Rule = {
   type: RuleType;
+  turnOrderType?: TurnOrderType;
   winType?: RuleWinType;
   firstPlayer?: Choice;
   xInARow?: number;

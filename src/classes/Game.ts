@@ -378,52 +378,62 @@ export class Game {
       // Do their move
       this.loading = true;
       document.getElementById('loading')?.classList.add('loading');
-      setTimeout(() => {
-        let move;
-        const forceRandomPosition = this.getStatusEffectPosition(StatusEffectType.FORCE_RANDOM);
-        const forceSpacePosition = this.getStatusEffectPosition(StatusEffectType.FORCE_SPACE);
-        if (forceSpacePosition !== -1) {
-          const {target} = this.activeStatusEffects[forceSpacePosition];
+      setTimeout(() => this.takeTheirMove(this.level.isTwoToOne()), 50);
+    }
+  }
 
-          const isStillValidMove =
-            this.level.board.isMoveOnBoard(target!) &&
-            this.level.board.selections.get(numberCoordsToCoords(target!)) === 'forced';
-          move = isStillValidMove ? target : this.level.board.getRandomMove();
-        } else if (forceRandomPosition !== -1) {
-          move = this.level.board.getRandomMove();
-        } else {
-          move = getBestMove(
-            {
-              board: this.level.board,
-              maxDepth: this.level.maxDepth,
-              requiredWin: this.level.requiredWin,
-              currentPlayer: 'o',
-            },
-            false,
-          ).bestMove;
+  private takeTheirMove(takeExtraTurn: boolean): void {
+    console.log('taking their turn with takeExtraTurn', takeExtraTurn);
+    let move;
+    const forceRandomPosition = this.getStatusEffectPosition(StatusEffectType.FORCE_RANDOM);
+    const forceSpacePosition = this.getStatusEffectPosition(StatusEffectType.FORCE_SPACE);
+    if (forceSpacePosition !== -1) {
+      const {target} = this.activeStatusEffects[forceSpacePosition];
+
+      const isStillValidMove =
+        this.level.board.isMoveOnBoard(target!) &&
+        this.level.board.selections.get(numberCoordsToCoords(target!)) === 'forced';
+      move = isStillValidMove ? target : this.level.board.getRandomMove();
+    } else if (forceRandomPosition !== -1) {
+      move = this.level.board.getRandomMove();
+    } else {
+      move = getBestMove(
+        {
+          board: this.level.board,
+          maxDepth: this.level.maxDepth,
+          requiredWin: this.level.requiredWin,
+          currentPlayer: 'o',
+        },
+        false,
+      ).bestMove;
+    }
+    if (!takeExtraTurn) {
+      document.getElementById('loading')?.classList.remove('loading');
+      this.loading = false;
+    }
+    if (move) {
+      this.makePlay(`${move.x},${move.y}`, 'o');
+    }
+    this.activeStatusEffects = this.activeStatusEffects
+      .map((activeStatusEffect) => {
+        activeStatusEffect.turnsRemaining -= 1;
+        // Clean up the finished active status effects on the board
+        if (
+          activeStatusEffect.target &&
+          activeStatusEffect.turnsRemaining === 0 &&
+          [StatusEffectType.FORCE_SPACE, StatusEffectType.BLOCKED_SPACE].includes(activeStatusEffect.type)
+        ) {
+          if (!this.level.board.isPlayerMove(activeStatusEffect.target)) {
+            this.level.board.selections.delete(numberCoordsToCoords(activeStatusEffect.target));
+          }
         }
-        document.getElementById('loading')?.classList.remove('loading');
-        this.loading = false;
-        if (move) {
-          this.makePlay(`${move.x},${move.y}`, 'o');
-        }
-        this.activeStatusEffects = this.activeStatusEffects
-          .map((activeStatusEffect) => {
-            activeStatusEffect.turnsRemaining -= 1;
-            // Clean up the finished active status effects on the board
-            if (
-              activeStatusEffect.target &&
-              activeStatusEffect.turnsRemaining === 0 &&
-              [StatusEffectType.FORCE_SPACE, StatusEffectType.BLOCKED_SPACE].includes(activeStatusEffect.type)
-            ) {
-              if (!this.level.board.isPlayerMove(activeStatusEffect.target)) {
-                this.level.board.selections.delete(numberCoordsToCoords(activeStatusEffect.target));
-              }
-            }
-            return activeStatusEffect;
-          })
-          .filter((activeStatusEffect) => activeStatusEffect.turnsRemaining > 0);
-        this.redrawRules();
+        return activeStatusEffect;
+      })
+      .filter((activeStatusEffect) => activeStatusEffect.turnsRemaining > 0);
+    this.redrawRules();
+    if (takeExtraTurn) {
+      setTimeout(() => {
+        this.takeTheirMove(false);
       }, 50);
     }
   }
