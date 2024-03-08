@@ -43,7 +43,7 @@ export class Level {
   // 9:
   // Boss: one of the fancy situations (quantum, ultimate, ????)
   constructor(level: number) {
-    let columns = 4;
+    let columns = generateNumberOfAxes(level);
     let rows = level === 10 ? 4 : generateNumberOfAxes(level);
 
     if (isDebug()) {
@@ -57,14 +57,12 @@ export class Level {
       rows,
       selections: new Map<Coordinate, Choice>(),
     });
-    this.requiredWin = 3;
-    this.maxDepth = level === 10 ? 4 : 6;
-
     this.rules = generateRules(level, columns, rows);
     this.requiredWin = this.rules.find((rule) => rule.type === RuleType.WIN_CON)?.xInARow ?? 3;
     if (this.rules.find((rule) => rule.type === RuleType.FIRST_MOVE)?.firstPlayer === 'o') {
       this.board.setRandomMove('o');
     }
+    this.maxDepth = level === 10 ? 4 : 6;
   }
 
   changeWinRequirement(requiredWin: number): void {

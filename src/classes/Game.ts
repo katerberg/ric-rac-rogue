@@ -361,6 +361,9 @@ export class Game {
           this.level.maxDepth = 3000;
         }
       }
+      if (this.level.board.getAvailableMoves().length < 12) {
+        this.level.maxDepth = 3000;
+      }
       // Bail if we won
       this.stats.totalMoves++;
       if (this.makePlay(`${x},${y}`, 'x')) {

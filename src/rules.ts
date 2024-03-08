@@ -15,11 +15,15 @@ function getWinCondition(level: number, columns: number, rows: number): Rule {
       xInARow: 4,
     };
   }
-  return {
+  const winCon = {
     type: RuleType.WIN_CON,
     winType: RuleWinType.X_IN_A_ROW,
     xInARow: Math.min(Math.ceil(Math.random() * Math.max(columns, rows)) + 1, Math.max(columns, rows)),
   };
+  if (winCon.xInARow > 3 && columns === 5 && rows === 5) {
+    winCon.xInARow = 3;
+  }
+  return winCon;
 }
 
 function getFirstMoveRule(level: number): Rule {
@@ -41,6 +45,9 @@ function getFirstMoveRule(level: number): Rule {
   };
 }
 
+// 1: 3x3
+// 2-5: nXm of 2-4
+// 2-6: nXm of 3-5
 export function generateNumberOfAxes(level: number): number {
   if (level === 1) {
     return 3;
