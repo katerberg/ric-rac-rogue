@@ -346,7 +346,7 @@ export class Game {
       this.currentAction = null;
       return;
     }
-    if (this.currentAction?.type === PowerUpType.TELEPORT_RANDOM && this.level.board.isMoveOnBoard({x, y})) {
+    if (this.currentAction?.type === PowerUpType.TELEPORT_RANDOM && this.level.board.isTakenMove({x, y})) {
       this.level.board.teleportRandom({x, y});
       this.checkWinCondition();
       this.currentAction = null;
@@ -645,13 +645,21 @@ export class Game {
       actionsContainer.innerHTML = '';
       this.powerUps.forEach((powerUp) => {
         const button = getActionButton(powerUp);
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (e: MouseEvent) => {
           if (powerUp.cooldownRemaining < 1) {
-            this.energyCurrent -= powerUp.cost;
-            powerUp.cooldownRemaining = powerUp.cooldown;
-            this.redrawActions();
-            this.checkLossCondition();
-            this.activatePowerUp(powerUp);
+            if (this.energyCurrent > powerUp.cost) {
+              this.energyCurrent -= powerUp.cost;
+              powerUp.cooldownRemaining = powerUp.cooldown;
+              this.redrawActions();
+              this.checkLossCondition();
+              this.activatePowerUp(powerUp);
+            } else {
+              const clickedButton = (e.target as HTMLElement).closest('button');
+              clickedButton?.classList.add('warning');
+              setTimeout(() => {
+                clickedButton?.classList.remove('warning');
+              }, 500);
+            }
           } else if (this.currentAction?.type === PowerUpType.RESET_COOLDOWN) {
             powerUp.cooldownRemaining = 0;
             this.currentAction = null;

@@ -12,7 +12,8 @@
     padding: 20px;
     font-family: 'Orbitron', 'Roboto', sans-serif;
     border-radius: 500px;
-    transition: text-shadow $duration, box-shadow $duration, font-size $duration, padding $duration, letter-spacing $duration, box-shadow 100ms;
+    border-color: $color-game-axes;
+    transition: text-shadow $duration, box-shadow $duration, font-size $duration, padding $duration, letter-spacing $duration, box-shadow $duration, border-color 500ms, color 500ms;
     position: relative;
     width: 100%;
 
@@ -21,6 +22,18 @@
 
         .title {
             text-shadow: 0 0 3px $color, 0 0 3px $color;
+        }
+    }
+
+    &.warning {
+        border-color: $color-game-warning;
+
+        &:hover {
+            box-shadow: 0 3px 20px 0 $color-game-warning inset, 0 3px 20px 0 $color-game-warning, 0 3px 20px 0 $color-game-warning inset, 0 3px 20px 0 $color-game-warning;
+
+            .title {
+                text-shadow: 0 0 3px $color-game-warning, 0 0 3px $color-game-warning;
+            }
         }
     }
 
