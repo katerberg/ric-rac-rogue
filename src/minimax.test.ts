@@ -41,12 +41,17 @@ describe('minimax', () => {
 
     it('finds a winning terminal move for o', () => {
       const input = getFullBoardState();
+      input.board.selections = new Map();
       input.currentPlayer = 'o';
-      input.board.selections.delete('2,2');
+      input.board.selections.set('0,0', 'x');
+      input.board.selections.set('1,1', 'o');
+      input.board.selections.set('0,1', 'o');
+      input.board.selections.set('2,2', 'x');
+      input.board.selections.set('0,2', 'x');
 
-      const result = getBestMove(input, false);
+      const result = getBestMove(input, true);
 
-      expect(result.bestMove).toEqual({x: 2, y: 2});
+      expect(result.bestMove).toEqual({x: 2, y: 1});
       expect(result.bestScore).toEqual(-1_000_000);
     });
 

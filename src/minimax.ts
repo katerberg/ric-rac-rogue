@@ -115,8 +115,6 @@ export function getBestMove(
       if ((maximizing && nodeValue.bestScore > bestScore) || (!maximizing && nodeValue.bestScore < bestScore)) {
         ({bestScore} = nodeValue);
         bestMove = move;
-        newAlpha = null || newAlpha;
-        newBeta = null || newBeta;
         if (pruning) {
           if (maximizing) {
             newAlpha = Math.max(bestScore, newAlpha);
