@@ -932,6 +932,7 @@ export class Game {
     if (term.isWinner && term.winner) {
       const spaces = this.level.getWinningSpaces(term.winner);
       this.level.board.winLines.push(spaces);
+      this.startTime = Date.now() + 2000;
       setTimeout(() => {
         this.goToNextLevelScreen(term);
       }, 2000);
