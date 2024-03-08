@@ -52,7 +52,8 @@ export function getBestMove(
   if (depth > state.maxDepth) {
     return {
       bestScore:
-        getTotalScore(state.board.selections, state.board.columns, state.board.rows) + 1000 * (maximizing ? -1 : 1),
+        getTotalScore(state.board.selections, state.board.columns, state.board.rows, state.requiredWin) +
+        1000 * (maximizing ? -1 : 1),
       bestMove,
     };
   }

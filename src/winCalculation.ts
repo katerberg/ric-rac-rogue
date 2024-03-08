@@ -105,83 +105,55 @@ export function checkTerminal(board: Board, requiredWin: number): TerminalStatus
   };
 }
 
-export function getColumnScore(selections: Moves, column: number, rows: number): number {
+export function getColumnScore(selections: Moves, column: number, rows: number, requiredWin: number): number {
   let score = 0;
   for (let y = 0; y < rows; y++) {
-    if (selections.get(`${column},${y}`) === 'x') {
-      if (selections.get(`${column},${y + 1}`) === 'x') {
-        if (selections.get(`${column},${y + 2}`) === 'x') {
-          score += 100000;
-          y += 2;
-        } else {
-          score += 10;
-          y++;
+    const startingValue = selections.get(`${column},${y}`);
+    if (startingValue === 'x' || startingValue === 'o') {
+      let connectors = 0;
+      while (++connectors < requiredWin) {
+        if (selections.get(`${column},${y + connectors}`) !== startingValue) {
+          break;
         }
-      } else {
-        score += 1;
       }
-    } else if (selections.get(`${column},${y}`) === 'o') {
-      if (selections.get(`${column},${y + 1}`) === 'o') {
-        if (selections.get(`${column},${y + 2}`) === 'o') {
-          score -= 100000;
-          y += 2;
-        } else {
-          score -= 10;
-          y++;
-        }
-      } else {
-        score -= 1;
-      }
+
+      score += Math.pow(10, connectors - (requiredWin === connectors ? 0 : 1)) * (startingValue === 'o' ? -1 : 1);
     }
   }
   return score;
 }
 
-export function getRowScore(selections: Moves, columns: number, row: number): number {
+export function getRowScore(selections: Moves, columns: number, row: number, requiredWin: number): number {
   let score = 0;
   for (let x = 0; x < columns; x++) {
-    if (selections.get(`${x},${row}`) === 'x') {
-      if (selections.get(`${x + 1},${row}`) === 'x') {
-        if (selections.get(`${x + 2},${row}`) === 'x') {
-          score += 100000;
-          x += 2;
-        } else {
-          score += 10;
-          x++;
+    const startingValue = selections.get(`${x},${row}`);
+    if (startingValue === 'x' || startingValue === 'o') {
+      let connectors = 0;
+      while (++connectors < requiredWin) {
+        if (selections.get(`${x + connectors},${row}`) !== startingValue) {
+          break;
         }
-      } else {
-        score += 1;
       }
-    } else if (selections.get(`${x},${row}`) === 'o') {
-      if (selections.get(`${x + 1},${row}`) === 'o') {
-        if (selections.get(`${x + 2},${row}`) === 'o') {
-          score -= 100000;
-          x += 2;
-        } else {
-          score -= 10;
-          x++;
-        }
-      } else {
-        score -= 1;
-      }
+
+      score += Math.pow(10, connectors - (requiredWin === connectors ? 0 : 1)) * (startingValue === 'o' ? -1 : 1);
     }
   }
   return score;
 }
 
-export function getTotalColumnScore(selections: Moves, columns: number, rows: number): number {
+export function getTotalColumnScore(selections: Moves, columns: number, rows: number, requiredWin: number): number {
   let score = 0;
   for (let x = 0; x < columns; x++) {
-    score += getColumnScore(selections, x, rows);
+    score += getColumnScore(selections, x, rows, requiredWin);
   }
 
   return score;
 }
 
-export function getTotalRowScore(selections: Moves, columns: number, rows: number): number {
+export function getTotalRowScore(selections: Moves, columns: number, rows: number, requiredWin: number): number {
   let score = 0;
   for (let y = 0; y < rows; y++) {
-    score += getRowScore(selections, columns, y);
+    score += getRowScore(selections, columns, y, requiredWin);
   }
 
   return score;
@@ -192,41 +164,28 @@ export function getDiagonalScore(
   columns: number,
   rows: number,
   startingCoordinate: NumberCoordinates,
+  requiredWin: number,
 ): number {
   let {x, y} = startingCoordinate;
   let score = 0;
   while (x < columns && y < rows) {
-    if (selections.get(`${x},${y}`) === 'x') {
-      if (selections.get(`${x + 1},${y + 1}`) === 'x') {
-        if (selections.get(`${x + 2},${y + 2}`) === 'x') {
-          score += 100000;
-          x += 3;
-          y += 3;
-        } else {
-          score += 10;
-          x += 2;
-          y += 2;
+    const startingValue = selections.get(`${x},${y}`);
+    if (startingValue === 'x' || startingValue === 'o') {
+      let connectors = 0;
+      while (++connectors < requiredWin) {
+        if (selections.get(`${x + connectors},${y + connectors}`) !== startingValue) {
+          y += connectors;
+          x += connectors;
+          break;
         }
-      } else {
-        score += 1;
-        x += 1;
-        y += 1;
       }
-    } else if (selections.get(`${x},${y}`) === 'o') {
-      if (selections.get(`${x + 1},${y + 1}`) === 'o') {
-        if (selections.get(`${x + 2},${y + 2}`) === 'o') {
-          score -= 100000;
-          x += 3;
-          y += 3;
-        } else {
-          score -= 10;
-          x += 2;
-          y += 2;
-        }
+
+      if (connectors === requiredWin) {
+        y += connectors;
+        x += connectors;
+        score += Math.pow(10, connectors + 1) * (startingValue === 'o' ? -1 : 1);
       } else {
-        score -= 1;
-        x += 1;
-        y += 1;
+        score += Math.pow(10, connectors - 1) * (startingValue === 'o' ? -1 : 1);
       }
     } else {
       x += 1;
@@ -236,13 +195,13 @@ export function getDiagonalScore(
   return score;
 }
 
-export function getTotalDiagonalScore(selections: Moves, columns: number, rows: number): number {
+export function getTotalDiagonalScore(selections: Moves, columns: number, rows: number, requiredWin: number): number {
   let score = 0;
   for (let x = 0; x < columns; x++) {
-    score += getDiagonalScore(selections, columns, rows, {x, y: 0});
+    score += getDiagonalScore(selections, columns, rows, {x, y: 0}, requiredWin);
   }
   for (let y = 1; y < rows; y++) {
-    score += getDiagonalScore(selections, columns, rows, {x: 0, y});
+    score += getDiagonalScore(selections, columns, rows, {x: 0, y}, requiredWin);
   }
 
   return score;
@@ -253,41 +212,28 @@ function getReverseDiagonalScore(
   columns: number,
   rows: number,
   startingCoordinate: NumberCoordinates,
+  requiredWin: number,
 ): number {
   let {x, y} = startingCoordinate;
   let score = 0;
-  while (x >= 0 && y < rows) {
-    if (selections.get(`${x},${y}`) === 'x') {
-      if (selections.get(`${x - 1},${y + 1}`) === 'x') {
-        if (selections.get(`${x - 2},${y + 2}`) === 'x') {
-          score += 100000;
-          x -= 3;
-          y += 3;
-        } else {
-          score += 10;
-          x -= 2;
-          y += 2;
+  while (x < columns && y < rows) {
+    const startingValue = selections.get(`${x},${y}`);
+    if (startingValue === 'x' || startingValue === 'o') {
+      let connectors = 0;
+      while (++connectors < requiredWin) {
+        if (selections.get(`${x - connectors},${y + connectors}`) !== startingValue) {
+          x -= connectors;
+          y += connectors;
+          break;
         }
-      } else {
-        score += 1;
-        x -= 1;
-        y += 1;
       }
-    } else if (selections.get(`${x},${y}`) === 'o') {
-      if (selections.get(`${x - 1},${y + 1}`) === 'o') {
-        if (selections.get(`${x - 2},${y + 2}`) === 'o') {
-          score -= 100000;
-          x -= 3;
-          y += 3;
-        } else {
-          score -= 10;
-          x -= 2;
-          y += 2;
-        }
+
+      if (connectors === requiredWin) {
+        x -= connectors;
+        y += connectors;
+        score += Math.pow(10, connectors + 1) * (startingValue === 'o' ? -1 : 1);
       } else {
-        score -= 1;
-        x -= 1;
-        y += 1;
+        score += Math.pow(10, connectors - 1) * (startingValue === 'o' ? -1 : 1);
       }
     } else {
       x -= 1;
@@ -297,23 +243,28 @@ function getReverseDiagonalScore(
   return score;
 }
 
-export function getTotalReverseDiagonalScore(selections: Moves, columns: number, rows: number): number {
+export function getTotalReverseDiagonalScore(
+  selections: Moves,
+  columns: number,
+  rows: number,
+  requiredWin: number,
+): number {
   let score = 0;
   for (let x = 0; x < columns; x++) {
-    score += getReverseDiagonalScore(selections, columns, rows, {x, y: 0});
+    score += getReverseDiagonalScore(selections, columns, rows, {x, y: 0}, requiredWin);
   }
   for (let y = 1; y < rows; y++) {
-    score += getReverseDiagonalScore(selections, columns, rows, {x: 3, y});
+    score += getReverseDiagonalScore(selections, columns, rows, {x: 3, y}, requiredWin);
   }
 
   return score;
 }
 
-export function getTotalScore(selections: Moves, columns: number, rows: number): number {
+export function getTotalScore(selections: Moves, columns: number, rows: number, winNumber: number): number {
   return (
-    getTotalColumnScore(selections, columns, rows) +
-    getTotalRowScore(selections, columns, rows) +
-    getTotalDiagonalScore(selections, columns, rows) +
-    getTotalReverseDiagonalScore(selections, columns, rows)
+    getTotalColumnScore(selections, columns, rows, winNumber) +
+    getTotalRowScore(selections, columns, rows, winNumber) +
+    getTotalDiagonalScore(selections, columns, rows, winNumber) +
+    getTotalReverseDiagonalScore(selections, columns, rows, winNumber)
   );
 }
