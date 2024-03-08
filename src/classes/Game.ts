@@ -383,7 +383,6 @@ export class Game {
   }
 
   private takeTheirMove(takeExtraTurn: boolean): void {
-    console.log('taking their turn with takeExtraTurn', takeExtraTurn);
     let move;
     const forceRandomPosition = this.getStatusEffectPosition(StatusEffectType.FORCE_RANDOM);
     const forceSpacePosition = this.getStatusEffectPosition(StatusEffectType.FORCE_SPACE);
