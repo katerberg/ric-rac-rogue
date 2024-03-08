@@ -50,11 +50,27 @@ function recreateNode(el: HTMLElement, withChildren?: boolean): Node {
   }
   return newNode;
 }
+function getPowerUpDescription(powerUp: PowerUp): HTMLElement | null {
+  if (powerUp.description !== '') {
+    const description = document.createElement('div');
+    description.classList.add('description');
+    const descriptionContent = document.createElement('div');
+    descriptionContent.innerText = powerUp.description;
+    descriptionContent.classList.add('description-content');
+    description.appendChild(descriptionContent);
+    return description;
+  }
+  return null;
+}
 
 function getActionButton(powerUp: PowerUp): HTMLElement {
   const button = document.createElement('button');
   if (powerUp.cooldownRemaining > 0) {
     button.classList.add('disabled');
+  }
+  const description = getPowerUpDescription(powerUp);
+  if (description) {
+    button.appendChild(description);
   }
   const title = document.createElement('div');
   title.classList.add('title');
@@ -738,6 +754,10 @@ export class Game {
         this.redrawActions();
         resolve();
       });
+      const description = getPowerUpDescription(powerUpOption);
+      if (description) {
+        button.appendChild(description);
+      }
       powerUpOptionsDisplay.appendChild(button);
     });
     return powerUpOptionsDisplay;
@@ -948,7 +968,7 @@ export class Game {
     this.redrawRules();
     this.redrawActions();
     if (isDebug('endlevel')) {
-      this.endLevel({isTerminal: true, winner: 'x', isCat: false, isWinner: true});
+      this.goToNextLevelScreen({isTerminal: true, winner: 'x', isCat: false, isWinner: true});
     }
   }
 }

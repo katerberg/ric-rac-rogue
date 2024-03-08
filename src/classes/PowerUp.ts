@@ -92,6 +92,43 @@ export class PowerUp {
     this.cooldownRemaining = cooldownRemaining;
   }
 
+  get description(): string {
+    switch (this.type) {
+      case PowerUpType.EXTRA_TURN:
+        return 'Grants an additional turn to make moves beyond their regular turn';
+      case PowerUpType.FLIP_TILE:
+        return 'Change a tile on the game board, changing an "o" to an "x"';
+      case PowerUpType.RESET_COOLDOWN:
+        return 'Resets the cooldown timer on another power-up, allowing it to be used again';
+      case PowerUpType.COPY_COLUMN:
+        return 'Duplicates the contents of an entire column and places the copy after it';
+      case PowerUpType.COPY_ROW:
+        return 'Duplicates the contents of an entire row and places the copy below it';
+      case PowerUpType.INCREASE_ENERGY:
+        return 'Acquire additional energy points on each use';
+      case PowerUpType.INCREASE_MAX_ENERGY:
+        return 'Permanently increase your maximum energy points';
+      case PowerUpType.FORCE_RANDOM:
+        return 'Forces your opponent to play on a random space on the game board for a turn';
+      case PowerUpType.FORCE_SPACE:
+        return 'Forces your opponent to play on a designated space on the game board for a turn';
+      case PowerUpType.BLOCKED_SPACE:
+        return 'Obstructs a designated space on the game board for a turn';
+      case PowerUpType.REMOVE_COLUMN:
+        return 'Deletes an entire column from the game board';
+      case PowerUpType.REMOVE_ROW:
+        return 'Deletes an entire row from the game board';
+      case PowerUpType.INCREASE_REQUIRED_WIN:
+        return 'Increases the threshold for a victory by one';
+      case PowerUpType.DECREASE_REQUIRED_WIN:
+        return 'Decreases the threshold for a victory by one';
+      case PowerUpType.TELEPORT_RANDOM:
+        return 'Repositions a move to a random empty space on the game board';
+      default:
+        return '';
+    }
+  }
+
   get displayName(): string {
     switch (this.type) {
       case PowerUpType.EXTRA_TURN:

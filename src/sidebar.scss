@@ -13,7 +13,13 @@ $action-button-transition-duration: 100ms;
     flex-direction: column;
     align-items: center;
 
+    h2 {
+        margin-bottom: 0;
+    }
+
     #actions-container {
+        padding-top: 20px;
+        flex-grow: 1;
         width: 100%;
         padding-left: 20px;
         padding-right: 20px;
@@ -22,6 +28,19 @@ $action-button-transition-duration: 100ms;
 
         button {
             @include action_button();
+
+            .description {
+                opacity: 0;
+                z-index: 10;
+                transition: all 300ms ease-in, opacity 300ms ease-out 0ms;
+            }
+
+            &:hover {
+                .description {
+                    opacity: 1;
+                    transition: all 300ms ease-in, opacity 300ms ease-in 500ms;
+                }
+            }
         }
     }
 }
