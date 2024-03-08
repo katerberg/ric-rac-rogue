@@ -172,7 +172,7 @@ export class Game {
         new PowerUp({type: PowerUpType.BLOCKED_SPACE}),
         // new PowerUp({type: PowerUpType.DECREASE_REQUIRED_WIN}),
         // new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
-        // new PowerUp({type: PowerUpType.EXTRA_TURN}),
+        new PowerUp({type: PowerUpType.EXTRA_TURN}),
         new PowerUp({type: PowerUpType.FLIP_TILE}),
         new PowerUp({type: PowerUpType.RESET_COOLDOWN}),
         new PowerUp({type: PowerUpType.COPY_COLUMN}),
@@ -370,7 +370,7 @@ export class Game {
       this.resetCurrentAction();
       return;
     }
-    if (this.level.board.isAvailableMove({x, y})) {
+    if (this.level.board.isAvailableMove({x, y}) && this.level.board.isUnblockedMove({x, y})) {
       // Do our move
       this.energyCurrent -= ENERGY_COST_MOVE;
       this.powerUps.forEach((powerUp) => {
@@ -462,6 +462,35 @@ export class Game {
     }
   }
 
+  private drawWobble({x, y}: NumberCoordinates, cellWidth: number, cellHeight: number, color: string): void {
+    this.p5.stroke(color);
+    this.p5.strokeWeight(gameAxisWidth * 1.5);
+    this.p5.drawingContext.shadowBlur = 80;
+    this.p5.drawingContext.shadowColor = COLORS.statusEffect;
+
+    const radius = Math.max(Math.min(cellWidth, cellHeight) * 0.8 - gameAxisWidth * 4, 10);
+    const xStart = x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
+    const yStart = y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
+
+    const wobble = 100;
+    const smoothing = 100;
+    const r = radius / 8; // Circle radius
+    const vertices = 200; // Number of vertices for drawing the circle
+    this.p5.beginShape();
+    const t = this.p5.millis() / 1000;
+    for (let i = 0; i < vertices; i++) {
+      const f = this.p5.noise(
+        (50 * this.p5.cos((i / vertices) * 2 * this.p5.PI)) / smoothing + t,
+        (50 * this.p5.sin((i / vertices) * 2 * this.p5.PI)) / smoothing + t,
+      );
+      this.p5.vertex(
+        xStart + (r + wobble * f) * this.p5.cos((i / vertices) * 2 * this.p5.PI),
+        yStart + (r + wobble * f) * this.p5.sin((i / vertices) * 2 * this.p5.PI),
+      );
+    }
+    this.p5.endShape(this.p5.CLOSE);
+  }
+
   private redrawBoard(): void {
     const cellWidth = this.getCellWidth();
     const cellHeight = this.getCellHeight();
@@ -506,36 +535,14 @@ export class Game {
         );
       }
     }
+    this.level.board.blockedSpaces.forEach((blockedSpace) => {
+      if (!this.level.board.isTakenMove(blockedSpace)) {
+        this.drawWobble(blockedSpace, cellWidth, cellHeight, COLORS.gameAxes);
+      }
+    });
     this.activeStatusEffects.forEach((activeStatusEffect) => {
       if (activeStatusEffect.target) {
-        const {x, y} = activeStatusEffect.target;
-
-        this.p5.stroke(COLORS.energy);
-        this.p5.strokeWeight(gameAxisWidth * 1.5);
-        this.p5.drawingContext.shadowBlur = 80;
-        this.p5.drawingContext.shadowColor = COLORS.statusEffect;
-
-        const radius = Math.max(Math.min(cellWidth, cellHeight) * 0.8 - gameAxisWidth * 4, 10);
-        const xStart = x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
-        const yStart = y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
-
-        const wobble = 100;
-        const smoothing = 100;
-        const r = radius / 8; // Circle radius
-        const vertices = 200; // Number of vertices for drawing the circle
-        this.p5.beginShape();
-        const t = this.p5.millis() / 1000;
-        for (let i = 0; i < vertices; i++) {
-          const f = this.p5.noise(
-            (50 * this.p5.cos((i / vertices) * 2 * this.p5.PI)) / smoothing + t,
-            (50 * this.p5.sin((i / vertices) * 2 * this.p5.PI)) / smoothing + t,
-          );
-          this.p5.vertex(
-            xStart + (r + wobble * f) * this.p5.cos((i / vertices) * 2 * this.p5.PI),
-            yStart + (r + wobble * f) * this.p5.sin((i / vertices) * 2 * this.p5.PI),
-          );
-        }
-        this.p5.endShape(this.p5.CLOSE);
+        this.drawWobble(activeStatusEffect.target, cellWidth, cellHeight, COLORS.energy);
       }
     });
   }

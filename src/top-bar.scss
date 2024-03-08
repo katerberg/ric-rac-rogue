@@ -27,7 +27,7 @@
         #rules-container {
             display: flex;
             align-items: center;
-            overflow-x: scroll;
+            overflow-x: auto;
 
             .rule {
                 border: 1px solid $color-game-rule;
@@ -37,7 +37,7 @@
         #statuses-container {
             display: flex;
             align-items: center;
-            overflow-x: scroll;
+            overflow-x: auto;
 
 
             .status {

@@ -1,8 +1,9 @@
 import {getUrlParams, isDebug} from '../environment';
-import {generateNumberOfAxes, generateRules} from '../rules';
+import {getBlockedSpaces, generateNumberOfAxes, generateRules} from '../rules';
 import {Choice, Coordinate, NumberCoordinates, Rule, RuleType, TurnOrderType} from '../types';
 import {getWin} from '../winCalculation';
 import {Board} from './Board';
+
 
 export class Level {
   board: Board;
@@ -57,6 +58,7 @@ export class Level {
       columns,
       rows,
       selections: new Map<Coordinate, Choice>(),
+      blockedSpaces: getBlockedSpaces(level, columns, rows),
     });
     this.rules = generateRules(level, columns, rows);
     this.requiredWin = this.rules.find((rule) => rule.type === RuleType.WIN_CON)?.xInARow ?? 3;

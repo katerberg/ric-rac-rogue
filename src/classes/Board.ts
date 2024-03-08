@@ -5,6 +5,7 @@ type BoardProps = {
   columns: number;
   rows: number;
   selections: Moves;
+  blockedSpaces?: NumberCoordinates[];
 };
 
 export class Board {
@@ -16,11 +17,14 @@ export class Board {
 
   winLines: NumberCoordinates[][];
 
-  constructor({columns, rows, selections}: BoardProps) {
+  blockedSpaces: NumberCoordinates[];
+
+  constructor({columns, rows, selections, blockedSpaces = []}: BoardProps) {
     this.columns = columns;
     this.rows = rows;
     this.selections = selections;
     this.winLines = [];
+    this.blockedSpaces = blockedSpaces;
   }
 
   getAvailableMoves(): NumberCoordinates[] {
@@ -33,6 +37,13 @@ export class Board {
       }
     }
     return moves;
+  }
+
+  isUnblockedMove({x, y}: NumberCoordinates): boolean {
+    return (
+      this.isMoveOnBoard({x, y}) &&
+      !this.blockedSpaces.some((blockedSpace) => blockedSpace.x === x && blockedSpace.y === y)
+    );
   }
 
   isMoveOnBoard({x, y}: NumberCoordinates): boolean {

@@ -1,4 +1,5 @@
-import {Rule, RuleType, RuleWinType, TurnOrderType} from './types';
+/* eslint-disable no-case-declarations */
+import {NumberCoordinates, Rule, RuleType, RuleWinType, TurnOrderType} from './types';
 
 function getWinCondition(level: number, columns: number, rows: number): Rule {
   if (level === 1) {
@@ -85,5 +86,51 @@ export function getRuleName(rule: Rule): string {
       return `${rule.firstPlayer?.toUpperCase()} goes first`;
     default:
       return 'Unknown';
+  }
+}
+
+function getCell(columns: number, rows: number): NumberCoordinates {
+  return {x: Math.floor(Math.random() * columns), y: Math.floor(Math.random() * rows)};
+}
+
+export function getBlockedSpaces(level: number, columns: number, rows: number): NumberCoordinates[] {
+  const cellsToBlock: NumberCoordinates[] = [];
+  switch (level) {
+    case 1:
+      return [];
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+      const numBlocks = Math.floor(Math.random() * 3);
+      while (numBlocks > cellsToBlock.length) {
+        const cellToBlock = getCell(columns, rows);
+        if (!cellsToBlock.find((c) => c.x === cellToBlock.x && c.y === cellToBlock.y)) {
+          cellsToBlock.push(cellToBlock);
+        }
+      }
+      return cellsToBlock;
+    case 7:
+    case 8:
+    case 9:
+      const numberOfBlocks = Math.ceil(Math.random() * 3);
+      while (numberOfBlocks > cellsToBlock.length) {
+        const cellToBlock = getCell(columns, rows);
+        if (!cellsToBlock.find((c) => c.x === cellToBlock.x && c.y === cellToBlock.y)) {
+          cellsToBlock.push(cellToBlock);
+        }
+      }
+      return cellsToBlock;
+    case 10:
+      const columnToBlock = Math.floor(Math.random() * columns);
+      const rowToBlock = Math.floor(Math.random() * rows);
+      return [
+        ...Array.from(Array(rows).keys()).map((i) => ({x: i, y: columnToBlock})),
+        ...Array.from(Array(columns).keys()).map((i) => (i === columnToBlock ? undefined : {x: rowToBlock, y: i})),
+      ].filter((a) => a) as NumberCoordinates[];
+
+    default:
+      return [];
   }
 }
