@@ -4,7 +4,6 @@ import {Choice, Coordinate, NumberCoordinates, Rule, RuleType, TurnOrderType} fr
 import {getWin} from '../winCalculation';
 import {Board} from './Board';
 
-
 export class Level {
   board: Board;
 

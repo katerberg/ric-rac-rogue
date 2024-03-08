@@ -148,6 +148,7 @@ export class Game {
         this.redrawBoard();
         this.redrawSelections();
         this.redrawEnergy();
+        this.redrawHoverText();
       };
     };
     this.p5 = new P5(sketch, document.getElementById('canvas-container')!);
@@ -246,6 +247,14 @@ export class Game {
     return {
       x: Math.floor((x / this.gameWidth) * this.level.board.columns),
       y: Math.floor((y / this.gameHeight) * this.level.board.rows),
+    };
+  }
+
+  private getP5CoordinatesFromCell(x: number, y: number): NumberCoordinates {
+    // not strictly accurate since there are axes to consider but fine for now
+    return {
+      x: Math.floor((this.gameWidth / this.level.board.columns) * x) + gameAxisWidth * 2,
+      y: Math.floor((this.gameHeight / this.level.board.rows) * y) + (this.gameHeight * 0.5) / this.level.board.rows,
     };
   }
 
@@ -601,6 +610,17 @@ export class Game {
       }
     });
     this.level.board.winLines.forEach((winLine) => this.drawWinLines(winLine));
+  }
+
+  private redrawHoverText(): void {
+    const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
+    const hoveredSpace = this.level.board.blockedSpaces.find(
+      (blockedSpace) => blockedSpace.x === x && blockedSpace.y === y,
+    );
+    if (hoveredSpace) {
+      const {x: cellX, y: cellY} = this.getP5CoordinatesFromCell(hoveredSpace.x, hoveredSpace.y);
+      this.p5.text('BLOCKED', cellX, cellY);
+    }
   }
 
   private redrawEnergy(): void {
