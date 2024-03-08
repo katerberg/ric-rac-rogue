@@ -50,6 +50,7 @@ export function getBestMove(
   const availableMoves = state.board.getAvailableMoves();
   let [bestMove] = availableMoves;
   if (depth > state.maxDepth) {
+    console.log('bailing over max depth', state.maxDepth);
     return {
       bestScore:
         getTotalScore(state.board.selections, state.board.columns, state.board.rows, state.requiredWin) +
@@ -110,6 +111,7 @@ export function getBestMove(
           }
         });
       }
+      // alpha beta pruning
       if ((maximizing && nodeValue.bestScore > bestScore) || (!maximizing && nodeValue.bestScore < bestScore)) {
         ({bestScore} = nodeValue);
         bestMove = move;

@@ -90,6 +90,127 @@ export function isWin(selections: Moves, columns: number, rows: number, winNumbe
   );
 }
 
+function getWinFromColumn(
+  selections: Moves,
+  columns: number,
+  rows: number,
+  winNumber: number,
+  choice: Choice,
+): NumberCoordinates[] | undefined {
+  for (let x = 0; x < columns; x++) {
+    for (let y = 0; y < rows - winNumber + 1; y++) {
+      let isWinningColumn = selections.get(`${x},${y}`);
+      if (isWinningColumn === choice) {
+        for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+          if (selections.get(`${x},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
+            isWinningColumn = undefined;
+            break;
+          }
+        }
+
+        if (isWinningColumn !== undefined) {
+          return Array.from(Array(winNumber).keys()).map((i) => ({x, y: y + i}));
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
+function getWinFromReverseDiagonal(
+  selections: Moves,
+  columns: number,
+  rows: number,
+  winNumber: number,
+  choice: Choice,
+): NumberCoordinates[] | undefined {
+  for (let x = winNumber - 1; x < columns; x++) {
+    for (let y = 0; y < rows - winNumber + 1; y++) {
+      let isWinningDiagonal = selections.get(`${x},${y}`);
+      if (isWinningDiagonal === choice) {
+        for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+          if (selections.get(`${x - winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
+            isWinningDiagonal = undefined;
+            break;
+          }
+        }
+        if (isWinningDiagonal !== undefined) {
+          return Array.from(Array(winNumber).keys()).map((i) => ({x: x - i, y: y + i}));
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
+function getWinFromDiagonal(
+  selections: Moves,
+  columns: number,
+  rows: number,
+  winNumber: number,
+  choice: Choice,
+): NumberCoordinates[] | undefined {
+  for (let x = 0; x < columns - winNumber + 1; x++) {
+    for (let y = 0; y < rows - winNumber + 1; y++) {
+      let isWinningDiagonal = selections.get(`${x},${y}`);
+      if (isWinningDiagonal === choice) {
+        for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+          if (selections.get(`${x + winCheck},${y + winCheck}`) !== selections.get(`${x},${y}`)) {
+            isWinningDiagonal = undefined;
+            break;
+          }
+        }
+        if (isWinningDiagonal !== undefined) {
+          return Array.from(Array(winNumber).keys()).map((i) => ({x: x + i, y: y + i}));
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
+function getWinFromRow(
+  selections: Moves,
+  columns: number,
+  rows: number,
+  winNumber: number,
+  choice: Choice,
+): NumberCoordinates[] | undefined {
+  for (let x = 0; x < columns - winNumber + 1; x++) {
+    for (let y = 0; y < rows; y++) {
+      let isWinningRow = selections.get(`${x},${y}`);
+      if (isWinningRow === choice) {
+        for (let winCheck = 1; winCheck < winNumber; winCheck++) {
+          if (selections.get(`${x + winCheck},${y}`) !== selections.get(`${x},${y}`)) {
+            isWinningRow = undefined;
+            break;
+          }
+        }
+
+        if (isWinningRow !== undefined) {
+          return Array.from(Array(winNumber).keys()).map((i) => ({x: x + i, y}));
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
+export function getWin(
+  selections: Moves,
+  columns: number,
+  rows: number,
+  winNumber: number,
+  choice: Choice,
+): NumberCoordinates[] | undefined {
+  return (
+    getWinFromDiagonal(selections, columns, rows, winNumber, choice) ??
+    getWinFromReverseDiagonal(selections, columns, rows, winNumber, choice) ??
+    getWinFromRow(selections, columns, rows, winNumber, choice) ??
+    getWinFromColumn(selections, columns, rows, winNumber, choice)
+  );
+}
+
 export function isCat(selections: Moves, columns: number, rows: number): boolean {
   return selections.size === columns * rows;
 }

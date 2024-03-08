@@ -1,6 +1,7 @@
 import {getUrlParams, isDebug} from '../environment';
 import {generateNumberOfAxes, generateRules} from '../rules';
-import {Choice, Coordinate, Rule, RuleType, TurnOrderType} from '../types';
+import {Choice, Coordinate, NumberCoordinates, Rule, RuleType, TurnOrderType} from '../types';
+import {getWin} from '../winCalculation';
 import {Board} from './Board';
 
 export class Level {
@@ -72,6 +73,10 @@ export class Level {
     return !!this.rules.find(
       (rule) => rule.type === RuleType.TURN_ORDER && rule.turnOrderType === TurnOrderType.TWO_TO_ONE,
     );
+  }
+
+  getWinningSpaces(choice: Choice): NumberCoordinates[] {
+    return getWin(this.board.selections, this.board.columns, this.board.rows, this.requiredWin, choice) ?? [];
   }
 
   changeWinRequirement(requiredWin: number): void {

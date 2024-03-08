@@ -396,6 +396,7 @@ export class Game {
     } else if (forceRandomPosition !== -1) {
       move = this.level.board.getRandomMove();
     } else {
+      console.log('making best move');
       move = getBestMove(
         {
           board: this.level.board,
@@ -787,7 +788,7 @@ export class Game {
     return message;
   }
 
-  private endLevel(term: TerminalStatus): void {
+  private goToNextLevelScreen(term: TerminalStatus): void {
     const nextLevelScreen = document.getElementById('next-level-screen');
     const nextLevelContent = document.getElementById('next-level-content');
     if (nextLevelScreen && nextLevelContent) {
@@ -823,6 +824,14 @@ export class Game {
         this.redrawRules();
       });
     }
+  }
+
+  private endLevel(term: TerminalStatus): void {
+    if (term.isWinner && term.winner) {
+      const spaces = this.level.getWinningSpaces(term.winner);
+      console.log(spaces, 'win');
+    }
+    this.goToNextLevelScreen(term);
   }
 
   private displayStats(): void {
