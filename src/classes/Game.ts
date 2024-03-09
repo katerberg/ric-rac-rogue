@@ -932,8 +932,7 @@ export class Game {
   private endLevel(term: TerminalStatus): void {
     if (this.level.level === 10) {
       this.endGame(term.isWinner && term.winner === 'x');
-    }
-    if (this.energyCurrent - ENERGY_COST_LOSS <= 0) {
+    } else if (this.energyCurrent - ENERGY_COST_LOSS <= 0) {
       this.endGame();
     } else if (term.isWinner && term.winner) {
       const spaces = this.level.getWinningSpaces(term.winner);
