@@ -117,6 +117,8 @@ export class Game {
 
   energyCurrent: number;
 
+  previousEnergyCurrent: number;
+
   powerUps: PowerUp[];
 
   gameWidth: number;
@@ -158,6 +160,7 @@ export class Game {
     this.loading = false;
     this.energyMax = 100;
     this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
+    this.previousEnergyCurrent = 0;
     this.powerUps = [getStartingPowerUp()];
     this.stats = {
       totalMoves: 0,
@@ -638,7 +641,12 @@ export class Game {
     this.p5.drawingContext.shadowBlur = 40;
     this.p5.drawingContext.shadowColor = COLORS.energy;
     const y = this.gameHeight - strokeWidth;
-    const percentage = this.energyCurrent / this.energyMax;
+    const percentage = this.previousEnergyCurrent / this.energyMax;
+    if (this.previousEnergyCurrent < this.energyCurrent) {
+      this.previousEnergyCurrent++;
+    } else if (this.previousEnergyCurrent > this.energyCurrent) {
+      this.previousEnergyCurrent--;
+    }
     this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
     this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
     this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
@@ -824,7 +832,6 @@ export class Game {
     const button = getRechargeButton();
     button.addEventListener('click', () => {
       this.energyCurrent = this.energyMax;
-      this.redrawEnergy();
       resolve();
     });
     return button;
