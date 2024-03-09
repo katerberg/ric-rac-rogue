@@ -929,7 +929,9 @@ export class Game {
     if (this.level.level === 10) {
       this.endGame(term.isWinner && term.winner === 'x');
     }
-    if (term.isWinner && term.winner) {
+    if (this.energyCurrent - ENERGY_COST_LOSS <= 0) {
+      this.endGame();
+    } else if (term.isWinner && term.winner) {
       const spaces = this.level.getWinningSpaces(term.winner);
       this.level.board.winLines.push(spaces);
       this.startTime = Date.now() + 2000;
@@ -988,7 +990,11 @@ export class Game {
     const topBar = document.getElementById('top-bar');
     const sidebar = document.getElementById('sidebar');
     if (canvasContainer && endScreen && topBar && sidebar) {
-      this.stats.totalLosses++;
+      if (!win) {
+        this.stats.totalLosses++;
+      } else {
+        this.stats.totalWins++;
+      }
       this.p5.remove();
       canvasContainer.innerHTML = '';
       this.displayStats(win);
