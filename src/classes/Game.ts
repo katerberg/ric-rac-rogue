@@ -473,6 +473,7 @@ export class Game {
 
   private drawWobble({x, y}: NumberCoordinates, cellWidth: number, cellHeight: number, color: string): void {
     this.p5.stroke(color);
+    this.p5.fill(COLORS.background);
     this.p5.strokeWeight(gameAxisWidth * 1.5);
     this.p5.drawingContext.shadowBlur = 80;
     this.p5.drawingContext.shadowColor = COLORS.statusEffect;

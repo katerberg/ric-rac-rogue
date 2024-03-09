@@ -177,11 +177,11 @@ export function getBlockedSpaces(level: number, columns: number, rows: number): 
       }
       return cellsToBlock;
     case 10:
-      const columnToBlock = Math.floor(Math.random() * columns);
       const rowToBlock = Math.floor(Math.random() * rows);
+      const columnToBlock = Math.floor(Math.random() * columns);
       return [
-        ...Array.from(Array(rows).keys()).map((i) => ({x: i, y: columnToBlock})),
-        ...Array.from(Array(columns).keys()).map((i) => (i === columnToBlock ? undefined : {x: rowToBlock, y: i})),
+        ...Array.from(Array(rows).keys()).map((i) => ({x: columnToBlock, y: i})),
+        ...Array.from(Array(columns).keys()).map((i) => (i === columnToBlock ? undefined : {x: i, y: rowToBlock})),
       ].filter((a) => a) as NumberCoordinates[];
 
     default:
