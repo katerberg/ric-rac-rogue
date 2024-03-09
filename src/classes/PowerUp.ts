@@ -10,32 +10,36 @@ type PowerUpProps = {
 
 function getDefaultCost(type: PowerUpType): number {
   switch (type) {
+    // Lethal
     case PowerUpType.EXTRA_TURN:
-      return 30;
-    case PowerUpType.FLIP_TILE:
-      return 20;
-    case PowerUpType.RESET_COOLDOWN:
-      return 10;
+      return 50;
     case PowerUpType.COPY_COLUMN:
     case PowerUpType.COPY_ROW:
+      return 40;
+    case PowerUpType.FLIP_TILE:
+      return 20;
+    case PowerUpType.INCREASE_ENERGY:
+      return -20;
+    case PowerUpType.INCREASE_MAX_ENERGY:
+      return 30;
+    case PowerUpType.FORCE_SPACE:
+      return 30;
+    // Moderate
+    case PowerUpType.INCREASE_REQUIRED_WIN:
+    case PowerUpType.DECREASE_REQUIRED_WIN:
+      return 30;
+    // Risky
+    case PowerUpType.TELEPORT_RANDOM:
+      return 10;
+    case PowerUpType.FORCE_RANDOM:
+      return 10;
+    // Situational
+    case PowerUpType.BLOCKED_SPACE:
       return 20;
     case PowerUpType.REMOVE_COLUMN:
     case PowerUpType.REMOVE_ROW:
       return 20;
-    case PowerUpType.INCREASE_ENERGY:
-      return -30;
-    case PowerUpType.INCREASE_MAX_ENERGY:
-      return 30;
-    case PowerUpType.FORCE_RANDOM:
-      return 30;
-    case PowerUpType.BLOCKED_SPACE:
-      return 20;
-    case PowerUpType.FORCE_SPACE:
-      return 30;
-    case PowerUpType.INCREASE_REQUIRED_WIN:
-    case PowerUpType.DECREASE_REQUIRED_WIN:
-      return 30;
-    case PowerUpType.TELEPORT_RANDOM:
+    case PowerUpType.RESET_COOLDOWN:
       return 10;
     default:
       return 10;
@@ -47,30 +51,30 @@ function getDefaultCooldown(type: PowerUpType): number {
     case PowerUpType.EXTRA_TURN:
       return 4;
     case PowerUpType.FLIP_TILE:
-      return 3;
+      return 7;
     case PowerUpType.RESET_COOLDOWN:
       return 8;
     case PowerUpType.COPY_COLUMN:
     case PowerUpType.COPY_ROW:
-      return 3;
+      return 4;
     case PowerUpType.REMOVE_COLUMN:
     case PowerUpType.REMOVE_ROW:
       return 3;
     case PowerUpType.INCREASE_REQUIRED_WIN:
     case PowerUpType.DECREASE_REQUIRED_WIN:
-      return 5;
+      return 9;
     case PowerUpType.INCREASE_ENERGY:
       return 8;
     case PowerUpType.INCREASE_MAX_ENERGY:
-      return 8;
+      return 10;
     case PowerUpType.FORCE_RANDOM:
       return 2;
     case PowerUpType.BLOCKED_SPACE:
-      return 4;
+      return 7;
     case PowerUpType.FORCE_SPACE:
-      return 5;
+      return 8;
     case PowerUpType.TELEPORT_RANDOM:
-      return 1;
+      return 4;
     default:
       return 3;
   }
