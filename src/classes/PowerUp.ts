@@ -68,7 +68,7 @@ function getDefaultCooldown(type: PowerUpType): number {
     case PowerUpType.INCREASE_MAX_ENERGY:
       return 10;
     case PowerUpType.FORCE_RANDOM:
-      return 2;
+      return 3;
     case PowerUpType.BLOCKED_SPACE:
       return 7;
     case PowerUpType.FORCE_SPACE:

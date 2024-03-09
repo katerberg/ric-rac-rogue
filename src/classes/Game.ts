@@ -172,7 +172,9 @@ export class Game {
         new PowerUp({type: PowerUpType.FORCE_SPACE}),
         new PowerUp({type: PowerUpType.BLOCKED_SPACE}),
         // new PowerUp({type: PowerUpType.DECREASE_REQUIRED_WIN}),
-        // new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
+        new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
+        new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
+        new PowerUp({type: PowerUpType.INCREASE_REQUIRED_WIN}),
         new PowerUp({type: PowerUpType.EXTRA_TURN}),
         new PowerUp({type: PowerUpType.FLIP_TILE}),
         new PowerUp({type: PowerUpType.RESET_COOLDOWN}),
@@ -882,7 +884,7 @@ export class Game {
           if (term.winner === 'x') {
             this.stats.totalWins++;
             this.energyMax += 10;
-            this.energyCurrent += Math.floor(this.energyMax * 0.25);
+            this.energyCurrent += Math.floor(this.energyMax * 0.15);
             if (this.energyCurrent > this.energyMax) {
               this.energyCurrent = this.energyMax;
             }
