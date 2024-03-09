@@ -642,7 +642,7 @@ export class Game {
 
     this.p5.textStyle(this.p5.NORMAL);
     this.p5.textSize(30);
-    this.p5.fill(COLORS.background);
+    this.p5.fill(COLORS.text);
     this.p5.text(`ENERGY  ${this.energyCurrent} / ${this.energyMax}`, 50, y + 10);
   }
 
