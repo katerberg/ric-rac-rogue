@@ -14,6 +14,7 @@ import {
   StatusEffectType,
   TerminalStatus,
   randomEnum,
+  SpaceStatusEffect,
 } from '../types';
 import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
@@ -624,12 +625,20 @@ export class Game {
       return;
     }
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
-    const hoveredSpace = this.level.board.blockedSpaces.find(
-      (blockedSpace) => blockedSpace.x === x && blockedSpace.y === y,
-    );
-    if (hoveredSpace) {
-      const {x: cellX, y: cellY} = this.getP5CoordinatesFromCell(hoveredSpace.x, hoveredSpace.y);
-      this.p5.text('Player Embargo', cellX, cellY);
+    if (this.level.board.selections.get(`${x},${y}`) === 'blocked') {
+      const {x: cellX, y: cellY} = this.getP5CoordinatesFromCell(x, y);
+      this.p5.text('Blocked', cellX, cellY);
+    } else if (this.level.board.selections.get(`${x},${y}`) === 'forced') {
+      const {x: cellX, y: cellY} = this.getP5CoordinatesFromCell(x, y);
+      this.p5.text('Forced Play', cellX, cellY);
+    } else {
+      const hoveredSpace = this.level.board.blockedSpaces.find(
+        (blockedSpace) => blockedSpace.x === x && blockedSpace.y === y,
+      );
+      if (hoveredSpace) {
+        const {x: cellX, y: cellY} = this.getP5CoordinatesFromCell(hoveredSpace.x, hoveredSpace.y);
+        this.p5.text('Player Embargo', cellX, cellY);
+      }
     }
   }
 
