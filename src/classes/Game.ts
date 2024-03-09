@@ -24,6 +24,7 @@ import '../menu.scss';
 import '../end-game.scss';
 import {PowerUp, getStartingPowerUp} from './PowerUp';
 import {StatusEffect} from './StatusEffect';
+import {WinLine} from './WinLine';
 
 const gameAxisWidth = 10;
 const gameInnerPadding = 24;
@@ -911,7 +912,7 @@ export class Game {
     }
   }
 
-  private drawWinLines(spaces: NumberCoordinates[]): void {
+  private drawWinLines(winLine: WinLine): void {
     this.p5.stroke(COLORS.winLines);
     this.p5.strokeCap(this.p5.ROUND);
     this.p5.strokeWeight(gameAxisWidth * 2);
@@ -921,14 +922,13 @@ export class Game {
     const cellWidth = this.getCellWidth();
     const cellHeight = this.getCellHeight();
 
-    for (let iteration = 0; iteration < 2; iteration++) {
-      for (let i = 0; i < spaces.length - 1; i++) {
-        const xStart = spaces[i].x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
-        const yStart = spaces[i].y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
-        const xEnd = spaces[i + 1].x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
-        const yEnd = spaces[i + 1].y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
-        this.p5.line(xStart, yStart, xEnd, yEnd);
-      }
+    const xStart = winLine.start.x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
+    const yStart = winLine.start.y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
+    const xEnd = winLine.end.x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
+    const yEnd = winLine.end.y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
+    const percentage = Math.min(1, (this.p5.millis() - winLine.drawStart) / winLine.drawTime);
+    for (let iteration = 0; iteration < 4; iteration++) {
+      this.p5.line(xStart, yStart, xStart + (xEnd - xStart) * percentage, yStart + (yEnd - yStart) * percentage);
     }
   }
 
@@ -939,11 +939,14 @@ export class Game {
       this.endGame();
     } else if (term.isWinner && term.winner) {
       const spaces = this.level.getWinningSpaces(term.winner);
-      this.level.board.winLines.push(spaces);
+      this.level.board.winLines.push(new WinLine(spaces[0], spaces[spaces.length - 1], this.p5.millis()));
       this.startTime = Date.now() + 2000;
-      setTimeout(() => {
-        this.goToNextLevelScreen(term);
-      }, 2000);
+      setTimeout(
+        () => {
+          this.goToNextLevelScreen(term);
+        },
+        isDebug('slowlevel') ? 20000 : 2000,
+      );
     } else {
       this.goToNextLevelScreen(term);
     }

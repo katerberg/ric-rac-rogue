@@ -1,5 +1,6 @@
 import {numberCoordsToCoords} from '../coordinatesHelper';
 import {Choice, Moves, NumberCoordinates} from '../types';
+import {WinLine} from './WinLine';
 
 type BoardProps = {
   columns: number;
@@ -15,7 +16,7 @@ export class Board {
 
   selections: Moves;
 
-  winLines: NumberCoordinates[][];
+  winLines: WinLine[];
 
   blockedSpaces: NumberCoordinates[];
 
