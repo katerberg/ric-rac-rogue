@@ -754,11 +754,12 @@ export class Game {
     let counter = 0;
     while (powerUpOptions.length < 3 && counter++ < 100) {
       const powerUp = randomEnum(PowerUpType);
-      if (
-        !this.powerUps.some((powerUpOption) => powerUpOption.type === powerUp) &&
-        !powerUpOptions.some((powerUpOption) => powerUpOption.type === powerUp)
-      ) {
-        powerUpOptions.push(new PowerUp({type: powerUp}));
+
+      const isAlreadyPresented = powerUpOptions.some((powerUpOption) => powerUpOption.type === powerUp);
+      if (!isAlreadyPresented) {
+        if (this.powerUps.length > 3 || !this.powerUps.some((powerUpOption) => powerUpOption.type === powerUp)) {
+          powerUpOptions.push(new PowerUp({type: powerUp}));
+        }
       }
     }
     while (powerUpOptions.length < 3) {
