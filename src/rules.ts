@@ -1,26 +1,73 @@
 /* eslint-disable no-case-declarations */
 import {NumberCoordinates, Rule, RuleType, RuleWinType, TurnOrderType} from './types';
 
+function getWeightedRandomNumber(probabilities: {[expectedNumber: number]: number}): number {
+  let totalProbability = 0;
+  Object.values(probabilities).forEach((num) => {
+    totalProbability += num;
+  });
+
+  let rand = Math.random() * totalProbability;
+  let val = Number.parseInt(Object.keys(probabilities)[0], 10);
+  Object.entries(probabilities).some(([key, value]) => {
+    rand -= value;
+    if (rand <= 0) {
+      val = Number.parseInt(key, 10);
+      return true;
+    }
+    return false;
+  });
+  return val;
+}
+
 function getWinCondition(level: number, columns: number, rows: number): Rule {
-  if (level === 1) {
-    return {
-      type: RuleType.WIN_CON,
-      winType: RuleWinType.X_IN_A_ROW,
-      xInARow: 3,
-    };
+  let winCon;
+  switch (level) {
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+      const prob: {[key: number]: number} = {
+        2: 0.2,
+      };
+      const min = Math.min(columns, rows);
+      if (min > 2) {
+        // 0.8 left
+        const spread = min - 2;
+        for (let i = 3; i <= min; i++) {
+          prob[i] = 0.8 / spread;
+        }
+      } else {
+        prob[2] = 1;
+      }
+
+      winCon = {
+        type: RuleType.WIN_CON,
+        winType: RuleWinType.X_IN_A_ROW,
+        xInARow: getWeightedRandomNumber(prob),
+      };
+      break;
+
+    case 10:
+      winCon = {
+        type: RuleType.WIN_CON,
+        winType: RuleWinType.X_IN_A_ROW,
+        xInARow: 4,
+      };
+      break;
+    case 1:
+    default:
+      winCon = {
+        type: RuleType.WIN_CON,
+        winType: RuleWinType.X_IN_A_ROW,
+        xInARow: 3,
+      };
+      break;
   }
-  if (level === 10) {
-    return {
-      type: RuleType.WIN_CON,
-      winType: RuleWinType.X_IN_A_ROW,
-      xInARow: 4,
-    };
-  }
-  const winCon = {
-    type: RuleType.WIN_CON,
-    winType: RuleWinType.X_IN_A_ROW,
-    xInARow: Math.ceil(Math.random() * (Math.min(columns, rows) - 1)) + 1,
-  };
   if (winCon.xInARow > 3 && columns === 5 && rows === 5) {
     winCon.xInARow = 3;
   }
@@ -44,25 +91,6 @@ function getFirstMoveRule(level: number): Rule {
     type: RuleType.FIRST_MOVE,
     firstPlayer: Math.random() > 0.5 ? 'x' : 'o',
   };
-}
-
-function getWeightedRandomNumber(probabilities: {[expectedNumber: number]: number}): number {
-  let totalProbability = 0;
-  Object.values(probabilities).forEach((num) => {
-    totalProbability += num;
-  });
-
-  let rand = Math.random() * totalProbability;
-  let val = Number.parseInt(Object.keys(probabilities)[0], 10);
-  Object.entries(probabilities).some(([key, value]) => {
-    rand -= value;
-    if (rand <= 0) {
-      val = Number.parseInt(key, 10);
-      return true;
-    }
-    return false;
-  });
-  return val;
 }
 
 export function generateNumberOfAxes(level: number): number {
