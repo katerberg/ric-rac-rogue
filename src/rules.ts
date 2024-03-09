@@ -31,7 +31,7 @@ function getWinCondition(level: number, columns: number, rows: number): Rule {
     case 7:
     case 8:
     case 9:
-      const prob: {[key: number]: number} = {
+      const probability: {[key: number]: number} = {
         2: 0.2,
       };
       const min = Math.min(columns, rows);
@@ -39,16 +39,16 @@ function getWinCondition(level: number, columns: number, rows: number): Rule {
         // 0.8 left
         const spread = min - 2;
         for (let i = 3; i <= min; i++) {
-          prob[i] = 0.8 / spread;
+          probability[i] = 0.8 / spread;
         }
       } else {
-        prob[2] = 1;
+        probability[2] = 1;
       }
 
       winCon = {
         type: RuleType.WIN_CON,
         winType: RuleWinType.X_IN_A_ROW,
-        xInARow: getWeightedRandomNumber(prob),
+        xInARow: getWeightedRandomNumber(probability),
       };
       break;
 
