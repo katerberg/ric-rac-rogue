@@ -629,7 +629,7 @@ export class Game {
     );
     if (hoveredSpace) {
       const {x: cellX, y: cellY} = this.getP5CoordinatesFromCell(hoveredSpace.x, hoveredSpace.y);
-      this.p5.text('BLOCKED', cellX, cellY);
+      this.p5.text('Player Embargo', cellX, cellY);
     }
   }
 
