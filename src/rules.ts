@@ -19,7 +19,7 @@ function getWinCondition(level: number, columns: number, rows: number): Rule {
   const winCon = {
     type: RuleType.WIN_CON,
     winType: RuleWinType.X_IN_A_ROW,
-    xInARow: Math.min(Math.ceil(Math.random() * Math.max(columns, rows)) + 1, Math.max(columns, rows)),
+    xInARow: Math.ceil(Math.random() * (Math.min(columns, rows) - 1)) + 1,
   };
   if (winCon.xInARow > 3 && columns === 5 && rows === 5) {
     winCon.xInARow = 3;
@@ -46,20 +46,46 @@ function getFirstMoveRule(level: number): Rule {
   };
 }
 
-// 1: 3x3
-// 2-5: nXm of 2-4
-// 2-6: nXm of 3-5
+function getWeightedRandomNumber(probabilities: {[expectedNumber: number]: number}): number {
+  let totalProbability = 0;
+  Object.values(probabilities).forEach((num) => {
+    totalProbability += num;
+  });
+
+  let rand = Math.random() * totalProbability;
+  let val = Number.parseInt(Object.keys(probabilities)[0], 10);
+  Object.entries(probabilities).some(([key, value]) => {
+    rand -= value;
+    if (rand <= 0) {
+      val = Number.parseInt(key, 10);
+      return true;
+    }
+    return false;
+  });
+  return val;
+}
+
 export function generateNumberOfAxes(level: number): number {
-  if (level === 1) {
-    return 3;
+  switch (level) {
+    case 1:
+      return getWeightedRandomNumber({3: 1});
+    case 2:
+    case 3:
+      return getWeightedRandomNumber({3: 0.7, 4: 0.3});
+    case 4:
+    case 5:
+      return getWeightedRandomNumber({2: 0.1, 3: 0.6, 4: 0.3});
+    case 6:
+    case 7:
+      return getWeightedRandomNumber({2: 0.1, 3: 0.4, 4: 0.3, 5: 0.2});
+    case 8:
+    case 9:
+      return getWeightedRandomNumber({2: 0.1, 3: 0.4, 4: 0.3, 5: 0.2});
+    case 10:
+      return getWeightedRandomNumber({7: 0.1, 8: 0.4, 9: 0.3, 10: 0.2});
+    default:
+      return Math.ceil(Math.random() * 3) + 2;
   }
-  if (level === 10) {
-    return Math.ceil(Math.random() * 4) + 6;
-  }
-  if (level < 6) {
-    return Math.ceil(Math.random() * 3) + 1;
-  }
-  return Math.ceil(Math.random() * 3) + 2;
 }
 
 export function generateRules(level: number, columns: number, rows: number): Rule[] {

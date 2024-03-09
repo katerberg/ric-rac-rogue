@@ -613,6 +613,9 @@ export class Game {
   }
 
   private redrawHoverText(): void {
+    if (!this.p5.mouseX || !this.p5.mouseY) {
+      return;
+    }
     const {x, y} = this.getCellCoordinatesFromClick(this.p5.mouseX, this.p5.mouseY);
     const hoveredSpace = this.level.board.blockedSpaces.find(
       (blockedSpace) => blockedSpace.x === x && blockedSpace.y === y,

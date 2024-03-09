@@ -46,6 +46,7 @@ export class Level {
   constructor(level: number) {
     let columns = generateNumberOfAxes(level);
     let rows = level === 10 ? 5 : generateNumberOfAxes(level);
+    console.log(columns, rows);
 
     if (isDebug()) {
       const urlParams = getUrlParams();
