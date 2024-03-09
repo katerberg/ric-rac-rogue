@@ -211,12 +211,16 @@ export function getWin(
   );
 }
 
-export function isCat(selections: Moves, columns: number, rows: number): boolean {
-  return selections.size === columns * rows;
+export function isCat(selections: Moves, columns: number, rows: number, blockedSpaces: NumberCoordinates[]): boolean {
+  return (
+    blockedSpaces.reduce((prev, curr) => prev + (selections.get(`${curr.x},${curr.y}`) === undefined ? 1 : 0), 0) +
+      selections.size ===
+    columns * rows
+  );
 }
 
 export function checkTerminal(board: Board, requiredWin: number): TerminalStatus {
-  const isCatGame = isCat(board.selections, board.columns, board.rows);
+  const isCatGame = isCat(board.selections, board.columns, board.rows, board.blockedSpaces);
   const isWinner = isWin(board.selections, board.columns, board.rows, requiredWin);
   return {
     isTerminal: !!isWinner || isCatGame,

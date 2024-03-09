@@ -36,7 +36,7 @@ exports[`snapshot pruning limits for 2x4 with required win 3 max depth 6 1`] = `
 
 exports[`snapshot pruning limits for 2x4 with required win 3 max depth 8 1`] = `4`;
 
-exports[`snapshot pruning limits for 2x4 with required win 4 max depth 6 1`] = `6`;
+exports[`snapshot pruning limits for 2x4 with required win 4 max depth 6 1`] = `4`;
 
 exports[`snapshot pruning limits for 2x5 with required win 3 max depth 6 1`] = `5`;
 
@@ -60,13 +60,13 @@ exports[`snapshot pruning limits for 3x3 with required win 3 max depth 6 1`] = `
 
 exports[`snapshot pruning limits for 3x3 with required win 3 max depth 8 1`] = `26`;
 
-exports[`snapshot pruning limits for 3x3 with required win 4 max depth 6 1`] = `34`;
+exports[`snapshot pruning limits for 3x3 with required win 4 max depth 6 1`] = `33`;
 
 exports[`snapshot pruning limits for 3x4 with required win 3 max depth 6 1`] = `132`;
 
 exports[`snapshot pruning limits for 3x4 with required win 3 max depth 8 1`] = `133`;
 
-exports[`snapshot pruning limits for 3x4 with required win 4 max depth 6 1`] = `225`;
+exports[`snapshot pruning limits for 3x4 with required win 4 max depth 6 1`] = `215`;
 
 exports[`snapshot pruning limits for 3x5 with required win 3 max depth 6 1`] = `190`;
 
@@ -96,7 +96,7 @@ exports[`snapshot pruning limits for 4x4 with required win 3 max depth 6 1`] = `
 
 exports[`snapshot pruning limits for 4x4 with required win 3 max depth 8 1`] = `6289`;
 
-exports[`snapshot pruning limits for 4x4 with required win 4 max depth 6 1`] = `7128`;
+exports[`snapshot pruning limits for 4x4 with required win 4 max depth 6 1`] = `7620`;
 
 exports[`snapshot pruning limits for 4x5 with required win 3 max depth 6 1`] = `13928`;
 

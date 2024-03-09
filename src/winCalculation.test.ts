@@ -62,11 +62,15 @@ describe('winCalculation', () => {
 
   describe('isCat', () => {
     it('should return false when there are not enough selections', () => {
-      expect(isCat(objectToMap({'0,0': 'x', '0,1': 'x', '1,0': 'x'}), 2, 2)).toBe(false);
+      expect(isCat(objectToMap({'0,0': 'x', '0,1': 'x', '1,0': 'x'}), 2, 2, [])).toBe(false);
     });
 
     it('should return true when all spaces are filled', () => {
-      expect(isCat(objectToMap({'0,0': 'x', '0,1': 'o', '1,0': 'x', '2,2': 'o'}), 2, 2)).toBe(true);
+      expect(isCat(objectToMap({'0,0': 'x', '0,1': 'o', '1,0': 'x', '2,2': 'o'}), 2, 2, [])).toBe(true);
+    });
+
+    it('should return true when not all of the spaces are filled but the rest are blocked', () => {
+      expect(isCat(objectToMap({'0,0': 'x', '0,1': 'o', '1,0': 'x'}), 2, 2, [{x: 2, y: 2}])).toBe(true);
     });
   });
 
