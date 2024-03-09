@@ -993,11 +993,17 @@ export class Game {
     const endScreen = document.getElementById('end-screen');
     const topBar = document.getElementById('top-bar');
     const sidebar = document.getElementById('sidebar');
-    if (canvasContainer && endScreen && topBar && sidebar) {
+    const endScreenWin = document.getElementById('end-game-you-win');
+    const endScreenLoss = document.getElementById('end-game-game-over');
+    if (canvasContainer && endScreen && topBar && sidebar && endScreenWin && endScreenLoss) {
       if (!win) {
         this.stats.totalLosses++;
+        endScreenLoss.classList.add('visible');
+        endScreenWin.classList.remove('visible');
       } else {
         this.stats.totalWins++;
+        endScreenWin.classList.add('visible');
+        endScreenLoss.classList.remove('visible');
       }
       this.p5.remove();
       canvasContainer.innerHTML = '';

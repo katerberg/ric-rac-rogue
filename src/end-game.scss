@@ -192,6 +192,15 @@ $button-transition-duration: 100ms;
         white-space: nowrap;
     }
 
+    #end-game-game-over,
+    #end-game-you-win {
+        display: none;
+
+        &.visible {
+            display: block;
+        }
+    }
+
     .chrome {
         font-family: "Montserrat";
         font-weight: 900;

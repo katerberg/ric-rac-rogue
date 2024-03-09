@@ -29,9 +29,13 @@ function openHowToPlay(): void {
 function closeEndScreen(): void {
   const startScreen = document.getElementById('start-screen');
   const endScreen = document.getElementById('end-screen');
-  if (startScreen && endScreen) {
+  const endScreenWin = document.getElementById('end-game-you-win');
+  const endScreenLoss = document.getElementById('end-game-game-over');
+  if (startScreen && endScreen && endScreenWin && endScreenLoss) {
     startScreen.classList.add('visible');
     endScreen.classList.remove('visible');
+    endScreenWin.classList.remove('visible');
+    endScreenLoss.classList.remove('visible');
   }
 }
 function closeHowToPlay(): void {
