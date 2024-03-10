@@ -1,5 +1,5 @@
 import {numberCoordsToCoords} from '../coordinatesHelper';
-import {Choice, Moves, NumberCoordinates} from '../types';
+import {Choice, Moves, NumberCoordinates, SelectionTimes} from '../types';
 import {WinLine} from './WinLine';
 
 type BoardProps = {
@@ -16,6 +16,8 @@ export class Board {
 
   selections: Moves;
 
+  selectionTimes: SelectionTimes;
+
   winLines: WinLine[];
 
   blockedSpaces: NumberCoordinates[];
@@ -24,6 +26,7 @@ export class Board {
     this.columns = columns;
     this.rows = rows;
     this.selections = selections;
+    this.selectionTimes = new Map();
     this.winLines = [];
     this.blockedSpaces = blockedSpaces;
   }
@@ -77,6 +80,7 @@ export class Board {
     if (availableMoves.length > 0) {
       const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
       this.selections.set(`${randomMove.x},${randomMove.y}`, this.selections.get(`${x},${y}`));
+      this.selectionTimes.set(`${randomMove.x},${randomMove.y}`, this.selectionTimes.get(`${x},${y}`) ?? 0);
       this.selections.delete(`${x},${y}`);
     }
   }
@@ -89,6 +93,7 @@ export class Board {
           if (valueToCopy !== undefined) {
             //Move previous selections
             this.selections.set(`${x},${y + 1}`, this.selections.get(`${x},${y}`));
+            this.selectionTimes.set(`${x},${y + 1}`, this.selectionTimes.get(`${x},${y}`) ?? 0);
           }
           if (y !== rowNumberToCopy) {
             this.selections.delete(`${x},${y}`);
@@ -107,6 +112,7 @@ export class Board {
           if (valueToCopy !== undefined) {
             //Move previous selections
             this.selections.set(`${x + 1},${y}`, this.selections.get(`${x},${y}`));
+            this.selectionTimes.set(`${x + 1},${y}`, this.selectionTimes.get(`${x},${y}`) ?? 0);
           }
           if (x !== columnNumberToCopy) {
             this.selections.delete(`${x},${y}`);
@@ -128,6 +134,7 @@ export class Board {
           if (valueToCopy !== undefined) {
             //Move previous selections
             this.selections.set(`${x},${y}`, valueToCopy);
+            this.selectionTimes.set(`${x},${y}`, this.selectionTimes.get(`${x},${y + 1}`) ?? 0);
           } else {
             this.selections.delete(`${x},${y}`);
           }
@@ -148,6 +155,7 @@ export class Board {
           if (valueToCopy !== undefined) {
             //Move previous selections
             this.selections.set(`${x},${y}`, valueToCopy);
+            this.selectionTimes.set(`${x},${y}`, this.selectionTimes.get(`${x + 1},${y}`) ?? 0);
           } else {
             this.selections.delete(`${x},${y}`);
           }

@@ -14,7 +14,6 @@ import {
   StatusEffectType,
   TerminalStatus,
   randomEnum,
-  SpaceStatusEffect,
 } from '../types';
 import {checkTerminal} from '../winCalculation';
 import {Level} from './Level';
@@ -36,6 +35,8 @@ const horizontalPadding = 0;
 const ENERGY_COST_MOVE = 0;
 const ENERGY_COST_LOSS = 50;
 const ENERGY_COST_CAT = 20;
+const SELECTION_DRAW_TIME = 500;
+
 function recreateNode(el: HTMLElement, withChildren?: boolean): Node {
   let newNode: Node;
   if (withChildren) {
@@ -136,6 +137,8 @@ export class Game {
 
   gameEndCallback: () => void;
 
+  mostRecentPlay: number;
+
   constructor(gameEndCallback: () => void) {
     this.startTime = Date.now();
     const sketch = (p: P5): void => {
@@ -162,6 +165,7 @@ export class Game {
     this.energyMax = 100;
     this.energyCurrent = isDebug('energy') ? Number.parseInt(getUrlParams().get('energy') || '100', 10) : 100;
     this.previousEnergyCurrent = 0;
+    this.mostRecentPlay = 0;
     this.powerUps = [getStartingPowerUp()];
     this.stats = {
       totalMoves: 0,
@@ -564,7 +568,7 @@ export class Game {
     });
   }
 
-  private drawO(x: number, y: number): void {
+  private drawO(x: number, y: number, percentage: number): void {
     this.p5.stroke(COLORS.o);
     this.p5.fill(this.p5.color(0, 0));
     this.p5.strokeWeight(gameAxisWidth * 1.5);
@@ -576,13 +580,18 @@ export class Game {
     const xStart = x * cellWidth + cellWidth * 0.5 - gameAxisWidth;
     const yStart = y * cellHeight + cellHeight * 0.5 - gameAxisWidth;
     const radius = Math.max(Math.min(cellWidth, cellHeight) * 0.8 - gameAxisWidth * 4, 10);
-    this.p5.arc(xStart, yStart, radius * 1.2, radius, 1.74533, 1.309);
+    const startingRad = 1.74533;
+    const maxEndingRad = 2 * Math.PI + 1.309;
+    const endingRad = (maxEndingRad - startingRad) * percentage + startingRad;
+    // (maxEndingRad - startingRad * percentage) / (maxEndingRad - startingRad) + startingRad;
+    // const endingRad = 1.309;
+    this.p5.arc(xStart, yStart, radius * 1.2, radius, startingRad, endingRad);
     // repeat here as needed
-    this.p5.arc(xStart, yStart, radius * 1.2, radius, 1.74533, 1.309);
-    this.p5.arc(xStart, yStart, radius * 1.2, radius, 1.74533, 1.309);
+    this.p5.arc(xStart, yStart, radius * 1.2, radius, startingRad, endingRad);
+    this.p5.arc(xStart, yStart, radius * 1.2, radius, startingRad, endingRad);
   }
 
-  private drawX(x: number, y: number): void {
+  private drawX(x: number, y: number, percentage: number): void {
     this.p5.stroke(COLORS.x);
     this.p5.strokeCap(this.p5.ROUND);
     this.p5.strokeWeight(gameAxisWidth);
@@ -594,27 +603,72 @@ export class Game {
     const yStart = y * cellHeight + gameAxisWidth * 2;
     const xEnd = xStart + cellWidth * 0.9 - gameAxisWidth * 4;
     const yEnd = yStart + cellHeight * 0.8 - gameAxisWidth * 4;
-    // Long diagonal
-    this.p5.line(xStart, yStart, xEnd, yEnd);
-    // Two short diagonals
-    this.p5.line(xEnd, yStart, xStart + (xEnd - xStart) * 0.6, yStart + (yEnd - yStart) * 0.4);
-    this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
+    const longDiagonalPercentage = Math.min(percentage * 2, 1);
+    const shortDiagonalPercentage = Math.min((percentage - 0.5) * 4, 1);
+    const secondShortDiagonalPercentage = Math.min((percentage - 0.75) * 4, 1);
+
+    for (let iteration = 0; iteration < 2; iteration++) {
+      // Long diagonal
+      this.p5.line(
+        xStart,
+        yStart,
+        (xEnd - xStart) * longDiagonalPercentage + xStart,
+        (yEnd - yStart) * longDiagonalPercentage + yStart,
+      );
+      // Two short diagonals
+
+      if (shortDiagonalPercentage > 0) {
+        const firstLineXEnd = xStart + (xEnd - xStart) * 0.6;
+        const firstLineYEnd = yStart + (yEnd - yStart) * 0.4;
+        this.p5.line(
+          xEnd,
+          yStart,
+          (firstLineXEnd - xEnd) * shortDiagonalPercentage + xEnd,
+          (firstLineYEnd - yStart) * shortDiagonalPercentage + yStart,
+        );
+      }
+      if (secondShortDiagonalPercentage > 0) {
+        const secondLineXStart = xStart + (xEnd - xStart) * 0.4;
+        const secondLineYStart = yStart + (yEnd - yStart) * 0.6;
+        this.p5.line(
+          secondLineXStart,
+          secondLineYStart,
+          xStart + (secondLineXStart - xStart) * (1 - secondShortDiagonalPercentage),
+          (yEnd - secondLineYStart) * secondShortDiagonalPercentage + secondLineYStart,
+        );
+      }
+    }
+    // this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
 
     // repeat here as needed
-    this.p5.line(xStart, yStart, xEnd, yEnd);
-    this.p5.line(xEnd, yStart, xStart + (xEnd - xStart) * 0.6, yStart + (yEnd - yStart) * 0.4);
-    this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
-    this.p5.line(xEnd, yStart, xStart + (xEnd - xStart) * 0.6, yStart + (yEnd - yStart) * 0.4);
-    this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
+    // this.p5.line(
+    //   xStart,
+    //   yStart,
+    //   (xEnd - xStart) * longDiagonalPercentage + xStart,
+    //   (yEnd - yStart) * longDiagonalPercentage + yStart,
+    // );
+    // this.p5.line(xEnd, yStart, xStart + (xEnd - xStart) * 0.6, yStart + (yEnd - yStart) * 0.4);
+    // this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
+    // this.p5.line(xEnd, yStart, xStart + (xEnd - xStart) * 0.6, yStart + (yEnd - yStart) * 0.4);
+    // this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
   }
 
   private redrawSelections(): void {
     this.level.board.selections.forEach((key, value) => {
       const {x, y} = coordsToNumberCoords(value);
-      if (key === 'x') {
-        this.drawX(x, y);
-      } else if (key === 'o') {
-        this.drawO(x, y);
+      let percentage = 1;
+      const selectionTime = this.level.board.selectionTimes.get(value);
+      if (selectionTime) {
+        percentage = Math.min((this.p5.millis() - selectionTime) / SELECTION_DRAW_TIME, 1);
+      } else {
+        this.level.board.selectionTimes.set(value, this.p5.millis());
+      }
+      if (!selectionTime || selectionTime < this.p5.millis()) {
+        if (key === 'x') {
+          this.drawX(x, y, percentage);
+        } else if (key === 'o') {
+          this.drawO(x, y, percentage);
+        }
       }
     });
     this.level.board.winLines.forEach((winLine) => this.drawWinLines(winLine));
@@ -656,10 +710,9 @@ export class Game {
     } else if (this.previousEnergyCurrent > this.energyCurrent) {
       this.previousEnergyCurrent--;
     }
-    this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
-    this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
-    this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
-    this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
+    for (let iteration = 0; iteration < 4; iteration++) {
+      this.p5.line(0, y, this.gameWidth * percentage - strokeWidth, y);
+    }
 
     this.p5.textStyle(this.p5.NORMAL);
     this.p5.textSize(30);
@@ -1055,6 +1108,11 @@ export class Game {
 
   makePlay(move: Coordinate, player: Choice): boolean {
     this.level.board.selections.set(move, player);
+
+    const isStillDrawing = this.mostRecentPlay + SELECTION_DRAW_TIME > this.p5.millis();
+    const selectionTime = isStillDrawing ? this.mostRecentPlay + SELECTION_DRAW_TIME : this.p5.millis();
+    this.level.board.selectionTimes.set(move, selectionTime);
+    this.mostRecentPlay = this.p5.millis();
     const isWin = this.checkWinCondition();
     if (isWin) {
       return true;

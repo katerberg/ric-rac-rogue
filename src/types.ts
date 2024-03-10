@@ -5,6 +5,7 @@ export type NumberCoordinates = {x: number; y: number};
 export type Choice = 'x' | 'o';
 export type SpaceStatusEffect = 'blocked' | 'forced';
 export type Moves = Map<Coordinate, Choice | SpaceStatusEffect | undefined>;
+export type SelectionTimes = Map<Coordinate, number>;
 
 export enum RuleType {
   WIN_CON,
