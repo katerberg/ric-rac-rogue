@@ -25,7 +25,7 @@ describe('snapshot', () => {
 
       const time = new Date().getTime();
 
-      getBestMove(input, true);
+      getBestMove(input);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -34,7 +34,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(4, 4)};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -43,7 +43,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(4, 10)};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -52,7 +52,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(4, 20)};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -63,7 +63,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(4, 4), maxDepth: 10};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -72,7 +72,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(5, 5), maxDepth: 6};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -81,7 +81,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(5, 5), requiredWin: 4, maxDepth: 6};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -90,7 +90,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(5, 5), requiredWin: 4, maxDepth: 6};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -99,7 +99,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(6, 6), maxDepth: 6};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -108,13 +108,13 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(4, 4), requiredWin: 4, maxDepth: 10};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
   });
 
-  describe.only('pruning limits', () => {
+  describe.skip('pruning limits', () => {
     for (let x = 2; x < 5; x++) {
       for (let y = 2; y < 8; y++) {
         for (let requiredWin = 3; requiredWin < 4; requiredWin++) {
@@ -123,7 +123,7 @@ describe('snapshot', () => {
             it.skip(`for ${x}x${y} with required win ${requiredWin} max depth ${maxDepth}`, () => {
               const input = {...getEmptyBoardState(x, y), requiredWin, maxDepth: 6};
               const time = new Date().getTime();
-              getBestMove(input, false);
+              getBestMove(input);
 
               expect(new Date().getTime() - time).toMatchSnapshot();
             });
@@ -139,7 +139,7 @@ describe('snapshot', () => {
             it(`for ${x}x${y} with required win ${requiredWin} max depth ${maxDepth}`, () => {
               const input = {...getEmptyBoardState(x, y), requiredWin, maxDepth: 6};
               const time = new Date().getTime();
-              getBestMove(input, false);
+              getBestMove(input);
 
               expect(new Date().getTime() - time).toMatchSnapshot();
             });

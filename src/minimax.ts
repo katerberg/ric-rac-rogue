@@ -201,11 +201,11 @@ export function boardToTranspositionTableKeys(selections: Moves, columns: number
 // };
 
 // Same as above but for printing a pruning message
-function printPruningMessage(depth: number): string {
-  const indentSize = depth * 15;
-  const indent = ' '.repeat(indentSize);
-  return `${indent}-- pruning -- \n`;
-}
+// function printPruningMessage(depth: number): string {
+//   const indentSize = depth * 15;
+//   const indent = ' '.repeat(indentSize);
+//   return `${indent}-- pruning -- \n`;
+// }
 // * Debugging
 
 const BEST_MINIMIZING_SCORE = 1_000_000;
@@ -213,15 +213,19 @@ const BEST_MAXIMIZING_SCORE = -1_000_000;
 
 export function getBestMove(
   state: State,
-  pruning: boolean,
   depth = 0,
   alpha = -1_000_000,
   beta = 1_000_000,
 ): {
   bestScore: number;
-  // should probably be `| null` instead but whatever
   bestMove: NumberCoordinates | undefined;
 } {
+  if (depth === 0) {
+    const props = Object.getOwnPropertyNames(transpositionTable);
+    for (let i = 0; i < props.length; i++) {
+      delete transpositionTable[props[i]];
+    }
+  }
   // removed the isMaximizing param just to minimize the number of
   // things I had to think about at the time
   const isMaximizingPlayer = state.currentPlayer === 'x';
@@ -283,27 +287,50 @@ export function getBestMove(
 
     nextState.board.selections.set(numberCoordsToCoords(move), isMaximizingPlayer ? 'x' : 'o');
 
-    const result = getBestMove(nextState, pruning, depth + 1, alpha, beta);
+    let result: {bestScore: number; bestMove: NumberCoordinates | undefined};
+    const transpositionTableKey = boardToTranspositionTableKey(
+      nextState.board.selections,
+      nextState.board.columns,
+      nextState.board.rows,
+    );
+
+    if (transpositionTable[transpositionTableKey]) {
+      result = transpositionTable[transpositionTableKey];
+    } else {
+      result = getBestMove(nextState, depth + 1, alpha, beta);
+      if (result.bestMove) {
+        boardToTranspositionTableKeys(
+          nextState.board.selections,
+          nextState.board.columns,
+          nextState.board.rows,
+        ).forEach((key) => {
+          if (!transpositionTable[key]) {
+            transpositionTable[key] = result as {
+              bestScore: number;
+              bestMove: NumberCoordinates;
+            };
+          }
+        });
+      }
+    }
 
     // alpha beta pruning
     if ((isMaximizingPlayer && result.bestScore > bestScore) || (!isMaximizingPlayer && result.bestScore < bestScore)) {
       ({bestScore} = result);
       bestMove = move;
 
-      if (pruning) {
-        if (isMaximizingPlayer) {
-          alpha = Math.max(alpha, bestScore);
-        } else if (!isMaximizingPlayer) {
-          beta = Math.min(beta, bestScore);
-        }
-        if (beta <= alpha) {
-          // debugStateStrings.push(printPruningMessage(depth));
-          break;
-        }
+      if (isMaximizingPlayer) {
+        alpha = Math.max(alpha, bestScore);
+      } else if (!isMaximizingPlayer) {
+        beta = Math.min(beta, bestScore);
+      }
+      if (beta <= alpha) {
+        // debugStateStrings.push(printPruningMessage(depth));
+        break;
       }
     }
 
-    if (pruning && beta <= alpha) {
+    if (beta <= alpha) {
       // debugStateStrings.push(printPruningMessage(depth));
       break;
     }

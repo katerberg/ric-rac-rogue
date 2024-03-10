@@ -1,24 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`snapshot infinite depth 3x3 with 3 in a row 1`] = `20`;
+exports[`snapshot infinite depth 3x3 with 3 in a row 1`] = `18`;
 
-exports[`snapshot infinite depth 4x4 with 3 in a row 1`] = `592`;
+exports[`snapshot infinite depth 4x4 with 3 in a row 1`] = `1588`;
 
-exports[`snapshot infinite depth 4x10 with 3 in a row 1`] = `2557`;
+exports[`snapshot infinite depth 4x10 with 3 in a row 1`] = `8737`;
 
-exports[`snapshot infinite depth 4x20 with 3 in a row 1`] = `6513`;
+exports[`snapshot infinite depth 4x20 with 3 in a row 1`] = `25778`;
 
-exports[`snapshot limited depth 4x4 with 3 in a row depth 10 1`] = `611`;
+exports[`snapshot limited depth 4x4 with 3 in a row depth 10 1`] = `1524`;
 
-exports[`snapshot limited depth 4x4 with 4 in a row depth 10 1`] = `39682`;
+exports[`snapshot limited depth 4x4 with 4 in a row depth 10 1`] = `35451`;
 
-exports[`snapshot limited depth 4x10 with 4 in a row depth 8 1`] = `30026`;
+exports[`snapshot limited depth 4x10 with 4 in a row depth 8 1`] = `26965`;
 
-exports[`snapshot limited depth 5x5 with 3 in a row depth 6 1`] = `1504`;
+exports[`snapshot limited depth 5x5 with 3 in a row depth 6 1`] = `1954`;
 
-exports[`snapshot limited depth 5x5 with 4 in a row depth 6 1`] = `29374`;
+exports[`snapshot limited depth 5x5 with 4 in a row depth 6 1`] = `25983`;
 
-exports[`snapshot limited depth 6x6 with 3 in a row depth 6 1`] = `8337`;
+exports[`snapshot limited depth 6x6 with 3 in a row depth 6 1`] = `11385`;
 
 exports[`snapshot pruning limits for 2x2 with required win 3 max depth 6 1`] = `0`;
 

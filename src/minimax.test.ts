@@ -33,7 +33,7 @@ describe('minimax', () => {
       const input = getFullBoardState();
       input.board.selections.delete('2,2');
 
-      const result = getBestMove(input, true);
+      const result = getBestMove(input);
 
       expect(result.bestMove).toEqual({x: 2, y: 2});
       expect(result.bestScore).toEqual(999_999);
@@ -49,7 +49,7 @@ describe('minimax', () => {
       input.board.selections.set('2,2', 'x');
       input.board.selections.set('0,2', 'x');
 
-      const result = getBestMove(input, true);
+      const result = getBestMove(input);
 
       expect(result.bestMove).toEqual({x: 2, y: 1});
       expect(result.bestScore).toEqual(-999_999);
@@ -65,7 +65,7 @@ describe('minimax', () => {
       input.board.selections.set('2,2', 'x');
       input.board.selections.set('0,2', 'x');
 
-      const result = getBestMove(input, true);
+      const result = getBestMove(input);
 
       expect(result.bestMove).toEqual({x: 2, y: 1});
       expect(result.bestScore).toEqual(-999_999);
@@ -79,7 +79,7 @@ describe('minimax', () => {
       input.board.selections.set('2,0', 'o');
       input.board.selections.set('2,2', 'x');
 
-      const result = getBestMove(input, true);
+      const result = getBestMove(input);
 
       expect(result.bestMove).toEqual({x: 0, y: 2});
       expect(result.bestScore).toEqual(999_997);
@@ -96,7 +96,7 @@ describe('minimax', () => {
       input.board.selections.set('1,2', 'o');
       input.board.selections.set('2,2', 'x');
 
-      const result = getBestMove(input, true);
+      const result = getBestMove(input);
 
       expect(result.bestMove).toEqual({x: 1, y: 1});
       expect(result.bestScore).toEqual(0);
@@ -112,7 +112,7 @@ describe('minimax', () => {
       input.board.selections.set('2,0', 'x');
       input.board.selections.set('2,1', 'x');
 
-      const result = getBestMove(input, true);
+      const result = getBestMove(input);
 
       expect(result.bestMove).toEqual({x: 2, y: 2});
       expect(result.bestScore).toEqual(1_000_000 - 4);
@@ -126,7 +126,7 @@ describe('minimax', () => {
       input.board.selections.set('1,1', 'o');
       input.board.selections.set('2,2', 'x');
 
-      const result = getBestMove(input, true);
+      const result = getBestMove(input);
 
       expect(result.bestMove).toEqual({x: 0, y: 1});
       expect(result.bestScore).toEqual(0);

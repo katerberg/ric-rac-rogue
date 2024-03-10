@@ -441,15 +441,12 @@ export class Game {
     } else if (forceRandomPosition !== -1) {
       move = this.level.board.getRandomMove();
     } else {
-      move = getBestMove(
-        {
-          board: this.level.board,
-          maxDepth: this.level.maxDepth,
-          requiredWin: this.level.requiredWin,
-          currentPlayer: 'o',
-        },
-        this.level.board.getAvailableMoves().length > 12,
-      ).bestMove;
+      move = getBestMove({
+        board: this.level.board,
+        maxDepth: this.level.maxDepth,
+        requiredWin: this.level.requiredWin,
+        currentPlayer: 'o',
+      }).bestMove;
     }
     if (!takeExtraTurn) {
       document.getElementById('loading')?.classList.remove('loading');
