@@ -107,15 +107,8 @@ export function getBestMove(
         nodeValue = transpositionTable[transpositionTableKey];
       } else {
         let nextMaximizing = !maximizing;
-        if (turnOrderType === TurnOrderType.TWO_TO_ONE) {
-          if (previousMaximizing !== maximizing && !maximizing) {
-            // don't toggle
-            // console.log('toggling', depth, maximizing);
-            nextMaximizing = maximizing;
-          } else {
-            //toggle
-            // console.log('not toggling', depth, maximizing);
-          }
+        if (turnOrderType === TurnOrderType.TWO_TO_ONE && previousMaximizing !== maximizing && !maximizing) {
+          nextMaximizing = maximizing;
         }
         nodeValue = getBestMove(
           child,

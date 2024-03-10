@@ -2,6 +2,7 @@ import * as P5 from 'p5';
 import {COLORS} from '../colors';
 import {coordsToNumberCoords, numberCoordsToCoords} from '../coordinatesHelper';
 import {getUrlParams, isDebug} from '../environment';
+import {getBlockingMove, getWinningMove} from '../heuristics';
 import {getBestMove} from '../minimax';
 import {getRuleName} from '../rules';
 import {
@@ -462,16 +463,22 @@ export class Game {
     } else if (forceRandomPosition !== -1) {
       move = this.level.board.getRandomMove();
     } else {
-      move = getBestMove(
-        {
-          board: this.level.board,
-          maxDepth: this.level.maxDepth,
-          requiredWin: this.level.requiredWin,
-          currentPlayer: 'o',
-        },
-        this.level.board.getAvailableMoves().length > 12,
-        this.level.getRule(RuleType.TURN_ORDER)?.turnOrderType ?? TurnOrderType.TAKE_TURNS,
-      ).bestMove;
+      move = getWinningMove(this.level.board, this.level.requiredWin);
+      if (this.level.getRule(RuleType.TURN_ORDER)?.turnOrderType === TurnOrderType.TAKE_TURNS) {
+        move = getBlockingMove(this.level.board, this.level.requiredWin);
+      }
+      if (!move) {
+        move = getBestMove(
+          {
+            board: this.level.board,
+            maxDepth: this.level.maxDepth,
+            requiredWin: this.level.requiredWin,
+            currentPlayer: 'o',
+          },
+          this.level.board.getAvailableMoves().length > 12,
+          this.level.getRule(RuleType.TURN_ORDER)?.turnOrderType ?? TurnOrderType.TAKE_TURNS,
+        ).bestMove;
+      }
     }
     if (!takeExtraTurn) {
       document.getElementById('loading')?.classList.remove('loading');
