@@ -116,6 +116,7 @@ function bindClickListeners(): void {
 }
 
 window.addEventListener('load', () => {
+  document.getElementById('js-required')?.style.setProperty('display', 'none');
   if (!menuSound) {
     import('./assets/menu.mp3').then((menuMp3) => {
       menuSound = new Howl({
