@@ -1007,7 +1007,16 @@ export class Game {
 
   private endLevel(term: TerminalStatus): void {
     if (this.level.level === 10) {
-      this.endGame(term.isWinner && term.winner === 'x');
+      if (term.winner) {
+        const spaces = this.level.getWinningSpaces(term.winner);
+        this.level.board.winLines.push(new WinLine(spaces[0], spaces[spaces.length - 1], this.p5.millis()));
+      }
+      setTimeout(
+        () => {
+          this.endGame(term.isWinner && term.winner === 'x');
+        },
+        isDebug('slowlevel') ? 20000 : 2000,
+      );
     } else if (term.winner !== 'x' && this.energyCurrent - ENERGY_COST_LOSS <= 0) {
       this.endGame();
     } else if (term.isWinner && term.winner) {
