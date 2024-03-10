@@ -464,8 +464,10 @@ export class Game {
       move = this.level.board.getRandomMove();
     } else {
       move = getWinningMove(this.level.board, this.level.requiredWin);
-      if (this.level.getRule(RuleType.TURN_ORDER)?.turnOrderType === TurnOrderType.TAKE_TURNS) {
-        move = getBlockingMove(this.level.board, this.level.requiredWin);
+      if (!move) {
+        if (this.level.getRule(RuleType.TURN_ORDER)?.turnOrderType === TurnOrderType.TAKE_TURNS) {
+          move = getBlockingMove(this.level.board, this.level.requiredWin);
+        }
       }
       if (!move) {
         move = getBestMove(
