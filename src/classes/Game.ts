@@ -360,7 +360,7 @@ export class Game {
       return;
     }
     if (this.currentAction?.type === PowerUpType.REVERSE_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
-      this.level.board.reverseColumn(y);
+      this.level.board.reverseColumn(x);
       this.checkWinCondition();
       this.currentAction = null;
       return;
