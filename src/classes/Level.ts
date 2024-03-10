@@ -57,23 +57,46 @@ export class Level {
       columns,
       rows,
       selections: new Map<Coordinate, Choice>(),
-      blockedSpaces: getBlockedSpaces(level, columns, rows),
     });
     this.rules = generateRules(level, columns, rows);
-    this.requiredWin = this.rules.find((rule) => rule.type === RuleType.WIN_CON)?.xInARow ?? 3;
-    if (this.rules.find((rule) => rule.type === RuleType.FIRST_MOVE)?.firstPlayer === 'o') {
+    this.requiredWin = this.getRule(RuleType.WIN_CON)?.xInARow ?? 3;
+    if (this.getRule(RuleType.BLOCKING_COLUMN) || this.getRule(RuleType.BLOCKING_ROW)) {
+      const blockingRule = this.getRule(RuleType.BLOCKING_COLUMN) ?? this.getRule(RuleType.BLOCKING_ROW);
+      if (this.getRule(RuleType.BLOCKING_ROW)) {
+        for (let i = 0; i < columns; i++) {
+          this.board.blockedSpaces.push({x: i, y: blockingRule?.axisToBlock ?? 0});
+        }
+      }
+      if (this.getRule(RuleType.BLOCKING_COLUMN)) {
+        for (let i = 0; i < rows; i++) {
+          this.board.blockedSpaces.push({y: i, x: blockingRule?.axisToBlock ?? 0});
+        }
+      }
+    } else {
+      this.board.blockedSpaces = getBlockedSpaces(level, columns, rows);
+    }
+    if (this.getRule(RuleType.FIRST_MOVE)?.firstPlayer === 'o') {
       this.board.setRandomMove('o');
-      if (this.rules.find((rule) => rule.type === RuleType.TURN_ORDER)?.turnOrderType === TurnOrderType.TWO_TO_ONE) {
+      if (this.getRule(RuleType.TURN_ORDER)?.turnOrderType === TurnOrderType.TWO_TO_ONE) {
         this.board.setRandomMove('o');
       }
     }
     this.maxDepth = level === 10 ? 4 : 6;
   }
 
+  handleRuleRotations(): void {
+    const rule = this.getRule(RuleType.BLOCKING_ROW) ?? this.getRule(RuleType.BLOCKING_COLUMN);
+    if (rule) {
+      this.board.handleRotatingBlock(rule);
+    }
+  }
+
+  getRule(type: RuleType): Rule | undefined {
+    return this.rules.find((rule) => rule.type === type);
+  }
+
   isTwoToOne(): boolean {
-    return !!this.rules.find(
-      (rule) => rule.type === RuleType.TURN_ORDER && rule.turnOrderType === TurnOrderType.TWO_TO_ONE,
-    );
+    return this.getRule(RuleType.TURN_ORDER)?.turnOrderType === TurnOrderType.TWO_TO_ONE;
   }
 
   getWinningSpaces(choice: Choice): NumberCoordinates[] {
@@ -82,7 +105,7 @@ export class Level {
 
   changeWinRequirement(requiredWin: number): void {
     this.requiredWin = requiredWin;
-    const winCon = this.rules.find((rule) => rule.type === RuleType.WIN_CON);
+    const winCon = this.getRule(RuleType.WIN_CON);
     if (winCon?.xInARow) {
       winCon.xInARow = requiredWin;
     }

@@ -1,5 +1,5 @@
 import {numberCoordsToCoords} from '../coordinatesHelper';
-import {Choice, Moves, NumberCoordinates, SelectionTimes, SpaceStatusEffect} from '../types';
+import {Choice, Moves, NumberCoordinates, Rule, RuleType, SelectionTimes, SpaceStatusEffect} from '../types';
 import {WinLine} from './WinLine';
 
 type BoardProps = {
@@ -207,6 +207,35 @@ export class Board {
         }
       });
     }
+  }
+
+  handleRotatingBlock(rule: Rule): void {
+    if (rule.axisToBlock === undefined) {
+      return;
+    }
+    const prevAxis = rule.axisToBlock;
+    let newAxis = rule.axisToBlock + 1;
+
+    if (rule.type === RuleType.BLOCKING_ROW) {
+      if (newAxis >= this.columns) {
+        newAxis = 0;
+      }
+      // eslint-disable-next-line no-confusing-arrow
+      this.blockedSpaces = this.blockedSpaces.map((blockedSpace) =>
+        blockedSpace.y === prevAxis ? {...blockedSpace, y: newAxis} : blockedSpace,
+      );
+    }
+    if (rule.type === RuleType.BLOCKING_COLUMN) {
+      if (newAxis >= this.rows) {
+        newAxis = 0;
+      }
+      // eslint-disable-next-line no-confusing-arrow
+      this.blockedSpaces = this.blockedSpaces.map((blockedSpace) =>
+        blockedSpace.x === prevAxis ? {...blockedSpace, x: newAxis} : blockedSpace,
+      );
+    }
+
+    rule.axisToBlock = newAxis;
   }
 
   getRandomMove(): NumberCoordinates {

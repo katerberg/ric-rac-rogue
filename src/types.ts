@@ -11,6 +11,8 @@ export enum RuleType {
   WIN_CON,
   FIRST_MOVE,
   TURN_ORDER,
+  BLOCKING_COLUMN,
+  BLOCKING_ROW,
 }
 
 export enum RuleWinType {
@@ -28,6 +30,7 @@ export type Rule = {
   winType?: RuleWinType;
   firstPlayer?: Choice;
   xInARow?: number;
+  axisToBlock?: number;
 };
 export type State = {
   board: Board;

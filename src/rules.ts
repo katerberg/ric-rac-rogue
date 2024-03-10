@@ -117,14 +117,26 @@ export function generateNumberOfAxes(level: number): number {
 }
 
 export function generateRules(level: number, columns: number, rows: number): Rule[] {
-  return [
+  const rules = [
     getWinCondition(level, columns, rows),
     {
       type: RuleType.TURN_ORDER,
       turnOrderType: level === 10 ? TurnOrderType.TWO_TO_ONE : TurnOrderType.TAKE_TURNS,
     },
-    getFirstMoveRule(level),
   ];
+
+  if (level > 4 && level < 10) {
+    const percentage = 0.1 * (level - 3);
+    if (getWeightedRandomNumber({0: 1 - percentage, 1: percentage})) {
+      rules.push({
+        type: RuleType.BLOCKING_COLUMN,
+        axisToBlock: Math.floor(Math.random() * columns),
+      });
+    }
+  }
+
+  rules.push(getFirstMoveRule(level));
+  return rules;
 }
 
 export function getRuleName(rule: Rule): string {
@@ -138,6 +150,9 @@ export function getRuleName(rule: Rule): string {
       return 'Take turns';
     case RuleType.FIRST_MOVE:
       return `${rule.firstPlayer?.toUpperCase()} goes first`;
+    case RuleType.BLOCKING_COLUMN:
+    case RuleType.BLOCKING_ROW:
+      return 'Rotating embargo';
     default:
       return 'Unknown';
   }

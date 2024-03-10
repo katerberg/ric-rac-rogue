@@ -432,6 +432,9 @@ export class Game {
       if (this.makePlay(`${x},${y}`, 'x')) {
         return;
       }
+      // Handle rotations
+      this.level.handleRuleRotations();
+
       // Handle extra turn
       const extraTurnPosition = this.getStatusEffectPosition(StatusEffectType.EXTRA_TURN);
       if (extraTurnPosition !== -1) {
@@ -467,7 +470,7 @@ export class Game {
           currentPlayer: 'o',
         },
         this.level.board.getAvailableMoves().length > 12,
-        this.level.rules.find((rule) => rule.type === RuleType.TURN_ORDER)?.turnOrderType ?? TurnOrderType.TAKE_TURNS,
+        this.level.getRule(RuleType.TURN_ORDER)?.turnOrderType ?? TurnOrderType.TAKE_TURNS,
       ).bestMove;
     }
     if (!takeExtraTurn) {
