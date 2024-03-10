@@ -616,7 +616,6 @@ export class Game {
         (yEnd - yStart) * longDiagonalPercentage + yStart,
       );
       // Two short diagonals
-
       if (shortDiagonalPercentage > 0) {
         const firstLineXEnd = xStart + (xEnd - xStart) * 0.6;
         const firstLineYEnd = yStart + (yEnd - yStart) * 0.4;
@@ -638,19 +637,6 @@ export class Game {
         );
       }
     }
-    // this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
-
-    // repeat here as needed
-    // this.p5.line(
-    //   xStart,
-    //   yStart,
-    //   (xEnd - xStart) * longDiagonalPercentage + xStart,
-    //   (yEnd - yStart) * longDiagonalPercentage + yStart,
-    // );
-    // this.p5.line(xEnd, yStart, xStart + (xEnd - xStart) * 0.6, yStart + (yEnd - yStart) * 0.4);
-    // this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
-    // this.p5.line(xEnd, yStart, xStart + (xEnd - xStart) * 0.6, yStart + (yEnd - yStart) * 0.4);
-    // this.p5.line(xStart + (xEnd - xStart) * 0.4, yStart + (yEnd - yStart) * 0.6, xStart, yEnd);
   }
 
   private redrawSelections(): void {
@@ -1008,14 +994,17 @@ export class Game {
       this.endGame();
     } else if (term.isWinner && term.winner) {
       const spaces = this.level.getWinningSpaces(term.winner);
-      this.level.board.winLines.push(new WinLine(spaces[0], spaces[spaces.length - 1], this.p5.millis()));
-      this.startTime = Date.now() + 2000;
-      setTimeout(
-        () => {
-          this.goToNextLevelScreen(term);
-        },
-        isDebug('slowlevel') ? 20000 : 2000,
-      );
+      this.startTime = Date.now() + 2000 + SELECTION_DRAW_TIME;
+
+      setTimeout(() => {
+        this.level.board.winLines.push(new WinLine(spaces[0], spaces[spaces.length - 1], this.p5.millis()));
+        setTimeout(
+          () => {
+            this.goToNextLevelScreen(term);
+          },
+          isDebug('slowlevel') ? 20000 : 2000,
+        );
+      }, SELECTION_DRAW_TIME);
     } else {
       this.goToNextLevelScreen(term);
     }
