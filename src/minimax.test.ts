@@ -33,14 +33,13 @@ describe('minimax', () => {
       const input = getFullBoardState();
       input.board.selections.delete('2,2');
 
-      const result = getBestMove(input, false);
+      const result = getBestMove(input, true);
 
       expect(result.bestMove).toEqual({x: 2, y: 2});
-      expect(result.bestScore).toEqual(1_000_000);
+      expect(result.bestScore).toEqual(999_999);
     });
 
-    // giving up on alpha beta pruning so I don't cry
-    it.skip('finds a winning terminal move for o', () => {
+    it('finds a winning terminal move for o', () => {
       const input = getFullBoardState();
       input.board.selections = new Map();
       input.currentPlayer = 'o';
@@ -53,8 +52,9 @@ describe('minimax', () => {
       const result = getBestMove(input, true);
 
       expect(result.bestMove).toEqual({x: 2, y: 1});
-      expect(result.bestScore).toEqual(-1_000_000);
+      expect(result.bestScore).toEqual(-999_999);
     });
+
     it('finds a winning terminal move for o without pruning', () => {
       const input = getFullBoardState();
       input.board.selections = new Map();
@@ -65,10 +65,10 @@ describe('minimax', () => {
       input.board.selections.set('2,2', 'x');
       input.board.selections.set('0,2', 'x');
 
-      const result = getBestMove(input, false);
+      const result = getBestMove(input, true);
 
       expect(result.bestMove).toEqual({x: 2, y: 1});
-      expect(result.bestScore).toEqual(-1_000_000);
+      expect(result.bestScore).toEqual(-999_999);
     });
 
     it('finds move in two turns for x', () => {
@@ -79,10 +79,10 @@ describe('minimax', () => {
       input.board.selections.set('2,0', 'o');
       input.board.selections.set('2,2', 'x');
 
-      const result = getBestMove(input, false);
+      const result = getBestMove(input, true);
 
       expect(result.bestMove).toEqual({x: 0, y: 2});
-      expect(result.bestScore).toEqual(1_000_000 - 0.2);
+      expect(result.bestScore).toEqual(999_997);
     });
 
     it('finds blocking move to end in cat game for x', () => {
@@ -96,7 +96,7 @@ describe('minimax', () => {
       input.board.selections.set('1,2', 'o');
       input.board.selections.set('2,2', 'x');
 
-      const result = getBestMove(input, false);
+      const result = getBestMove(input, true);
 
       expect(result.bestMove).toEqual({x: 1, y: 1});
       expect(result.bestScore).toEqual(0);
@@ -112,10 +112,10 @@ describe('minimax', () => {
       input.board.selections.set('2,0', 'x');
       input.board.selections.set('2,1', 'x');
 
-      const result = getBestMove(input, false);
+      const result = getBestMove(input, true);
 
       expect(result.bestMove).toEqual({x: 2, y: 2});
-      expect(result.bestScore).toEqual(1_000_000 - 0.3);
+      expect(result.bestScore).toEqual(1_000_000 - 4);
     });
 
     it('finds cat game from middle', () => {
@@ -126,7 +126,7 @@ describe('minimax', () => {
       input.board.selections.set('1,1', 'o');
       input.board.selections.set('2,2', 'x');
 
-      const result = getBestMove(input, false);
+      const result = getBestMove(input, true);
 
       expect(result.bestMove).toEqual({x: 0, y: 1});
       expect(result.bestScore).toEqual(0);
