@@ -10,9 +10,11 @@ import {
   MenuOption,
   NumberCoordinates,
   PowerUpType,
+  RuleType,
   Stats,
   StatusEffectType,
   TerminalStatus,
+  TurnOrderType,
   randomEnum,
 } from '../types';
 import {checkTerminal} from '../winCalculation';
@@ -465,6 +467,7 @@ export class Game {
           currentPlayer: 'o',
         },
         this.level.board.getAvailableMoves().length > 12,
+        this.level.rules.find((rule) => rule.type === RuleType.TURN_ORDER)?.turnOrderType ?? TurnOrderType.TAKE_TURNS,
       ).bestMove;
     }
     if (!takeExtraTurn) {

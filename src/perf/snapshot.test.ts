@@ -1,6 +1,6 @@
 import {Board} from '../classes/Board';
 import {getBestMove} from '../minimax';
-import {State} from '../types';
+import {State, TurnOrderType} from '../types';
 
 function getEmptyBoardState(rows = 3, columns = 3): State {
   return {
@@ -25,7 +25,7 @@ describe('snapshot', () => {
 
       const time = new Date().getTime();
 
-      getBestMove(input, true);
+      getBestMove(input, true, TurnOrderType.TAKE_TURNS);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -34,7 +34,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(4, 4)};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input, true, TurnOrderType.TAKE_TURNS);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -43,7 +43,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(4, 10)};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input, true, TurnOrderType.TAKE_TURNS);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -52,7 +52,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(4, 20)};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input, true, TurnOrderType.TAKE_TURNS);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -63,7 +63,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(4, 4), maxDepth: 10};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input, true, TurnOrderType.TAKE_TURNS);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -72,7 +72,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(5, 5), maxDepth: 6};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input, true, TurnOrderType.TAKE_TURNS);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -81,7 +81,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(5, 5), requiredWin: 4, maxDepth: 6};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input, true, TurnOrderType.TAKE_TURNS);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -90,7 +90,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(5, 5), requiredWin: 4, maxDepth: 6};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input, true, TurnOrderType.TAKE_TURNS);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -99,7 +99,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(6, 6), maxDepth: 6};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input, true, TurnOrderType.TAKE_TURNS);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -108,7 +108,7 @@ describe('snapshot', () => {
       const input = {...getEmptyBoardState(4, 4), requiredWin: 4, maxDepth: 10};
 
       const time = new Date().getTime();
-      getBestMove(input, true);
+      getBestMove(input, true, TurnOrderType.TAKE_TURNS);
 
       expect(new Date().getTime() - time).toMatchSnapshot();
     });
@@ -123,7 +123,7 @@ describe('snapshot', () => {
             it.skip(`for ${x}x${y} with required win ${requiredWin} max depth ${maxDepth}`, () => {
               const input = {...getEmptyBoardState(x, y), requiredWin, maxDepth: 6};
               const time = new Date().getTime();
-              getBestMove(input, false);
+              getBestMove(input, false, TurnOrderType.TAKE_TURNS);
 
               expect(new Date().getTime() - time).toMatchSnapshot();
             });
@@ -139,7 +139,7 @@ describe('snapshot', () => {
             it(`for ${x}x${y} with required win ${requiredWin} max depth ${maxDepth}`, () => {
               const input = {...getEmptyBoardState(x, y), requiredWin, maxDepth: 6};
               const time = new Date().getTime();
-              getBestMove(input, false);
+              getBestMove(input, false, TurnOrderType.TAKE_TURNS);
 
               expect(new Date().getTime() - time).toMatchSnapshot();
             });

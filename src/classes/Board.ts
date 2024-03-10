@@ -217,4 +217,18 @@ export class Board {
   setRandomMove(player: Choice): void {
     this.selections.set(numberCoordsToCoords(this.getRandomMove()), player);
   }
+
+  // o _ x
+  // o x _
+  // _ _ x
+  toString(): string {
+    let result = '';
+    for (let y = 0; y < this.rows; y++) {
+      for (let x = 0; x < this.columns; x++) {
+        result += `${this.selections.get(`${x},${y}`) ?? '_'} `;
+      }
+      result += '\n';
+    }
+    return result;
+  }
 }

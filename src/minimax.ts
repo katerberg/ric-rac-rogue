@@ -1,6 +1,6 @@
 import {Board} from './classes/Board';
 import {numberCoordsToCoords} from './coordinatesHelper';
-import {Moves, NumberCoordinates, State} from './types';
+import {Moves, NumberCoordinates, State, TurnOrderType} from './types';
 import {checkTerminal, getTotalScore} from './winCalculation';
 
 const transpositionTable: Record<string, {bestScore: number; bestMove: NumberCoordinates}> = {};
@@ -36,6 +36,8 @@ export function boardToTranspositionTableKeys(selections: Moves, columns: number
 export function getBestMove(
   state: State,
   pruning: boolean,
+  turnOrderType: TurnOrderType,
+  previousMaximizing?: boolean,
   isMaximizing?: boolean,
   depth = 0,
   alpha = -1_000_000,
@@ -76,7 +78,7 @@ export function getBestMove(
         rows: state.board.rows,
         selections: new Map(state.board.selections),
       }),
-      currentPlayer: maximizing ? 'o' : 'x',
+      currentPlayer: maximizing ? 'o' : 'x', //irrelevant and vestigial
     };
     child.board.selections.set(numberCoordsToCoords(move), maximizing ? 'x' : 'o');
     const terminalState = checkTerminal(child.board, child.requiredWin);
@@ -104,7 +106,27 @@ export function getBestMove(
       if (transpositionTable[transpositionTableKey]) {
         nodeValue = transpositionTable[transpositionTableKey];
       } else {
-        nodeValue = getBestMove(child, pruning, !maximizing, depth + 1, newAlpha, newBeta);
+        let nextMaximizing = !maximizing;
+        if (turnOrderType === TurnOrderType.TWO_TO_ONE) {
+          if (previousMaximizing !== maximizing && !maximizing) {
+            // don't toggle
+            // console.log('toggling', depth, maximizing);
+            nextMaximizing = maximizing;
+          } else {
+            //toggle
+            // console.log('not toggling', depth, maximizing);
+          }
+        }
+        nodeValue = getBestMove(
+          child,
+          pruning,
+          turnOrderType,
+          maximizing,
+          nextMaximizing,
+          depth + 1,
+          newAlpha,
+          newBeta,
+        );
         boardToTranspositionTableKeys(child.board.selections, child.board.columns, child.board.rows).forEach((key) => {
           if (!transpositionTable[key]) {
             transpositionTable[key] = nodeValue;
