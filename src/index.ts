@@ -6,6 +6,7 @@ import {Howl} from 'howler';
 import {Game} from './classes/Game';
 import {isDebug, skipMenu} from './environment';
 
+const VOLUME = 0.4;
 let menuSound: Howl | undefined;
 let gameSound: Howl;
 
@@ -76,16 +77,16 @@ function startNewGame(): void {
           autoplay: true,
         });
       }
-      gameSound.fade(0, 1, 1000);
-      menuSound?.fade(1, 0, 3000);
+      gameSound.fade(0, VOLUME, 1000);
+      menuSound?.fade(VOLUME, 0, 3000);
     });
 
     startScreen.classList.remove('visible');
     topBar.classList.add('visible');
     sidebar.classList.add('visible');
     const gameEndCallback = (): void => {
-      gameSound.fade(1, 0, 4000);
-      menuSound?.fade(0, 1, 2000);
+      gameSound.fade(VOLUME, 0, 4000);
+      menuSound?.fade(0, VOLUME, 2000);
     };
     new Game(gameEndCallback).start();
   }

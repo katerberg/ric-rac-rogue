@@ -972,7 +972,7 @@ export class Game {
           if (term.winner === 'x') {
             this.stats.totalWins++;
             this.energyMax += 10;
-            this.energyCurrent += Math.floor(this.energyMax * 0.15);
+            this.energyCurrent += Math.floor(this.energyMax * 0.2);
             if (this.energyCurrent > this.energyMax) {
               this.energyCurrent = this.energyMax;
             }

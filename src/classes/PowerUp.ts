@@ -52,37 +52,37 @@ function getDefaultCost(type: PowerUpType): number {
 function getDefaultCooldown(type: PowerUpType): number {
   switch (type) {
     case PowerUpType.EXTRA_TURN:
-      return 4;
+      return 6;
     case PowerUpType.FLIP_TILE:
-      return 7;
+      return 9;
     case PowerUpType.RESET_COOLDOWN:
-      return 8;
+      return 10;
     case PowerUpType.COPY_COLUMN:
     case PowerUpType.COPY_ROW:
-      return 4;
+      return 6;
     case PowerUpType.REVERSE_COLUMN:
     case PowerUpType.REVERSE_ROW:
-      return 3;
+      return 5;
     case PowerUpType.REMOVE_COLUMN:
     case PowerUpType.REMOVE_ROW:
-      return 3;
+      return 5;
     case PowerUpType.INCREASE_REQUIRED_WIN:
     case PowerUpType.DECREASE_REQUIRED_WIN:
-      return 9;
+      return 10;
     case PowerUpType.INCREASE_ENERGY:
       return 8;
     case PowerUpType.INCREASE_MAX_ENERGY:
       return 10;
     case PowerUpType.FORCE_RANDOM:
-      return 3;
+      return 5;
     case PowerUpType.BLOCKED_SPACE:
-      return 7;
+      return 9;
     case PowerUpType.FORCE_SPACE:
-      return 8;
+      return 10;
     case PowerUpType.TELEPORT_RANDOM:
-      return 4;
+      return 7;
     default:
-      return 3;
+      return 5;
   }
 }
 
