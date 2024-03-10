@@ -1,5 +1,5 @@
 import {numberCoordsToCoords} from '../coordinatesHelper';
-import {Choice, Moves, NumberCoordinates, SelectionTimes, SpaceStatusEffect, StatusEffectType} from '../types';
+import {Choice, Moves, NumberCoordinates, SelectionTimes, SpaceStatusEffect} from '../types';
 import {WinLine} from './WinLine';
 
 type BoardProps = {

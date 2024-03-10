@@ -1,5 +1,6 @@
 @import 'colors';
 @import 'button';
+@import 'energy_changer';
 
 $button-transition-duration: 100ms;
 
@@ -348,6 +349,7 @@ $button-transition-duration: 100ms;
 
     .end-game-summary {
         left: 5vw;
+        @include energy_changer();
 
         .power-up {
             margin-left: 10px;

@@ -844,11 +844,11 @@ export class Game {
     return powerUpOptions;
   }
 
-  private getEnergyCounter(): Node {
+  private getEnergyCounter(): HTMLElement {
     const energyCounter = document.createElement('div');
     energyCounter.classList.add('energy-counter');
     energyCounter.innerText = `Energy: ${this.energyCurrent}/${this.energyMax}`;
-    const previousEnergy = this.energyCurrent;
+    const previousEnergy = this.previousEnergyCurrent;
     const previousEnergyMax = this.energyMax;
     setTimeout(() => {
       const newEnergyChange = document.getElementById('energy-change');
@@ -858,7 +858,7 @@ export class Game {
           energyCounter.innerHTML = `︎︎⚡︎ ${previousEnergy}/${previousEnergyMax} -> <span class="new-energy">${this.energyCurrent}/${this.energyMax}</span>`;
         }
       }
-    }, 50);
+    }, 100);
     return energyCounter;
   }
 
@@ -867,7 +867,7 @@ export class Game {
     const energyChangeBar = document.createElement('div');
     energyChangeBar.classList.add('bar');
     energyChange.setAttribute('id', 'energy-change');
-    energyChange.style.setProperty('--progress', `${(this.energyCurrent / this.energyMax) * 100}%`);
+    energyChange.style.setProperty('--progress', `${(this.previousEnergyCurrent / this.energyMax) * 100}%`);
     energyChange.appendChild(energyChangeBar);
     return energyChange;
   }
@@ -1018,6 +1018,7 @@ export class Game {
         isDebug('slowlevel') ? 20000 : 2000,
       );
     } else if (term.winner !== 'x' && this.energyCurrent - ENERGY_COST_LOSS <= 0) {
+      this.energyCurrent = 0;
       this.endGame();
     } else if (term.isWinner && term.winner) {
       const spaces = this.level.getWinningSpaces(term.winner);
@@ -1064,6 +1065,10 @@ export class Game {
       const level = document.createElement('p');
       level.innerText = `${win ? 'Victory' : 'Defeat'} on level ${this.level.level}`;
       result.appendChild(level);
+      if (!win) {
+        result.appendChild(this.getEnergyCounter());
+        result.appendChild(this.getEnergyChange());
+      }
       const powerUpHeader = document.createElement('h2');
       powerUpHeader.innerText = 'Power-Ups';
       result.appendChild(powerUpHeader);
