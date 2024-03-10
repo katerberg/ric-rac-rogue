@@ -36,6 +36,9 @@ function getDefaultCost(type: PowerUpType): number {
     // Situational
     case PowerUpType.BLOCKED_SPACE:
       return 20;
+    case PowerUpType.REVERSE_COLUMN:
+    case PowerUpType.REVERSE_ROW:
+      return 20;
     case PowerUpType.REMOVE_COLUMN:
     case PowerUpType.REMOVE_ROW:
       return 20;
@@ -57,6 +60,9 @@ function getDefaultCooldown(type: PowerUpType): number {
     case PowerUpType.COPY_COLUMN:
     case PowerUpType.COPY_ROW:
       return 4;
+    case PowerUpType.REVERSE_COLUMN:
+    case PowerUpType.REVERSE_ROW:
+      return 3;
     case PowerUpType.REMOVE_COLUMN:
     case PowerUpType.REMOVE_ROW:
       return 3;
@@ -122,6 +128,12 @@ export class PowerUp {
         return 'Deletes an entire column from the game board';
       case PowerUpType.REMOVE_ROW:
         return 'Deletes an entire row from the game board';
+      case PowerUpType.REVERSE_COLUMN:
+        // eslint-disable-next-line quotes
+        return "Flips a column's contents on the game board";
+      case PowerUpType.REVERSE_ROW:
+        // eslint-disable-next-line quotes
+        return "Flips a row's contents on the game board";
       case PowerUpType.INCREASE_REQUIRED_WIN:
         return 'Increases the threshold for a victory by one';
       case PowerUpType.DECREASE_REQUIRED_WIN:
@@ -159,6 +171,10 @@ export class PowerUp {
         return 'Remove Column';
       case PowerUpType.REMOVE_ROW:
         return 'Remove Row';
+      case PowerUpType.REVERSE_COLUMN:
+        return 'Reverse Column';
+      case PowerUpType.REVERSE_ROW:
+        return 'Reverse Row';
       case PowerUpType.INCREASE_REQUIRED_WIN:
         return 'Boost Win Req';
       case PowerUpType.DECREASE_REQUIRED_WIN:
@@ -176,9 +192,9 @@ export function getStartingPowerUp(): PowerUp {
     new PowerUp({type: PowerUpType.FLIP_TILE}),
     new PowerUp({type: PowerUpType.COPY_COLUMN}),
     new PowerUp({type: PowerUpType.COPY_ROW}),
-    new PowerUp({type: PowerUpType.EXTRA_TURN}),
+    new PowerUp({type: PowerUpType.REVERSE_COLUMN}),
+    new PowerUp({type: PowerUpType.REVERSE_ROW}),
     new PowerUp({type: PowerUpType.TELEPORT_RANDOM}),
-    new PowerUp({type: PowerUpType.FORCE_RANDOM}),
     new PowerUp({type: PowerUpType.BLOCKED_SPACE}),
   ];
 

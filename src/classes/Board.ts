@@ -1,5 +1,5 @@
 import {numberCoordsToCoords} from '../coordinatesHelper';
-import {Choice, Moves, NumberCoordinates, SelectionTimes} from '../types';
+import {Choice, Moves, NumberCoordinates, SelectionTimes, SpaceStatusEffect, StatusEffectType} from '../types';
 import {WinLine} from './WinLine';
 
 type BoardProps = {
@@ -162,6 +162,50 @@ export class Board {
         }
       }
       this.columns--;
+    }
+  }
+
+  reverseRow(rowNumberToReverse: number): void {
+    if (rowNumberToReverse > -1 && rowNumberToReverse < this.rows) {
+      const previousValues: Array<Choice | SpaceStatusEffect | undefined> = [];
+      for (let x = 0; x < this.columns / 2; x++) {
+        previousValues[x] = this.selections.get(`${x},${rowNumberToReverse}`);
+        const valueToCopy = this.selections.get(`${this.columns - x - 1},${rowNumberToReverse}`);
+        if (valueToCopy !== undefined) {
+          this.selections.set(`${x},${rowNumberToReverse}`, valueToCopy);
+        } else {
+          this.selections.delete(`${x},${rowNumberToReverse}`);
+        }
+      }
+      previousValues.forEach((value, i) => {
+        if (value !== undefined) {
+          this.selections.set(`${this.columns - i - 1},${rowNumberToReverse}`, value);
+        } else {
+          this.selections.delete(`${this.columns - i - 1},${rowNumberToReverse}`);
+        }
+      });
+    }
+  }
+
+  reverseColumn(columnNumberToReverse: number): void {
+    if (columnNumberToReverse > -1 && columnNumberToReverse < this.columns) {
+      const previousValues: Array<Choice | SpaceStatusEffect | undefined> = [];
+      for (let y = 0; y < this.rows / 2; y++) {
+        previousValues[y] = this.selections.get(`${columnNumberToReverse},${y}`);
+        const valueToCopy = this.selections.get(`${columnNumberToReverse},${this.rows - y - 1}`);
+        if (valueToCopy !== undefined) {
+          this.selections.set(`${columnNumberToReverse},${y}`, valueToCopy);
+        } else {
+          this.selections.delete(`${columnNumberToReverse},${y}`);
+        }
+      }
+      previousValues.forEach((value, i) => {
+        if (value !== undefined) {
+          this.selections.set(`${columnNumberToReverse},${this.rows - i - 1}`, value);
+        } else {
+          this.selections.delete(`${columnNumberToReverse},${this.rows - i - 1}`);
+        }
+      });
     }
   }
 

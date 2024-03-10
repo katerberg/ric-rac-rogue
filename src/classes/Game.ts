@@ -177,6 +177,8 @@ export class Game {
     if (isDebug('powerups')) {
       this.powerUps = [
         new PowerUp({type: PowerUpType.TELEPORT_RANDOM}),
+        new PowerUp({type: PowerUpType.REVERSE_COLUMN}),
+        new PowerUp({type: PowerUpType.REVERSE_ROW}),
         new PowerUp({type: PowerUpType.FORCE_RANDOM}),
         new PowerUp({type: PowerUpType.FORCE_SPACE}),
         new PowerUp({type: PowerUpType.BLOCKED_SPACE}),
@@ -348,6 +350,18 @@ export class Game {
       this.currentAction = null;
       return;
     }
+    if (this.currentAction?.type === PowerUpType.REVERSE_ROW && this.level.board.isMoveOnBoard({x, y})) {
+      this.level.board.reverseRow(y);
+      this.checkWinCondition();
+      this.currentAction = null;
+      return;
+    }
+    if (this.currentAction?.type === PowerUpType.REVERSE_COLUMN && this.level.board.isMoveOnBoard({x, y})) {
+      this.level.board.reverseColumn(y);
+      this.checkWinCondition();
+      this.currentAction = null;
+      return;
+    }
     if (this.currentAction?.type === PowerUpType.REMOVE_ROW && this.level.board.isMoveOnBoard({x, y})) {
       this.level.board.removeRow(y);
       this.checkWinCondition();
@@ -379,6 +393,8 @@ export class Game {
         PowerUpType.FLIP_TILE,
         PowerUpType.BLOCKED_SPACE,
         PowerUpType.FORCE_SPACE,
+        PowerUpType.REVERSE_COLUMN,
+        PowerUpType.REVERSE_ROW,
         PowerUpType.REMOVE_COLUMN,
         PowerUpType.REMOVE_ROW,
         PowerUpType.COPY_COLUMN,
@@ -794,6 +810,8 @@ export class Game {
       case PowerUpType.COPY_ROW:
       case PowerUpType.REMOVE_COLUMN:
       case PowerUpType.REMOVE_ROW:
+      case PowerUpType.REVERSE_COLUMN:
+      case PowerUpType.REVERSE_ROW:
       case PowerUpType.TELEPORT_RANDOM:
       case PowerUpType.BLOCKED_SPACE:
       case PowerUpType.FORCE_SPACE:
